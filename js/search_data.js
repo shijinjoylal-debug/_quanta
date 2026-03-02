@@ -70,5 +70,11 @@ const searchData = [
         url: "pages/test6.html",
         description: "A short, modular learning experience: Overview → Simulator → Bell test → Quiz.",
         keywords: ["overview", "simulator", "bell test", "bell's inequality", "quiz and activity", "quiz & activity", "references", "bell test", "entanglement interactive", "entanglement interactive course"]
+    },
+    {
+        title: "Uncertainty Principle",
+        url: "pages/test7.html",
+        description: "Learn about Heizenbierg's Uncertainty Principle.",
+        keywords: ["Uncertainty Principle", "Heizenbierg's Uncertainty Principle", "uncertainty", "position", "momentum", "wave", "wavelength", "uncertainty in position", "uncertainty in wavelength", "heizenbierg", "missuderstanding about uncertainty", "spread",]
     }
 ];
