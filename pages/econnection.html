@@ -265,7 +265,7 @@
     };
 
     /* FRONTEND LOGIC */
-    const API_POSTS = "http://localhost:5000/api/posts";
+    const API_POSTS = "/api/posts";
 
     let selectedFiles = [];
 
@@ -377,7 +377,7 @@
         ${post.images
             .map(imagePath => {
               // Ensure we handle both full URLs (if changed in future) and relative paths
-              const src = imagePath.startsWith('http') ? imagePath : `http://localhost:5000${imagePath}`;
+              const src = imagePath.startsWith('http') ? imagePath : `https://quanta-khaki.vercel.app/${imagePath}`;
               return `<img src="${src}" onclick="openLightbox(this.src)">`;
             })
             .join("")}
