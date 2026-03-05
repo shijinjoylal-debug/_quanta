@@ -225,7 +225,7 @@
             resultDiv.style.display = 'none';
             generateBtn.disabled = true;
 
-            const API_BASE_URL = window.CONFIG ? window.CONFIG.API_BASE_URL : 'https://quanta-backend-raeq.onrender.com';
+            const API_BASE_URL = window.CONFIG.API_BASE_URL;
 
             try {
                 const response = await fetch(`${API_BASE_URL}/generate`, {
@@ -244,7 +244,7 @@
                 }
             } catch (error) {
                 console.error("Fetch error:", error);
-                alert("Could not connect to the AI server. Make sure NN6.py is running on port 5001.");
+                alert("Could not connect to the AI server.");
             } finally {
                 loading.style.display = 'none';
                 generateBtn.disabled = false;

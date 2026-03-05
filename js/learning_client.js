@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const addResourceBtn = document.getElementById('addResourceBtn');
     const quantumResultsContainer = document.getElementById('quantumResultsContainer');
 
-    const API_BASE = (window.CONFIG ? window.CONFIG.API_BASE_URL : '') + '/api/learning';
+    const API_BASE = window.CONFIG.API_BASE_URL + '/api/learning';
 
     // Tab Switching
     function switchTab(tabName) {

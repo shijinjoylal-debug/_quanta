@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://quanta-backend-raeq.onrender.com';
+const API_BASE_URL = window.CONFIG.API_BASE_URL;
 fetch(`${API_BASE_URL}/generate`, {
     method: "POST",
     headers: { "content-type": "application/json" },
