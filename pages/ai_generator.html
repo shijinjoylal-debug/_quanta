@@ -225,7 +225,7 @@
             resultDiv.style.display = 'none';
             generateBtn.disabled = true;
 
-            const API_BASE_URL = window.CONFIG ? window.CONFIG.API_BASE_URL : 'http://localhost:5001';
+            const API_BASE_URL = window.CONFIG ? window.CONFIG.API_BASE_URL : 'https://quanta-backend-raeq.onrender.com';
 
             try {
                 const response = await fetch(`${API_BASE_URL}/generate`, {
