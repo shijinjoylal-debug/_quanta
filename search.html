@@ -12,6 +12,7 @@
     <script src="js/search_data.js" defer></script>
     <script src="js/search.js" defer></script>
     <script src="js/learning_client.js" defer></script>
+    <script src="js/gemini_client.js" defer></script>
 </head>
 
 <body>
@@ -49,6 +50,13 @@
             <!-- AI Results here -->
             <p style="opacity: 0.6;">Ask anything. The AI has learned from the project files.</p>
         </div>
+        <div class="search-container"
+            style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <p style="font-size: 0.9rem; opacity: 0.8;">Need general information? Ask Gemini directly:</p>
+            <button id="askGeminiAiBtn" class="ingest-btn"
+                style="background: #9b59b6; box-shadow: 0 0 10px #9b59b6;">Ask
+                Gemini General</button>
+        </div>
         <button id="ingestBtn" class="ingest-btn" title="Refresh AI Knowledge">↻ Re-learn Data</button>
     </div>
 
@@ -67,6 +75,13 @@
 
         <div id="quantumResultsContainer" style="width: 100%; max-width: 800px; margin: 0 auto;">
             <p style="opacity: 0.6;">Learn purely from external resources.</p>
+        </div>
+        <div class="search-container"
+            style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+            <p style="font-size: 0.9rem; opacity: 0.8;">Unsure about external topics? Ask Gemini:</p>
+            <button id="askGeminiQuantumBtn" class="ingest-btn"
+                style="background: #9b59b6; box-shadow: 0 0 10px #9b59b6;">Ask
+                Gemini General</button>
         </div>
     </div>
 

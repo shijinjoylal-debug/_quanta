@@ -15,6 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const externalUrlInput = document.getElementById('externalUrlInput');
     const addResourceBtn = document.getElementById('addResourceBtn');
     const quantumResultsContainer = document.getElementById('quantumResultsContainer');
+    const askGeminiAiBtn = document.getElementById('askGeminiAiBtn');
+    const askGeminiQuantumBtn = document.getElementById('askGeminiQuantumBtn');
 
     const API_BASE = window.CONFIG.API_BASE_URL + '/api/learning';
 
@@ -142,6 +144,47 @@ document.addEventListener('DOMContentLoaded', () => {
             addResourceBtn.textContent = "+ Add Resource";
         }
     });
+
+    // Gemini Integration Logic
+    async function handleGeminiChat(inputElement, container) {
+        const query = inputElement.value.trim();
+        if (!query) {
+            alert("Please enter a question.");
+            return;
+        }
+
+        container.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color:#9b59b6;">Connecting to Gemini AI...</p>';
+
+        try {
+            const result = await window.askGemini(query);
+            if (result.success) {
+                renderGeminiResponse(result.text, container);
+            } else {
+                container.innerHTML = `<p style="color:red; text-align:center;">Gemini Error: ${result.error}</p>`;
+            }
+        } catch (err) {
+            console.error(err);
+            container.innerHTML = `<p style="color:red; text-align:center;">Failed to connect to Gemini.</p>`;
+        }
+    }
+
+    askGeminiAiBtn.addEventListener('click', () => {
+        handleGeminiChat(aiInput, aiResultsContainer);
+    });
+
+    askGeminiQuantumBtn.addEventListener('click', () => {
+        handleGeminiChat(quantumInput, quantumResultsContainer);
+    });
+
+    function renderGeminiResponse(text, container) {
+        const formattedText = text.replace(/\n/g, '<br>');
+        container.innerHTML = `
+            <div class="ai-answer-box" style="border-left-color: #9b59b6;">
+                <h3 style="margin-bottom:10px; color:#9b59b6;">Gemini AI (General Knowledge)</h3>
+                <div class="gemini-response" style="line-height: 1.6;">${formattedText}</div>
+            </div>
+        `;
+    }
 
     function renderAIResponse(data, container) {
         // 1. Answer
