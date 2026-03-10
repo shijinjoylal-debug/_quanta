@@ -74,14 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // AI Search Logic (Project)
     aiInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            performSearch(aiInput.value.trim(), 'project', aiResultsContainer);
+            handleGeminiChat(aiInput, aiResultsContainer);
         }
     });
 
     // Quantum Search Logic
     quantumInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            performSearch(quantumInput.value.trim(), 'quantum', quantumResultsContainer);
+            handleGeminiChat(quantumInput, quantumResultsContainer);
         }
     });
 
