@@ -1,4 +1,4 @@
 const CONFIG = {
-    API_BASE_URL: 'https://quanta-backend-raeq.onrender.com',
+    API_BASE_URL: 'http://localhost:5000',
 };
 window.CONFIG = CONFIG;
