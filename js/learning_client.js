@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // AI Search Logic (Project)
     aiInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
-            handleGeminiChat(aiInput, aiResultsContainer);
+            performSearch(aiInput.value.trim(), 'project', aiResultsContainer);
         }
     });
 
