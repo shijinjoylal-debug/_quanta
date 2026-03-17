@@ -2,11 +2,11 @@
  * client-side Gemini AI communication
  */
 
-const GEMINI_API_URL = window.CONFIG.API_BASE_URL + '/api/gemini/chat';
+const GEMINI_API_KEY = window.CONFIG.API_BASE_URL + '/api/gemini/chat';
 
 async function askGemini(prompt, history = []) {
     try {
-        const response = await fetch(GEMINI_API_URL, {
+        const response = await fetch(GEMINI_API_KEY, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
