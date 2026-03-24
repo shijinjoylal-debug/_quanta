@@ -9,11 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const aiInput = document.getElementById('aiInput');
     const aiResultsContainer = document.getElementById('aiResultsContainer');
-    const ingestBtn = document.getElementById('ingestBtn');
 
     const quantumInput = document.getElementById('quantumInput');
-    const externalUrlInput = document.getElementById('externalUrlInput');
-    const addResourceBtn = document.getElementById('addResourceBtn');
     const quantumResultsContainer = document.getElementById('quantumResultsContainer');
     const askGeminiAiBtn = document.getElementById('askGeminiAiBtn');
     const askGeminiQuantumBtn = document.getElementById('askGeminiQuantumBtn');
@@ -82,66 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
     quantumInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
             performSearch(quantumInput.value.trim(), 'quantum', quantumResultsContainer);
-        }
-    });
-
-    // Ingestion Logic (Project)
-    ingestBtn.addEventListener('click', async () => {
-        const confirm = window.confirm("This will re-scan all project files and update the AI's knowledge base. Continue?");
-        if (!confirm) return;
-
-        ingestBtn.disabled = true;
-        ingestBtn.textContent = "Ingesting...";
-        ingestBtn.style.opacity = "0.7";
-
-        try {
-            const response = await fetch(`${API_BASE}/ingest`, { method: 'POST' });
-            const data = await response.json();
-
-            if (response.ok) {
-                alert(`Success! Processed ${data.data.processedFiles} files.`);
-            } else {
-                alert(`Error: ${data.error}`);
-            }
-        } catch (err) {
-            alert("Failed to connect to backend.");
-        } finally {
-            ingestBtn.disabled = false;
-            ingestBtn.textContent = "↻ Re-learn Data";
-            ingestBtn.style.opacity = "1";
-        }
-    });
-
-    // External Resource Ingestion
-    addResourceBtn.addEventListener('click', async () => {
-        const url = externalUrlInput.value.trim();
-        if (!url) {
-            alert("Please enter a valid URL.");
-            return;
-        }
-
-        addResourceBtn.disabled = true;
-        addResourceBtn.textContent = "Adding...";
-
-        try {
-            const response = await fetch(`${API_BASE}/ingest-url`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url })
-            });
-            const data = await response.json();
-
-            if (response.ok) {
-                alert(`Success! Learned from ${data.data.title}`);
-                externalUrlInput.value = '';
-            } else {
-                alert(`Error: ${data.error}`);
-            }
-        } catch (err) {
-            alert("Failed to add resource.");
-        } finally {
-            addResourceBtn.disabled = false;
-            addResourceBtn.textContent = "+ Add Resource";
         }
     });
 
