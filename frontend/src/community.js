@@ -157,8 +157,12 @@ function addPostToFeed(post, prepend = false) {
     // Images HTML
     let imagesHtml = "";
     if (post.images && post.images.length > 0) {
+        const backendBaseUrl = window.CONFIG ? window.CONFIG.API_BASE_URL : 'https://quanta-backend-raeq.onrender.com';
         imagesHtml = `<div class="post-images">
-      ${post.images.map(url => `<img src="${url}" loading="lazy">`).join("")}
+      ${post.images.map(url => {
+          const fullUrl = url.startsWith('http') ? url : backendBaseUrl + (url.startsWith('/') ? '' : '/') + url;
+          return `<img src="${fullUrl}" loading="lazy">`;
+      }).join("")}
     </div>`;
     }
 
