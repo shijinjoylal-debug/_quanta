@@ -336,7 +336,8 @@
       try {
         const res = await fetch(API_POSTS, {
           method: "POST",
-          body: fd
+          body: fd,
+          credentials: "include"
         });
 
         if (!res.ok) throw new Error("Failed to post");
@@ -358,7 +359,7 @@
     /*** LOAD POSTS ***/
     async function loadPosts() {
       try {
-        const res = await fetch(API_POSTS);
+        const res = await fetch(API_POSTS, { credentials: "include" });
         const all = await res.json();
         all.forEach(showPost);
       } catch (err) {
@@ -403,7 +404,10 @@
       if (!confirm("Delete this post?")) return;
 
       try {
-        const res = await fetch(`${API_POSTS}/${id}`, { method: "DELETE" });
+        const res = await fetch(`${API_POSTS}/${id}`, { 
+          method: "DELETE",
+          credentials: "include" 
+        });
         if (res.ok) {
           btn.parentElement.remove();
         } else {
