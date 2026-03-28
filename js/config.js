@@ -1,7 +1,12 @@
 const CONFIG = {
-    // API_BASE_URL can be overridden by environment variables during build (e.g., in Vercel)
-    API_BASE_URL: (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_BASE_URL) 
-        ? import.meta.env.VITE_API_BASE_URL 
-        : 'https://quanta-backend-raeq.onrender.com',
+    // Hosted Backend URL (Production)
+    API_BASE_URL: 'https://quanta-backend-raeq.onrender.com',
+    
+    // Local Backend URL (for development)
+    // API_BASE_URL: 'http://localhost:5000',
 };
+
+// Log the current API configuration for debugging
+console.log('🚀 API Base URL configured:', CONFIG.API_BASE_URL);
+
 window.CONFIG = CONFIG;
