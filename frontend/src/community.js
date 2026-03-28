@@ -1,4 +1,5 @@
-const API_URL = (window.CONFIG ? window.CONFIG.API_BASE_URL : 'https://quanta-backend-raeq.onrender.com') + '/api/posts';
+const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_URL = `${API_BASE}/api/posts`;
 
 let selectedFiles = [];
 
@@ -17,7 +18,7 @@ async function initAuth() {
     }
     
     try {
-        const authUrl = (window.CONFIG ? window.CONFIG.API_BASE_URL : 'https://quanta-backend-raeq.onrender.com') + '/api/auth/me';
+        const authUrl = `${API_BASE}/api/auth/me`;
         const res = await fetch(authUrl, { credentials: 'include' });
         if (res.ok) {
             currentUser = await res.json();
@@ -157,7 +158,7 @@ function addPostToFeed(post, prepend = false) {
     // Images HTML
     let imagesHtml = "";
     if (post.images && post.images.length > 0) {
-        const backendBaseUrl = window.CONFIG ? window.CONFIG.API_BASE_URL : 'https://quanta-backend-raeq.onrender.com';
+        const backendBaseUrl = API_BASE;
         imagesHtml = `<div class="post-images">
       ${post.images.map(url => {
           const fullUrl = url.startsWith('http') ? url : backendBaseUrl + (url.startsWith('/') ? '' : '/') + url;
