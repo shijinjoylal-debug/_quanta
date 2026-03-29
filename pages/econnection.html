@@ -340,6 +340,12 @@
           credentials: "include"
         });
 
+        if (res.status === 401) {
+          alert("Please login first");
+          window.location.href = "../index.html?login=true";
+          return;
+        }
+
         if (!res.ok) throw new Error("Failed to post");
 
         const data = await res.json();
@@ -408,6 +414,11 @@
           method: "DELETE",
           credentials: "include" 
         });
+        if (res.status === 401) {
+          alert("Session expired. Please login again.");
+          window.location.href = "../index.html?login=true";
+          return;
+        }
         if (res.ok) {
           btn.parentElement.remove();
         } else {

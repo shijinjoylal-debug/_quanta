@@ -11,7 +11,8 @@ async function askGemini(prompt, history = []) {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ prompt, history })
+            credentials: 'include',
+            body: JSON.stringify({ prompt })
         });
 
         const data = await response.json();

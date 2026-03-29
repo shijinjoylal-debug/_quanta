@@ -89,6 +89,12 @@ document.getElementById("postForm").onsubmit = async (e) => {
             credentials: 'include' // Important for sessions
         });
 
+        if (res.status === 401) {
+            alert("Login first");
+            window.location.href = "../index.html?login=true";
+            return;
+        }
+
         if (!res.ok) throw new Error("Failed to create post");
 
         const newPost = await res.json();
@@ -204,6 +210,11 @@ async function deletePost(id, element) {
             method: 'DELETE',
             credentials: 'include' // Important for sessions
         });
+        if (res.status === 401) {
+            alert("Session expired. Please login again.");
+            window.location.href = "../index.html?login=true";
+            return;
+        }
         if (res.ok) {
             element.remove();
             if (postsContainer.children.length === 0) {

@@ -470,6 +470,14 @@
         alert('Something went wrong. Check console for details.');
       }
     });
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('login') === 'true' && !currentUser) {
+        authModal.style.display = 'flex';
+      }
+    } catch (e) {
+      console.error('Error handling login query parameter:', e);
+    }
   </script>
 </body>
 

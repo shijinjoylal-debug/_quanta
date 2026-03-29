@@ -69,18 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // AI Search Logic (Project)
-    aiInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            performSearch(aiInput.value.trim(), 'project', aiResultsContainer);
-        }
-    });
+    // Removed Enter key listener as per user request (Ask Gemini button is used instead)
 
     // Quantum Search Logic
-    quantumInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            performSearch(quantumInput.value.trim(), 'quantum', quantumResultsContainer);
-        }
-    });
+    // Removed Enter key listener as per user request (Ask Gemini button is used instead)
 
     // Gemini Integration Logic
     async function handleGeminiChat(inputElement, container) {
