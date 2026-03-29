@@ -25,14 +25,16 @@ async function askGemini(prompt, history = []) {
         } else {
             return {
                 success: false,
-                error: data.error || 'Failed to fetch Gemini response'
+                error: data.error || 'Failed to fetch Gemini response',
+                details: data.details || null
             };
         }
     } catch (error) {
         console.error('Gemini Fetch Error:', error);
         return {
             success: false,
-            error: 'Could not connect to AI server.'
+            error: 'Could not connect to AI server.',
+            details: error.message
         };
     }
 }

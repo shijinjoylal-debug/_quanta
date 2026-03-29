@@ -89,7 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (result.success) {
                 renderGeminiResponse(result.text, container);
             } else {
-                container.innerHTML = `<p style="color:red; text-align:center;">Gemini Error: ${result.error}</p>`;
+                let errorHtml = `<p style="color:red; text-align:center; font-weight:bold;">Gemini Error: ${result.error}</p>`;
+                if (result.details) {
+                    errorHtml += `<p style="color: #e74c3c; font-size: 0.85rem; background: #fdf2f2; padding: 10px; border-radius: 5px; margin-top: 5px; border: 1px solid #fab1a0;"><strong>Details:</strong> ${result.details}</p>`;
+                }
+                container.innerHTML = errorHtml;
             }
         } catch (err) {
             console.error(err);
