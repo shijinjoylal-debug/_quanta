@@ -367,7 +367,9 @@
       try {
         const res = await fetch(API_POSTS, { credentials: "include" });
         const all = await res.json();
-        all.forEach(showPost);
+        // Since showPost uses prepend, we reverse the list (which is newest-to-oldest from backend)
+        // or just iterate and append. Reversing and prepending is consistent.
+        all.reverse().forEach(showPost);
       } catch (err) {
         console.error("Error loading posts:", err);
       }
