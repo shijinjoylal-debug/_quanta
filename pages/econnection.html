@@ -385,7 +385,7 @@
         ${post.images
             .map(imagePath => {
               // Ensure we handle both full URLs (if changed in future) and relative paths
-              const src = imagePath.startsWith('http') ? imagePath : `/${imagePath}`;
+              const src = imagePath.startsWith('http') ? imagePath : window.CONFIG.API_BASE_URL + (imagePath.startsWith('/') ? '' : '/') + imagePath;
               return `<img src="${src}" onclick="openLightbox(this.src)">`;
             })
             .join("")}
