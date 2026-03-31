@@ -167,8 +167,11 @@ function addPostToFeed(post, prepend = false) {
         const backendBaseUrl = API_BASE;
         imagesHtml = `<div class="post-images">
       ${post.images.map(url => {
-          const fullUrl = url.startsWith('http') ? url : backendBaseUrl + (url.startsWith('/') ? '' : '/') + url;
-          return `<img src="${fullUrl}" loading="lazy">`;
+          // Robust URL construction
+          let fullUrl = url.startsWith('http') ? url : backendBaseUrl + (url.startsWith('/') ? '' : '/') + url;
+          // Remove potential double slashes (except after http:)
+          fullUrl = fullUrl.replace(/([^:]\/)\/+/g, "$1");
+          return `<img src="${fullUrl}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=200&auto=format&fit=crop';this.style.opacity='0.5';this.title='Image no longer available on server';">`;
       }).join("")}
     </div>`;
     }

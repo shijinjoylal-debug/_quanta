@@ -385,12 +385,14 @@
         imgs = `
       <div class="post-images">
         ${post.images
-            .map(imagePath => {
-              // Ensure we handle both full URLs (if changed in future) and relative paths
-              const src = imagePath.startsWith('http') ? imagePath : window.CONFIG.API_BASE_URL + (imagePath.startsWith('/') ? '' : '/') + imagePath;
-              return `<img src="${src}" onclick="openLightbox(this.src)">`;
-            })
-            .join("")}
+          .map(imagePath => {
+            // Robust URL construction
+            let src = imagePath.startsWith('http') ? imagePath : window.CONFIG.API_BASE_URL + (imagePath.startsWith('/') ? '' : '/') + imagePath;
+            // Remove potential double slashes (except after http:)
+            src = src.replace(/([^:]\/)\/+/g, "$1");
+            return `<img src="${src}" onclick="openLightbox(this.src)" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=200&auto=format&fit=crop';this.style.opacity='0.5';this.title='Image no longer available on server';">`;
+          })
+          .join("")}
       </div>
     `;
       }
