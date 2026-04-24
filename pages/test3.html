@@ -389,6 +389,64 @@
       font-weight: 600;
     }
 
+    /* Prevent flex/grid intrinsic width blowout */
+    .visualizer-section, .info-section, .card {
+      min-width: 0;
+    }
+
+    /* Mobile Overrides */
+    @media (max-width: 600px) {
+      .container {
+        padding: 12px;
+        gap: 16px;
+        overflow-x: hidden;
+      }
+      .header-card {
+        padding: 16px;
+        gap: 12px;
+        flex-direction: column;
+        text-align: center;
+      }
+      .card {
+        padding: 16px;
+      }
+      h1 {
+        font-size: 20px;
+      }
+      .controls-grid {
+        gap: 12px;
+      }
+      .control-row label {
+        min-width: 60px;
+      }
+      .slider-container {
+        min-width: 100px;
+      }
+      .math-block {
+        font-size: 12px;
+        padding: 12px;
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .images-grid {
+        grid-template-columns: 1fr;
+      }
+      .tabs-nav {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+      }
+      .tabs-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .btn-group button {
+        min-width: 100px;
+      }
+      .axis-legend {
+        justify-content: center;
+      }
+    }
   </style>
 </head>
 
