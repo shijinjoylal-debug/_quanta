@@ -6,1076 +6,764 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EmerTezora — Bloch Sphere — Interactive Tutorial</title>
 
-  <!-- Basic safe font stack + appearance niceties -->
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@400;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --bg-0: #071028;
       --bg-1: #071827;
-      --card: #0b1220;
+      --card: rgba(11, 18, 32, 0.8);
       --muted: #94a3b8;
       --accent: #7dd3fc;
       --glass: rgba(255, 255, 255, 0.04);
-      --radius: 12px;
+      --radius: 16px;
       --maxw: 1200px;
-      --gap: 20px;
-      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
-      --ui-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      --gap: 24px;
+      --mono: 'Roboto Mono', ui-monospace, SFMono-Regular, monospace;
+      --ui-font: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     html,
     body {
-      height: 100%;
-      margin: 0;
+      min-height: 100%;
       font-family: var(--ui-font);
       color: #e6eef6;
-      background: linear-gradient(180deg, var(--bg-0) 0%, var(--bg-1) 60%);
+      background: radial-gradient(circle at top, #0c1b3d 0%, #071028 100%);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
     a {
       color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s;
     }
 
-    /* Layout */
+    a:hover {
+      color: #bae6fd;
+    }
+
     .container {
       max-width: var(--maxw);
-      margin: 18px auto;
+      margin: 0 auto;
       padding: 24px;
-      display: grid;
-      grid-template-columns: 520px 1fr;
+      display: flex;
+      flex-direction: column;
       gap: var(--gap);
-      align-items: start;
     }
 
     header {
-      grid-column: 1 / -1;
+      width: 100%;
+    }
+
+    .header-card {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
       display: flex;
-      gap: 16px;
+      gap: 20px;
       align-items: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
 
     h1 {
-      margin: 0;
-      font-size: 20px;
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #7dd3fc, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
     }
 
     .subtitle {
       color: var(--muted);
-      font-size: 13px;
+      font-size: 15px;
     }
 
     .card {
       background: var(--card);
+      backdrop-filter: blur(12px);
       border-radius: var(--radius);
-      padding: 14px;
-      box-shadow: 0 6px 20px rgba(2, 6, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 24px;
+      box-shadow: 0 8px 32px rgba(2, 6, 23, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      height: 100%;
+    }
+
+    /* Main Layout Grid */
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: var(--gap);
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .main-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* Left column */
-    .left {
+    .visualizer-section {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: var(--gap);
     }
 
     canvas#gl {
       width: 100%;
-      height: 420px;
-      /* fallback, can be overridden by CSS at smaller breakpoints */
-      border-radius: 8px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(255, 255, 255, 0.006));
+      aspect-ratio: 4 / 3;
+      max-height: 500px;
+      border-radius: 12px;
+      background: rgba(0, 0, 0, 0.2);
       display: block;
       touch-action: none;
       user-select: none;
+      border: 1px solid rgba(255, 255, 255, 0.03);
     }
 
-    .controls {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 6px;
+    .controls-grid {
+      display: grid;
+      gap: 16px;
     }
 
-    .row {
+    .control-row {
       display: flex;
-      gap: 8px;
+      gap: 16px;
       align-items: center;
       flex-wrap: wrap;
     }
 
-    label {
-      font-size: 13px;
+    .control-row label {
+      font-size: 14px;
       color: var(--muted);
-      min-width: 64px;
+      min-width: 80px;
+    }
+
+    .slider-container {
+      flex: 1;
+      min-width: 150px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     input[type=range] {
       -webkit-appearance: none;
-      appearance: none;
       width: 100%;
-    }
-
-    input[type=range]::-webkit-slider-runnable-track {
       height: 6px;
-      border-radius: 6px;
-      background: linear-gradient(90deg, #1f2937, #0ea5e9);
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      outline: none;
     }
 
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
       width: 18px;
       height: 18px;
+      background: var(--accent);
       border-radius: 50%;
-      background: #fff;
-      margin-top: -6px;
-    }
-
-    .value {
-      min-width: 78px;
-      text-align: right;
-      color: #cfe8ff;
-      font-weight: 600;
-    }
-
-    button {
-      padding: 8px 12px;
-      border-radius: 10px;
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: #cfe8ff;
       cursor: pointer;
+      box-shadow: 0 0 10px rgba(125, 211, 252, 0.5);
+      transition: transform 0.1s;
     }
 
-    button:active {
-      transform: translateY(1px);
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
     }
 
-    /* Right column */
-    .right {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .explain {
-      line-height: 1.45;
-      color: #dceefc;
-    }
-
-    pre.math {
-      background: var(--glass);
-      padding: 10px;
-      border-radius: 8px;
-      color: #eaf6ff;
-      overflow: auto;
+    .value-display {
+      min-width: 60px;
+      text-align: right;
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: 14px;
+      color: var(--accent);
     }
 
-    .info {
+    .btn-group {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
+      margin-top: 8px;
     }
 
-    .small {
-      font-size: 13px;
-      color: var(--muted);
+    button {
+      padding: 10px 20px;
+      border-radius: 10px;
+      background: rgba(125, 211, 252, 0.1);
+      border: 1px solid rgba(125, 211, 252, 0.2);
+      color: var(--accent);
+      font-family: var(--ui-font);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      flex: 1;
+      min-width: 140px;
+    }
+
+    button:hover {
+      background: rgba(125, 211, 252, 0.2);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
     }
 
     .axis-legend {
       display: flex;
-      gap: 10px;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    .legend-item {
+      display: flex;
       align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .dot {
-      width: 12px;
-      height: 12px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
     }
 
-    .x {
-      background: #f87171;
+    .x-dot { background: #f87171; }
+    .y-dot { background: #fbbf24; }
+    .z-dot { background: #60a5fa; }
+
+    /* Right column content */
+    .info-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
     }
 
-    .y {
-      background: #fbbf24;
-    }
-
-    .z {
-      background: #60a5fa;
-    }
-
-    .code {
-      background: #071428;
-      border-radius: 8px;
-      padding: 10px;
-      color: #bfe9ff;
+    .math-block {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 16px;
+      border-radius: 12px;
       font-family: var(--mono);
-      font-size: 13px;
-      white-space: pre-wrap;
+      font-size: 14px;
+      color: #eaf6ff;
+      overflow-x: auto;
+      border-left: 3px solid var(--accent);
+      margin: 12px 0;
+    }
+
+    ul {
+      list-style-position: inside;
+      margin-top: 8px;
+    }
+
+    li {
+      margin-bottom: 6px;
+      font-size: 14px;
+    }
+
+    /* Tabs System */
+    .tabs-container {
+      margin-top: 20px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .tab-btn {
+      padding: 10px 16px;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      min-width: auto;
+      flex: none;
+    }
+
+    .tab-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: none;
+    }
+
+    .tab-btn.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Second visualizer canvas */
+    #blochCanvas {
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1;
+      max-width: 500px;
+      margin: 0 auto;
+      display: block;
+      background: #000;
+      border-radius: 12px;
+    }
+
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .images-grid img {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     footer {
-      grid-column: 1 / -1;
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 13px;
       text-align: center;
+      padding: 40px 20px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
-    /* Responsive */
-    @media (max-width: 980px) {
-      .container {
-        grid-template-columns: 1fr;
-        padding: 18px;
-      }
-
-      canvas#gl {
-        height: 300px;
-      }
-
-      .value {
-        min-width: 64px;
-      }
+    /* Custom Checkbox */
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
     }
 
-    @media (max-width: 600px) {
-      canvas#gl {
-        height: 260px;
-      }
-
-      button {
-        width: 100%;
-      }
+    .checkbox-row input {
+      width: 18px;
+      height: 18px;
     }
 
-    /* Accessibility focus */
-    :focus {
-      outline: 3px solid rgba(125, 211, 252, 0.12);
-      outline-offset: 2px;
-      border-radius: 6px;
+    /* Results */
+    .result-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: rgba(125, 211, 252, 0.05);
+      border: 1px dashed rgba(125, 211, 252, 0.3);
+      border-radius: 12px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
     }
+
   </style>
 </head>
 
 <body>
-  <div class="container" role="main">
+  <div class="container">
     <header>
-      <div class="card" style="display:flex;gap:12px;align-items:center">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true" focusable="false">
+      <div class="header-card">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M12 2v20" stroke="#7dd3fc" stroke-width="1.5" stroke-linecap="round" />
           <path d="M2 12h20" stroke="#60a5fa" stroke-width="1.5" stroke-linecap="round" />
           <circle cx="12" cy="12" r="9" stroke="#94a3b8" stroke-width="0.9" opacity="0.12" />
         </svg>
         <div>
-          <h1>Bloch Sphere — Interactive Quantum Visualizer</h1>
-          <div class="subtitle">An intuitive way to explore quantum states using geometry ✨</div>
+          <h1>Bloch Sphere Visualizer</h1>
+          <p class="subtitle">Interactive exploration of quantum states ✨</p>
         </div>
       </div>
     </header>
 
-    <!-- LEFT PANEL -->
-    <section class="left card" aria-labelledby="controls-heading">
-      <canvas id="gl" role="img" aria-label="Interactive Bloch sphere visualization"></canvas>
+    <div class="main-grid">
+      <!-- Visualizer & Primary Controls -->
+      <section class="visualizer-section">
+        <div class="card">
+          <canvas id="gl" role="img" aria-label="Interactive Bloch sphere visualization"></canvas>
+          
+          <div class="controls-grid" style="margin-top: 20px;">
+            <div class="control-row">
+              <label for="theta">θ (theta)</label>
+              <div class="slider-container">
+                <input id="theta" type="range" min="0" max="3.141592653589793" step="0.001" value="1.5708">
+                <div class="value-display" id="thetaVal">π/2</div>
+              </div>
+            </div>
 
-      <div class="controls" aria-hidden="false">
-        <h3 id="controls-heading" style="margin:4px 0 0;color:#cfe8ff;font-size:15px;">Adjust State Angles</h3>
-        <p class="small" style="margin-top:2px">Change <strong>θ</strong> (polar) and <strong>φ</strong> (azimuthal) to
-          see how the qubit moves on the sphere.</p>
+            <div class="control-row">
+              <label for="phi">φ (phi)</label>
+              <div class="slider-container">
+                <input id="phi" type="range" min="0" max="6.283185307179586" step="0.001" value="0">
+                <div class="value-display" id="phiVal">0</div>
+              </div>
+            </div>
 
-        <div class="row">
-          <label for="theta">θ (theta)</label>
-          <input id="theta" type="range" min="0" max="3.141592653589793" step="0.001" value="1.5708" aria-valuemin="0"
-            aria-valuemax="3.14159" aria-label="Theta angle">
-          <div class="value" id="thetaVal" aria-live="polite">π/2</div>
+            <div class="control-row">
+              <label class="checkbox-row">
+                <input id="autoSpin" type="checkbox">
+                <span>Auto-rotation</span>
+              </label>
+              <span class="subtitle" style="margin-left: auto;">Tip: Drag sphere to rotate</span>
+            </div>
+
+            <div class="btn-group">
+              <button id="reset">🔄 Reset View</button>
+            </div>
+          </div>
+
+          <div class="axis-legend">
+            <div class="legend-item"><span class="dot x-dot"></span> X: |+⟩</div>
+            <div class="legend-item"><span class="dot y-dot"></span> Y: |+i⟩</div>
+            <div class="legend-item"><span class="dot z-dot"></span> Z: |0⟩/|1⟩</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Educational Content & Experiments -->
+      <section class="info-section">
+        <div class="card">
+          <h2 style="margin-bottom: 12px;">🧠 Core Concepts</h2>
+          <p>The Bloch sphere represents the state of a qubit as a point on a unit sphere. Every pure state |ψ⟩ is a point on the surface:</p>
+          <div class="math-block">|ψ⟩ = cos(θ/2) |0⟩ + e^{iφ} sin(θ/2) |1⟩</div>
+          
+          <div class="tabs-container">
+            <div class="tabs-nav">
+              <button class="tab-btn active" data-tab="details">Math Details</button>
+              <button class="tab-btn" data-tab="rotations">Rotations</button>
+              <button class="tab-btn" data-tab="measure">Measurement</button>
+              <button class="tab-btn" data-tab="experiments">Experiments</button>
+            </div>
+
+            <div id="details" class="tab-content active">
+              <p>State components in 3D:</p>
+              <div class="math-block">x = sinθ cosφ<br>y = sinθ sinφ<br>z = cosθ</div>
+              <ul style="color: var(--muted);">
+                <li>|0⟩ is the North Pole (θ = 0)</li>
+                <li>|1⟩ is the South Pole (θ = π)</li>
+                <li>Equator states are superpositions</li>
+              </ul>
+            </div>
+
+            <div id="rotations" class="tab-content">
+              <h3>Apply Manual Rotations</h3>
+              <p class="subtitle" style="margin-bottom: 12px;">Modify the state vector directly:</p>
+              <div class="controls-grid">
+                <div class="control-row">
+                  <label>X-axis</label>
+                  <input type="range" min="0" max="360" value="0" id="rotX">
+                </div>
+                <div class="control-row">
+                  <label>Y-axis</label>
+                  <input type="range" min="0" max="360" value="0" id="rotY">
+                </div>
+                <div class="control-row">
+                  <label>Z-axis</label>
+                  <input type="range" min="0" max="360" value="0" id="rotZ">
+                </div>
+              </div>
+            </div>
+
+            <div id="measure" class="tab-content">
+              <h3>Quantum Measurement</h3>
+              <p>Collapse the state into either |0⟩ or |1⟩ based on probabilities.</p>
+              <div class="btn-group" style="margin-top: 16px;">
+                <button id="measureZ">Measure in Z-Basis</button>
+              </div>
+              <div id="measureResult" class="result-box">Result will appear here</div>
+            </div>
+
+            <div id="experiments" class="tab-content">
+              <h3>Mini Experiments</h3>
+              <div class="btn-group">
+                <button id="expHadamard">Hadamard (H)</button>
+                <button id="expPauliX">Pauli-X (NOT)</button>
+                <button id="expRandomMeasure">Random Trial</button>
+                <button id="expReset">Reset to |0⟩</button>
+              </div>
+              <div id="expOutput" class="result-box" style="font-size: 15px; border-color: rgba(255,255,255,0.1);">Select an experiment</div>
+            </div>
+          </div>
         </div>
 
-        <div class="row">
-          <label for="phi">φ (phi)</label>
-          <input id="phi" type="range" min="0" max="6.283185307179586" step="0.001" value="0" aria-valuemin="0"
-            aria-valuemax="6.28318" aria-label="Phi angle">
-          <div class="value" id="phiVal" aria-live="polite">0</div>
+        <!-- Second Visualizer (Integrated into Tab or Section) -->
+        <div class="card" id="sphere-alt" style="display: none;">
+           <h3>Secondary Engine View</h3>
+           <canvas id="blochCanvas" width="500" height="500"></canvas>
         </div>
-
-        <div class="row" style="align-items:center;">
-          <label for="autoSpin">Auto-spin</label>
-          <input id="autoSpin" type="checkbox" aria-label="Auto rotate the sphere">
-          <div class="small" style="margin-left:auto">Toggle smooth rotation</div>
-        </div>
-
-        <div class="row">
-          <button id="reset" aria-label="Reset view and angles">🔄 Reset View</button>
-          <div style="margin-left:auto" class="small">Tip: drag the sphere to rotate</div>
-        </div>
-      </div>
-
-      <div class="info" aria-hidden="false">
-        <div class="axis-legend small card" style="padding:8px">
-          <span class="dot x" aria-hidden="true"></span> X-axis → superposition (<code>|+⟩</code>)
-        </div>
-        <div class="axis-legend small card" style="padding:8px">
-          <span class="dot y" aria-hidden="true"></span> Y-axis → phase (<code>|+i⟩</code>)
-        </div>
-        <div class="axis-legend small card" style="padding:8px">
-          <span class="dot z" aria-hidden="true"></span> Z-axis → basis states (<code>|0⟩ &amp; |1⟩</code>)
-        </div>
-      </div>
-    </section>
-
-    <!-- RIGHT PANEL -->
-    <section class="right" aria-live="polite">
-      <div class="card explain">
-        <h2 style="margin-top:0">🧠 Understanding the Bloch Sphere</h2>
-        <p>In quantum mechanics and computing, the Bloch sphere is a geometrical representation of the pure state space
-          of a two-level quantum system (a qubit). Each point on the sphere corresponds to a unique pure state:</p>
-
-        <pre class="math" aria-hidden="true">|ψ⟩ = cos(θ/2) |0⟩ + e^{iφ} sin(θ/2) |1⟩</pre>
-
-        <p style="margin-top:6px">Here:</p>
-        <ul style="font-size:13px;color:#cfe8ff;margin-top:0">
-          <li>θ — controls the relative weighting of <code>|0⟩</code> and <code>|1⟩</code></li>
-          <li>φ — adds a complex phase difference between the components</li>
-        </ul>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-top:0">📘 Quick Math Recap</h3>
-        <pre class="math" aria-hidden="true">x = sinθ cosφ
-y = sinθ sinφ
-z = cosθ</pre>
-        <pre class="math" aria-hidden="true">P(0) = cos²(θ/2)
-P(1) = sin²(θ/2)</pre>
-        <p class="small">These determine measurement probabilities and the 3D position of <code>|ψ⟩</code>.</p>
-        <p style="color:#cfe8ff;font-size:13px;margin-top:6px;">
-          Notes:
-        <ul>
-          <li>The Bloch sphere parametrizes single-qubit pure states only (mixed states are inside the sphere).</li>
-          <li>Global phase is not represented: multiplying by e^{iγ} does not change the point.</li>
-        </ul>
-        </p>
-        <p style="margin-top:6px"><strong>Examples</strong>
-        <ul>
-          <li><code>|0⟩</code> — north pole (θ = 0)</li>
-          <li><code>|1⟩</code> — south pole (θ = π)</li>
-          <li><code>|+⟩</code> — equator (θ = π/2, φ = 0)</li>
-          <li><code>|+i⟩</code> — equator (θ = π/2, φ = π/2)</li>
-        </ul>
-        </p>
-      </div>
-
-      <div class="card">
-        <h3 style="margin-top:0">💡 Learn by Experiment</h3>
-        <p class="small">Try these with the sliders:</p>
-        <ul style="font-size:13px;color:#cfe8ff;margin-top:0">
-          <li>θ = 0 → state is purely <code>|0⟩</code></li>
-          <li>θ = π → state becomes <code>|1⟩</code></li>
-          <li>θ = π/2, φ = 0 → <code>|+⟩</code></li>
-          <li>θ = π/2, φ = π/2 → <code>|+i⟩</code></li>
-        </ul>
-      </div>
-    </section>
-
-    <!-- Small explanatory block + images (kept accessible) -->
-    <div style="grid-column: 1 / -1; margin-top:6px;">
-      <div class="card" style="padding:14px;">
-        <h3 style="margin-top:0">The Pole States</h3>
-        <p style="font-size:14px;color:#cfe8ff;margin:0;">X-axis (|+⟩): <code>(|0⟩ + |1⟩) / √2</code> — superpositions
-          along X. Y-axis (|+i⟩): <code>(|0⟩ + i|1⟩) / √2</code> — phase-shifted superposition.</p>
-        <ul style="font-size:13px;color:var(--muted);margin-top:8px;">
-          <li>The Bloch vector can point anywhere on the sphere — each direction corresponds to a different pure state.
-          </li>
-          <li>Rotating the vector modifies probabilities &amp; relative phases.</li>
-        </ul>
-        <!-- Use <img> (not <image>) and include alt text -->
-        <div style="display:flex;flex-direction:column;gap:12px;align-items:center;margin-top:12px;">
-          <img src="../assets/images/Screenshot (25).png" alt="Bloch Sphere illustration"
-            style="width:80%;max-width:760px;border-radius:8px;">
-          <img src="../assets/images/Screenshot (24).png" alt="Bloch sphere diagram showing θ and φ"
-            style="width:80%;max-width:760px;border-radius:8px;">
-        </div>
-      </div>
+      </section>
     </div>
 
-    <!-- Script: clean, modular, robust across DPI and devices -->
-    <script>
-      (function () {
-        // --- Cached DOM ---
-        const canvas = document.getElementById('gl');
-        const ctx = canvas.getContext('2d', { alpha: false });
-        const thetaInput = document.getElementById('theta');
-        const phiInput = document.getElementById('phi');
-        const thetaVal = document.getElementById('thetaVal');
-        const phiVal = document.getElementById('phiVal');
-        const spinorEl = document.getElementById('spinor'); // note: not present in new layout; safe to ignore if null
-        const autoSpin = document.getElementById('autoSpin');
-        const resetBtn = document.getElementById('reset');
-
-        // Experiment UI (bottom panel may be optional; keep safe references)
-        const thetaExp = document.getElementById('thetaExp');
-        const phiExp = document.getElementById('phiExp');
-        const thetaExpVal = document.getElementById('thetaExpVal');
-        const phiExpVal = document.getElementById('phiExpVal');
-        const p0Bar = document.getElementById('p0Bar');
-        const p1Bar = document.getElementById('p1Bar');
-        const p0Val = document.getElementById('p0Val');
-        const p1Val = document.getElementById('p1Val');
-        const pxBar = document.getElementById('pxBar');
-        const pyBar = document.getElementById('pyBar');
-        const pxVal = document.getElementById('pxVal');
-        const pyVal = document.getElementById('pyVal');
-
-        // --- Canvas sizing / DPR handling ---
-        let DPR = Math.max(1, window.devicePixelRatio || 1);
-        let W = 0, H = 0, cx = 0, cy = 0, R = 0;
-
-        function setDPR() {
-          DPR = Math.max(1, window.devicePixelRatio || 1);
-        }
-
-        // Use a single resize handler with debounce for layout stability
-        let resizeRaf = null;
-        function resize() {
-          if (resizeRaf) cancelAnimationFrame(resizeRaf);
-          resizeRaf = requestAnimationFrame(() => {
-            setDPR();
-            const rect = canvas.getBoundingClientRect();
-            // ensure a minimum CSS height for canvas if none set
-            if (!rect.height || rect.height < 100) canvas.style.height = '420px';
-            const cssW = Math.max(100, Math.round(rect.width));
-            const cssH = Math.max(100, Math.round(rect.height));
-            W = Math.round(cssW * DPR);
-            H = Math.round(cssH * DPR);
-            canvas.width = W;
-            canvas.height = H;
-            canvas.style.width = cssW + 'px';
-            canvas.style.height = cssH + 'px';
-            ctx.setTransform(1, 0, 0, 1, 0, 0); // reset transform
-            cx = W / 2;
-            cy = H / 2;
-            R = Math.min(W, H) * 0.38;
-          });
-        }
-
-        // Ensure initial sizing once DOM is ready
-        function ensureInitialSize() {
-          // if CSS didn't give a height, provide a fallback
-          const computed = getComputedStyle(canvas);
-          if (!computed.height || computed.height === '0px') canvas.style.height = '420px';
-          resize();
-        }
-
-        // --- Camera & Interaction ---
-        let cam = { rotX: -0.4, rotY: 0.6, distance: 3 };
-        let dragging = false, last = { x: 0, y: 0 }, activePointerId = null;
-        // Add pointer handling (works for touch + mouse + pen)
-        canvas.addEventListener('pointerdown', function (e) {
-          dragging = true;
-          last = { x: e.clientX, y: e.clientY };
-          activePointerId = e.pointerId;
-          try { canvas.setPointerCapture(e.pointerId); } catch (err) { }
-        }, { passive: true });
-
-        canvas.addEventListener('pointermove', function (e) {
-          if (!dragging || e.pointerId !== activePointerId) return;
-          const dx = (e.clientX - last.x) / Math.max(160, canvas.clientWidth);
-          const dy = (e.clientY - last.y) / Math.max(160, canvas.clientHeight);
-          cam.rotY += dx;
-          cam.rotX += dy;
-          last = { x: e.clientX, y: e.clientY };
-        }, { passive: true });
-
-        canvas.addEventListener('pointerup', function (e) {
-          if (e.pointerId !== activePointerId) return;
-          dragging = false; activePointerId = null;
-          try { canvas.releasePointerCapture(e.pointerId); } catch (err) { }
-        }, { passive: true });
-
-        canvas.addEventListener('pointercancel', function () { dragging = false; activePointerId = null; }, { passive: true });
-
-        // Also allow keyboard nudges for accessibility
-        window.addEventListener('keydown', (ev) => {
-          const step = 0.08;
-          if (ev.key === 'ArrowLeft') { cam.rotY -= step; ev.preventDefault(); }
-          if (ev.key === 'ArrowRight') { cam.rotY += step; ev.preventDefault(); }
-          if (ev.key === 'ArrowUp') { cam.rotX -= step; ev.preventDefault(); }
-          if (ev.key === 'ArrowDown') { cam.rotX += step; ev.preventDefault(); }
-        });
-
-        // --- UI helpers ---
-        function formatAngle(v) {
-          if (Math.abs(v - Math.PI / 2) < 1e-3) return 'π/2';
-          if (Math.abs(v - Math.PI) < 1e-3) return 'π';
-          if (Math.abs(v) < 1e-3) return '0';
-          // nice shorter strings for users
-          return (Math.round(v * 1000) / 1000).toFixed(3);
-        }
-
-        function updateText() {
-          const th = parseFloat(thetaInput.value);
-          const ph = parseFloat(phiInput.value);
-          thetaVal.textContent = formatAngle(th);
-          phiVal.textContent = formatAngle(ph);
-          // update spinor textual only if element exists
-          if (spinorEl) {
-            const cth = Math.cos(th / 2), sth = Math.sin(th / 2);
-            function fmt(x) { if (Math.abs(x - 1) < 1e-9) return '1'; if (Math.abs(x) < 1e-9) return '0'; return (Math.round(x * 1000) / 1000).toFixed(3); }
-            spinorEl.textContent = `|ψ⟩ = (${fmt(cth)}) |0⟩ + e^{i(${ph.toFixed(3)})} · (${fmt(sth)}) |1⟩`;
-          }
-        }
-
-        thetaInput.addEventListener('input', updateText, { passive: true });
-        phiInput.addEventListener('input', updateText, { passive: true });
-
-        resetBtn.addEventListener('click', () => {
-          thetaInput.value = Math.PI / 2;
-          phiInput.value = 0;
-          cam.rotX = -0.4; cam.rotY = 0.6;
-          updateText();
-        }, { passive: true });
-
-        updateText();
-
-        // --- 3D transforms & projection helpers ---
-        function rotY(a, p) { const c = Math.cos(a), s = Math.sin(a); return { x: c * p.x + s * p.z, y: p.y, z: -s * p.x + c * p.z }; }
-        function rotX(a, p) { const c = Math.cos(a), s = Math.sin(a); return { x: p.x, y: c * p.y - s * p.z, z: s * p.y + c * p.z }; }
-
-        function project(p) {
-          const f = 400 * DPR;
-          const z = p.z + cam.distance;
-          const s = f / (f + z);
-          return { x: cx + p.x * s * R, y: cy - p.y * s * R, s: s, z: z };
-        }
-
-        // --- Drawing ---
-        function drawSphereMesh(ctxLocal) {
-          // longitudes
-          for (let i = 0; i < 12; i++) {
-            const a = i * (Math.PI * 2 / 12);
-            ctx.beginPath();
-            for (let t = 0; t <= Math.PI * 2 + 0.01; t += 0.05) {
-              const x = Math.cos(t) * Math.sin(a);
-              const y = Math.sin(t) * Math.sin(a);
-              const z = Math.cos(a);
-              let p = { x, y, z };
-              p = rotY(cam.rotY, p); p = rotX(cam.rotX, p);
-              const q = project(p);
-              if (t === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
-            }
-            ctx.strokeStyle = 'rgba(125,211,252,0.06)';
-            ctx.lineWidth = Math.max(1, 1 * DPR);
-            ctx.stroke();
-          }
-          // latitudes
-          for (let i = 1; i < 6; i++) {
-            const lat = Math.PI * (i / 6) - Math.PI / 2;
-            ctx.beginPath();
-            for (let t = 0; t <= Math.PI * 2 + 0.01; t += 0.05) {
-              const x = Math.cos(lat) * Math.cos(t);
-              const y = Math.cos(lat) * Math.sin(t);
-              const z = Math.sin(lat);
-              let p = { x, y, z }; p = rotY(cam.rotY, p); p = rotX(cam.rotX, p);
-              const q = project(p);
-              if (t === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
-            }
-            ctx.strokeStyle = 'rgba(148,163,184,0.04)';
-            ctx.lineWidth = Math.max(1, 1 * DPR);
-            ctx.stroke();
-          }
-        }
-
-        function drawScene() {
-          // ensure canvas size up to date
-          resize();
-
-          // clear
-          ctx.clearRect(0, 0, W, H);
-
-          // read angles
-          const th = parseFloat(thetaInput.value);
-          const ph = parseFloat(phiInput.value);
-
-          // sphere outline
-          ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2);
-          ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1.2 * DPR; ctx.stroke();
-
-          // mesh
-          drawSphereMesh(ctx);
-
-          // axes
-          const axes = [
-            { v: [1, 0, 0], col: 'rgba(248,113,113,0.92)' },
-            { v: [0, 1, 0], col: 'rgba(251,191,36,0.92)' },
-            { v: [0, 0, 1], col: 'rgba(96,165,250,0.92)' }
-          ];
-          axes.forEach(ax => {
-            const [x, y, z] = ax.v;
-            let p1 = { x: 0, y: 0, z: 0 };
-            let p2 = { x: x * 1.2, y: y * 1.2, z: z * 1.2 };
-            p1 = rotY(cam.rotY, p1); p1 = rotX(cam.rotX, p1);
-            p2 = rotY(cam.rotY, p2); p2 = rotX(cam.rotX, p2);
-            const q1 = project(p1); const q2 = project(p2);
-            ctx.beginPath(); ctx.moveTo(q1.x, q1.y); ctx.lineTo(q2.x, q2.y);
-            ctx.strokeStyle = ax.col; ctx.lineWidth = 2.4 * Math.max(1, DPR); ctx.stroke();
-
-            // --- arrow head: stable, perspective-scaled polygon (replaces broken arc) ---
-            const headSize = 8 * q2.s;
-            const angle = Math.atan2(q2.y - q1.y, q2.x - q1.x);
-            ctx.beginPath();
-            ctx.moveTo(q2.x, q2.y);
-            ctx.lineTo(q2.x - headSize * Math.cos(angle - Math.PI / 6), q2.y - headSize * Math.sin(angle - Math.PI / 6));
-            ctx.lineTo(q2.x - headSize * Math.cos(angle + Math.PI / 6), q2.y - headSize * Math.sin(angle + Math.PI / 6));
-            ctx.closePath();
-            ctx.fillStyle = ax.col;
-            ctx.fill();
-          });
-
-          // compute qubit position in world space
-          const sx = Math.sin(th) * Math.cos(ph), sy = Math.sin(th) * Math.sin(ph), sz = Math.cos(th);
-          let p = { x: sx, y: sy, z: sz }; p = rotY(cam.rotY, p); p = rotX(cam.rotX, p);
-          const q = project(p);
-
-          // shadow
-          ctx.beginPath(); ctx.ellipse(q.x, cy + R * 0.65, 18 * q.s, 6 * q.s, 0, 0, Math.PI * 2); ctx.fillStyle = 'rgba(0,0,0,0.18)'; ctx.fill();
-
-          // point
-          ctx.beginPath(); ctx.arc(q.x, q.y, 8 * q.s, 0, Math.PI * 2); ctx.fillStyle = 'rgba(125,211,252,1)'; ctx.fill();
-
-          // center-to-point line
-          let center = { x: 0, y: 0, z: 0 }; center = rotY(cam.rotY, center); center = rotX(cam.rotX, center);
-          const qc = project(center);
-          ctx.beginPath(); ctx.moveTo(qc.x, qc.y); ctx.lineTo(q.x, q.y); ctx.strokeStyle = 'rgba(125,211,252,0.8)'; ctx.lineWidth = 1.8 * DPR; ctx.stroke();
-
-          // labels in world space
-          ctx.fillStyle = '#bfe9ff';
-          const label = (tx, ty, tz, t) => {
-            let pp = { x: tx, y: ty, z: tz }; pp = rotY(cam.rotY, pp); pp = rotX(cam.rotX, pp); const pr = project(pp);
-            ctx.font = `${14 * DPR}px system-ui, Segoe UI, Roboto`;
-            ctx.fillText(t, pr.x + 6, pr.y - 6);
-          };
-          label(1.05, 0, 0, 'X'); label(0, 1.05, 0, 'Y'); label(0, 0, 1.05, 'Z');
-
-          // numeric coords bottom-left
-          ctx.fillStyle = '#dceefc'; ctx.font = `${12 * DPR}px system-ui`; ctx.fillText(`(x:${sx.toFixed(3)}, y:${sy.toFixed(3)}, z:${sz.toFixed(3)})`, 12 * DPR, H - 14 * DPR);
-        }
-
-        // --- Animation loop ---
-        let lastTime = performance.now();
-        function loop(now) {
-          const dt = (now - lastTime) / 1000 || 0; lastTime = now;
-          if (autoSpin && autoSpin.checked) cam.rotY += 0.2 * dt;
-          drawScene();
-          requestAnimationFrame(loop);
-        }
-
-        // --- Optional experiment controls (if present) ---
-        function expFormatAngle(v) {
-          if (Math.abs(v - Math.PI / 2) < 1e-3) return 'π/2';
-          if (Math.abs(v - Math.PI) < 1e-3) return 'π';
-          if (Math.abs(v) < 1e-3) return '0';
-          return (Math.round(v * 100) / 100).toFixed(2);
-        }
-
-        function updateExperiment() {
-          if (!thetaExp || !phiExp) return; // safe guard
-          const th = parseFloat(thetaExp.value);
-          const ph = parseFloat(phiExp.value);
-          thetaExpVal.textContent = expFormatAngle(th);
-          phiExpVal.textContent = expFormatAngle(ph);
-
-          // Z-basis probabilities
-          const P0 = Math.cos(th / 2) ** 2;
-          const P1 = Math.sin(th / 2) ** 2;
-          if (p0Bar) p0Bar.style.width = (P0 * 100) + '%';
-          if (p1Bar) p1Bar.style.width = (P1 * 100) + '%';
-          if (p0Val) p0Val.textContent = P0.toFixed(2);
-          if (p1Val) p1Val.textContent = P1.toFixed(2);
-
-          // X and Y basis probabilities
-          const s = Math.sin(th);
-          const PxPlus = (1 + s * Math.cos(ph)) / 2;
-          const PyPlus = (1 + s * Math.sin(ph)) / 2;
-          if (pxBar) pxBar.style.width = (PxPlus * 100) + '%';
-          if (pyBar) pyBar.style.width = (PyPlus * 100) + '%';
-          if (pxVal) pxVal.textContent = PxPlus.toFixed(2);
-          if (pyVal) pyVal.textContent = PyPlus.toFixed(2);
-        }
-
-        if (thetaExp) thetaExp.addEventListener('input', updateExperiment, { passive: true });
-        if (phiExp) phiExp.addEventListener('input', updateExperiment, { passive: true });
-        updateExperiment();
-
-        // --- Start up ---
-        window.addEventListener('resize', resize, { passive: true });
-        window.addEventListener('load', () => { ensureInitialSize(); resize(); requestAnimationFrame(loop); });
-        // ensure DPR/size on orientation change too
-        window.addEventListener('orientationchange', () => { setTimeout(resize, 80); }, { passive: true });
-
-        // Quick accessibility: read out angle values when slider changes (aria-live already on values)
-        thetaInput.addEventListener('change', () => { thetaVal.setAttribute('aria-live', 'polite'); }, { passive: true });
-        phiInput.addEventListener('change', () => { phiVal.setAttribute('aria-live', 'polite'); }, { passive: true });
-
-      })();
-    </script>
-
-    <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #0e1117;
-        color: #fff;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
-
-      h1 {
-        margin-top: 20px;
-      }
-
-      .tabs {
-        display: flex;
-        margin-top: 15px;
-      }
-
-      .tab {
-        padding: 10px 25px;
-        margin: 0 10px;
-        cursor: pointer;
-        color: #bbb;
-        border-bottom: 2px solid transparent;
-      }
-
-      .tab.active {
-        color: #fff;
-        border-bottom: 2px solid #4da3ff;
-      }
-
-      .content {
-        width: 90%;
-        max-width: 900px;
-        margin-top: 20px;
-        display: none;
-      }
-
-      .content.active {
-        display: block;
-      }
-
-      canvas {
-        width: 100%;
-        background: #111;
-        border-radius: 10px;
-        margin-top: 10px;
-      }
-
-      button {
-        padding: 10px 20px;
-        margin: 10px 5px;
-        cursor: pointer;
-        background: #1b75d0;
-        color: white;
-        border: none;
-        border-radius: 6px;
-      }
-
-      button:hover {
-        background: #2186ff;
-      }
-
-      .control-group {
-        margin: 15px 0;
-      }
-
-      input[type=range] {
-        width: 100%;
-      }
-    </style>
-    </head>
-
-    <body>
-
-      <h1>Interactive Bloch Sphere</h1>
-
-      <div class="tabs">
-        <div class="tab active" data-tab="sphere">Bloch Sphere</div>
-        <div class="tab" data-tab="rotations">Rotations</div>
-        <div class="tab" data-tab="measure">Measurement</div>
-        <div class="tab" data-tab="experiments">Experiments</div>
+    <!-- Visual Aids -->
+    <section class="card">
+      <h3>Visual References</h3>
+      <div class="images-grid">
+        <img src="../assets/images/Screenshot (25).png" alt="Bloch Sphere illustration">
+        <img src="../assets/images/Screenshot (24).png" alt="Bloch sphere diagram">
       </div>
+    </section>
 
-      <!-- ===================================================== -->
-      <!--                BLOCH SPHERE CANVAS                    -->
-      <!-- ===================================================== -->
+    <footer>
+      <p>Created for EmerTezora — Explore quantum geometry interactively.</p>
+      <p style="margin-top: 8px; opacity: 0.6; font-size: 12px;">Powered by HTML5 Canvas & Custom JS Engines</p>
+    </footer>
+  </div>
 
-      <div id="sphere" class="content active">
-        <canvas id="blochCanvas" width="500" height="500"></canvas>
-      </div>
+  <script>
+    (function () {
+      // --- ENGINE 1 (Interactive 3D-like) ---
+      const canvas = document.getElementById('gl');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const thetaInput = document.getElementById('theta');
+      const phiInput = document.getElementById('phi');
+      const thetaVal = document.getElementById('thetaVal');
+      const phiVal = document.getElementById('phiVal');
+      const autoSpin = document.getElementById('autoSpin');
+      const resetBtn = document.getElementById('reset');
 
-      <!-- ===================================================== -->
-      <!--                   ROTATION CONTROLS                   -->
-      <!-- ===================================================== -->
+      let DPR = window.devicePixelRatio || 1;
+      let W, H, cx, cy, R;
 
-      <div id="rotations" class="content">
+      function resize() {
+        DPR = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        W = Math.round(rect.width * DPR);
+        H = Math.round(rect.height * DPR);
+        canvas.width = W;
+        canvas.height = H;
+        cx = W / 2;
+        cy = H / 2;
+        R = Math.min(W, H) * 0.38;
+      }
 
-        <h2>Apply Rotations</h2>
+      let cam = { rotX: -0.4, rotY: 0.6, distance: 3 };
+      let dragging = false, last = { x: 0, y: 0 }, activePointerId = null;
 
-        <div class="control-group">
-          <label>Rotate around X-axis (θ):</label>
-          <input type="range" min="0" max="360" value="0" id="rotX">
-        </div>
+      canvas.addEventListener('pointerdown', e => {
+        dragging = true;
+        last = { x: e.clientX, y: e.clientY };
+        activePointerId = e.pointerId;
+        canvas.setPointerCapture(e.pointerId);
+      }, { passive: true });
 
-        <div class="control-group">
-          <label>Rotate around Y-axis (θ):</label>
-          <input type="range" min="0" max="360" value="0" id="rotY">
-        </div>
+      canvas.addEventListener('pointermove', e => {
+        if (!dragging || e.pointerId !== activePointerId) return;
+        const dx = (e.clientX - last.x) / (canvas.clientWidth / 2);
+        const dy = (e.clientY - last.y) / (canvas.clientHeight / 2);
+        cam.rotY += dx;
+        cam.rotX += dy;
+        last = { x: e.clientX, y: e.clientY };
+      }, { passive: true });
 
-        <div class="control-group">
-          <label>Rotate around Z-axis (θ):</label>
-          <input type="range" min="0" max="360" value="0" id="rotZ">
-        </div>
+      canvas.addEventListener('pointerup', e => {
+        dragging = false;
+        canvas.releasePointerCapture(e.pointerId);
+      }, { passive: true });
 
-      </div>
+      function formatAngle(v) {
+        if (Math.abs(v - Math.PI / 2) < 1e-3) return 'π/2';
+        if (Math.abs(v - Math.PI) < 1e-3) return 'π';
+        if (Math.abs(v) < 1e-3) return '0';
+        return (Math.round(v * 1000) / 1000).toFixed(2);
+      }
 
-      <!-- ===================================================== -->
-      <!--                    MEASUREMENT UI                     -->
-      <!-- ===================================================== -->
+      function updateUI() {
+        thetaVal.textContent = formatAngle(parseFloat(thetaInput.value));
+        phiVal.textContent = formatAngle(parseFloat(phiInput.value));
+      }
 
-      <div id="measure" class="content">
-        <h2>Simulate measurement</h2>
-        <button id="measureZ">Measure in Z basis</button>
-        <div id="measureResult" style="margin-top:20px;font-size:20px;"></div>
-      </div>
+      thetaInput.addEventListener('input', updateUI);
+      phiInput.addEventListener('input', updateUI);
+      resetBtn.addEventListener('click', () => {
+        thetaInput.value = Math.PI / 2;
+        phiInput.value = 0;
+        cam.rotX = -0.4; cam.rotY = 0.6;
+        updateUI();
+      });
 
-      <!-- ===================================================== -->
-      <!--             EXPERIMENTS (MISSING ADDED NOW)           -->
-      <!-- ===================================================== -->
+      // 3D Helpers
+      const rotY = (a, p) => ({ x: Math.cos(a) * p.x + Math.sin(a) * p.z, y: p.y, z: -Math.sin(a) * p.x + Math.cos(a) * p.z });
+      const rotX = (a, p) => ({ x: p.x, y: Math.cos(a) * p.y - Math.sin(a) * p.z, z: Math.sin(a) * p.y + Math.cos(a) * p.z });
+      const project = p => {
+        const f = 400 * DPR;
+        const z = p.z + cam.distance;
+        const s = f / (f + z);
+        return { x: cx + p.x * s * R, y: cy - p.y * s * R, s: s };
+      };
 
-      <div id="experiments" class="content">
-        <h2>Mini Experiments</h2>
+      function draw() {
+        resize();
+        ctx.clearRect(0, 0, W, H);
 
-        <button id="expHadamard">Hadamard Experiment</button>
-        <button id="expPauliX">Pauli-X Flip</button>
-        <button id="expRandomMeasure">Random Measurement Trial</button>
-        <button id="expReset">Reset to |0⟩</button>
+        const th = parseFloat(thetaInput.value);
+        const ph = parseFloat(phiInput.value);
 
-        <div id="expOutput" style="margin-top:20px;font-size:18px;"></div>
-      </div>
+        // Outer sphere circle (outline)
+        ctx.beginPath();
+        ctx.arc(cx, cy, R, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(125, 211, 252, 0.4)'; // Further increased
+        ctx.lineWidth = 1.5 * DPR;
+        ctx.stroke();
 
-      <script>
-        /* ==========================================================
-             BASIC BLOCH SPHERE ENGINE
-        ========================================================== */
-
-        const canvas = document.getElementById("blochCanvas");
-        const ctx = canvas.getContext("2d");
-        const W = canvas.width;
-        const H = canvas.height;
-        const R = 180;
-
-        let qubit = { x: 0, y: 0, z: 1 };
-
-        /* 3D Projection helper */
-        function project(x, y, z) {
-          return {
-            x: W / 2 + x * R,
-            y: H / 2 - y * R,
-            s: (z + 1.4) / 2.4
-          };
-        }
-
-        /* Draw 3D sphere */
-        function drawSphere() {
-          ctx.clearRect(0, 0, W, H);
-
-          ctx.strokeStyle = "#333";
-          ctx.lineWidth = 2;
-
+        // Sphere mesh
+        for (let i = 0; i < 12; i++) {
+          const a = i * (Math.PI * 2 / 12);
           ctx.beginPath();
-          ctx.arc(W / 2, H / 2, R, 0, Math.PI * 2);
+          for (let t = 0; t <= Math.PI * 2.1; t += 0.2) {
+            let p = { x: Math.cos(t) * Math.sin(a), y: Math.sin(t) * Math.sin(a), z: Math.cos(a) };
+            p = rotY(cam.rotY, p); p = rotX(cam.rotX, p);
+            const q = project(p);
+            if (t === 0) ctx.moveTo(q.x, q.y); else ctx.lineTo(q.x, q.y);
+          }
+          ctx.strokeStyle = 'rgba(125, 211, 252, 0.3)'; // Further increased visibility
+          ctx.lineWidth = 1 * DPR;
           ctx.stroke();
-
-          // axes data
-          const axes = [
-            { a: { x: 1, y: 0, z: 0 }, b: { x: -1, y: 0, z: 0 }, col: "#ff4444" },
-            { a: { x: 0, y: 1, z: 0 }, b: { x: 0, y: -1, z: 0 }, col: "#44ff44" },
-            { a: { x: 0, y: 0, z: 1 }, b: { x: 0, y: 0, z: -1 }, col: "#4499ff" }
-          ];
-
-          axes.forEach(ax => {
-            const p1 = project(ax.a.x, ax.a.y, ax.a.z);
-            const p2 = project(ax.b.x, ax.b.y, ax.b.z);
-
-            ctx.strokeStyle = ax.col;
-            ctx.lineWidth = 2;
-
-            ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.lineTo(p2.x, p2.y);
-            ctx.stroke();
-
-            // arrowhead
-            const head = p1;
-            const dx = p1.x - p2.x;
-            const dy = p1.y - p2.y;
-            const ang = Math.atan2(dy, dx);
-            const s = head.s * 12;
-
-            ctx.beginPath();
-            ctx.moveTo(head.x, head.y);
-            ctx.lineTo(head.x - s * Math.cos(ang - Math.PI / 6),
-              head.y - s * Math.sin(ang - Math.PI / 6));
-            ctx.lineTo(head.x - s * Math.cos(ang + Math.PI / 6),
-              head.y - s * Math.sin(ang + Math.PI / 6));
-            ctx.closePath();
-            ctx.fillStyle = ax.col;
-            ctx.fill();
-          });
-
-          drawQubit();
         }
 
-        function drawQubit() {
-          const p = project(qubit.x, qubit.y, qubit.z);
-
-          ctx.fillStyle = "#ffff88";
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, 10 * p.s, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        drawSphere();
-        /* ==========================================================
-             ROTATIONS
-        ========================================================== */
-
-        function rotateX(theta) {
-          const t = theta * Math.PI / 180;
-          const y = qubit.y * Math.cos(t) - qubit.z * Math.sin(t);
-          const z = qubit.y * Math.sin(t) + qubit.z * Math.cos(t);
-          qubit.y = y; qubit.z = z;
-        }
-
-        function rotateY(theta) {
-          const t = theta * Math.PI / 180;
-          const x = qubit.x * Math.cos(t) + qubit.z * Math.sin(t);
-          const z = -qubit.x * Math.sin(t) + qubit.z * Math.cos(t);
-          qubit.x = x; qubit.z = z;
-        }
-
-        function rotateZ(theta) {
-          const t = theta * Math.PI / 180;
-          const x = qubit.x * Math.cos(t) - qubit.y * Math.sin(t);
-          const y = qubit.x * Math.sin(t) + qubit.y * Math.cos(t);
-          qubit.x = x; qubit.y = y;
-        }
-
-        /* ==========================================================
-             SLIDERS (ROTATION CONTROLS)
-        ========================================================== */
-
-        document.getElementById("rotX").oninput = e => {
-          rotateX(parseFloat(e.target.value));
-          drawSphere();
-        };
-
-        document.getElementById("rotY").oninput = e => {
-          rotateY(parseFloat(e.target.value));
-          drawSphere();
-        };
-
-        document.getElementById("rotZ").oninput = e => {
-          rotateZ(parseFloat(e.target.value));
-          drawSphere();
-        };
-
-        /* ==========================================================
-             MEASUREMENT SIMULATION
-        ========================================================== */
-
-        document.getElementById("measureZ").onclick = () => {
-          const p0 = (1 + qubit.z) / 2;
-          const result = Math.random() < p0 ? "|0⟩" : "|1⟩";
-
-          document.getElementById("measureResult").innerHTML =
-            "Result: <b>" + result + "</b>";
-
-          // collapse state
-          qubit = result === "|0⟩" ? { x: 0, y: 0, z: 1 } : { x: 0, y: 0, z: -1 };
-          drawSphere();
-        };
-
-        /* ==========================================================
-             EXPERIMENTS IMPLEMENTATION
-        ========================================================== */
-
-        // Display helper
-        const expOut = msg => {
-          document.getElementById("expOutput").innerHTML = msg;
-        };
-
-        /* 1. Hadamard Experiment */
-        document.getElementById("expHadamard").onclick = () => {
-          // H maps |0> → |+> = (1/√2)(|0> + |1>)
-          qubit = { x: 1, y: 0, z: 0 };
-          drawSphere();
-          expOut("Applied Hadamard: Qubit is now in the |+⟩ state.");
-        };
-
-        /* 2. Pauli-X Flip */
-        document.getElementById("expPauliX").onclick = () => {
-          qubit.z = -qubit.z;
-          drawSphere();
-          expOut("Applied Pauli-X: State flipped between |0⟩ and |1⟩.");
-        };
-
-        /* 3. Random Measurement Trial */
-        document.getElementById("expRandomMeasure").onclick = () => {
-          const p0 = (1 + qubit.z) / 2;
-          const result = Math.random() < p0 ? "|0⟩" : "|1⟩";
-
-          expOut("Random measurement: " + result);
-
-          qubit = result === "|0⟩" ? { x: 0, y: 0, z: 1 } : { x: 0, y: 0, z: -1 };
-          drawSphere();
-        };
-
-        /* 4. Reset to |0⟩ */
-        document.getElementById("expReset").onclick = () => {
-          qubit = { x: 0, y: 0, z: 1 };
-          drawSphere();
-          expOut("State reset to |0⟩.");
-        };
-
-        /* ==========================================================
-             TAB SWITCHING
-        ========================================================== */
-
-        document.querySelectorAll(".tab").forEach(tab => {
-          tab.onclick = () => {
-            document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
-            document.querySelectorAll(".content").forEach(c => c.classList.remove("active"));
-
-            tab.classList.add("active");
-            document.getElementById(tab.dataset.tab).classList.add("active");
-
-            drawSphere();
-          };
+        // Axes
+        const axes = [[1, 0, 0, '#f87171'], [0, 1, 0, '#fbbf24'], [0, 0, 1, '#60a5fa']];
+        axes.forEach(([x, y, z, col]) => {
+          let p2 = { x: x * 1.2, y: y * 1.2, z: z * 1.2 };
+          p2 = rotY(cam.rotY, p2); p2 = rotX(cam.rotX, p2);
+          const q1 = project({x:0, y:0, z:0}); const q2 = project(p2);
+          ctx.beginPath(); ctx.moveTo(q1.x, q1.y); ctx.lineTo(q2.x, q2.y);
+          ctx.strokeStyle = col; ctx.lineWidth = 2 * DPR; ctx.stroke();
         });
-      </script>
-      <div>
-        <footer class="small">Created for learners 🌍 — explore quantum geometry interactively. Built using HTML, CSS &
-          raw Canvas.</footer>
-      </div>
 
-    </body>
+        // Qubit Vector
+        const sx = Math.sin(th) * Math.cos(ph), sy = Math.sin(th) * Math.sin(ph), sz = Math.cos(th);
+        let p = { x: sx, y: sy, z: sz }; p = rotY(cam.rotY, p); p = rotX(cam.rotX, p);
+        const q = project(p);
+        const qc = project({x:0, y:0, z:0});
+
+        ctx.beginPath(); ctx.moveTo(qc.x, qc.y); ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = 'rgba(125,211,252,0.8)'; ctx.lineWidth = 3 * DPR; ctx.stroke();
+        ctx.beginPath(); ctx.arc(q.x, q.y, 8 * q.s * DPR, 0, Math.PI * 2);
+        ctx.fillStyle = '#7dd3fc'; ctx.fill();
+
+        requestAnimationFrame(now => {
+          if (autoSpin.checked) cam.rotY += 0.005;
+          draw();
+        });
+      }
+      draw();
+
+      // --- ENGINE 2 (Simpler, used for rotations/experiments) ---
+      const altCanvas = document.getElementById("blochCanvas");
+      const altCtx = altCanvas.getContext("2d");
+      let qubit = { x: 0, y: 0, z: 1 };
+
+      function altProject(x, y, z) {
+        const w = altCanvas.width, h = altCanvas.height, r = 180;
+        return { x: w / 2 + x * r, y: h / 2 - y * r, s: (z + 1.4) / 2.4 };
+      }
+
+      function drawAlt() {
+        const w = altCanvas.width, h = altCanvas.height;
+        altCtx.clearRect(0, 0, w, h);
+        altCtx.strokeStyle = "rgba(255, 255, 255, 0.4)"; // Much more visible outline
+        altCtx.lineWidth = 2;
+        altCtx.beginPath(); altCtx.arc(w/2, h/2, 180, 0, Math.PI*2); altCtx.stroke();
+        
+        const axes = [{v:[1,0,0], c:"#ff4444"}, {v:[0,1,0], c:"#44ff44"}, {v:[0,0,1], c:"#4499ff"}];
+        axes.forEach(ax => {
+          const p1 = altProject(ax.v[0], ax.v[1], ax.v[2]);
+          const p2 = altProject(-ax.v[0], -ax.v[1], -ax.v[2]);
+          altCtx.strokeStyle = ax.c;
+          altCtx.globalAlpha = 0.8; // Increased opacity for axes
+          altCtx.lineWidth = 2;
+          altCtx.beginPath(); altCtx.moveTo(p1.x, p1.y); altCtx.lineTo(p2.x, p2.y); altCtx.stroke();
+          altCtx.globalAlpha = 1.0;
+        });
+
+        const p = altProject(qubit.x, qubit.y, qubit.z);
+        altCtx.fillStyle = "#ffff88"; altCtx.beginPath(); altCtx.arc(p.x, p.y, 10 * p.s, 0, Math.PI*2); altCtx.fill();
+      }
+
+      // Sync Engine 2 with Tab interactions
+      document.getElementById("rotX").oninput = e => {
+        const t = parseFloat(e.target.value) * Math.PI / 180;
+        const y = qubit.y * Math.cos(t) - qubit.z * Math.sin(t);
+        const z = qubit.y * Math.sin(t) + qubit.z * Math.cos(t);
+        qubit.y = y; qubit.z = z; drawAlt();
+      };
+      document.getElementById("rotY").oninput = e => {
+        const t = parseFloat(e.target.value) * Math.PI / 180;
+        const x = qubit.x * Math.cos(t) + qubit.z * Math.sin(t);
+        const z = -qubit.x * Math.sin(t) + qubit.z * Math.cos(t);
+        qubit.x = x; qubit.z = z; drawAlt();
+      };
+      document.getElementById("rotZ").oninput = e => {
+        const t = parseFloat(e.target.value) * Math.PI / 180;
+        const x = qubit.x * Math.cos(t) - qubit.y * Math.sin(t);
+        const y = qubit.x * Math.sin(t) + qubit.y * Math.cos(t);
+        qubit.x = x; qubit.y = y; drawAlt();
+      };
+
+      document.getElementById("measureZ").onclick = () => {
+        const p0 = (1 + qubit.z) / 2;
+        const res = Math.random() < p0 ? "|0⟩" : "|1⟩";
+        document.getElementById("measureResult").innerHTML = `Result: <b>${res}</b>`;
+        qubit = res === "|0⟩" ? { x: 0, y: 0, z: 1 } : { x: 0, y: 0, z: -1 };
+        drawAlt();
+      };
+
+      document.getElementById("expHadamard").onclick = () => { qubit = { x: 1, y: 0, z: 0 }; drawAlt(); document.getElementById("expOutput").textContent = "Applied Hadamard: State is now |+⟩"; };
+      document.getElementById("expPauliX").onclick = () => { qubit.z = -qubit.z; drawAlt(); document.getElementById("expOutput").textContent = "Applied Pauli-X: State flipped"; };
+      document.getElementById("expReset").onclick = () => { qubit = { x: 0, y: 0, z: 1 }; drawAlt(); document.getElementById("expOutput").textContent = "Reset to |0⟩"; };
+
+      // Tab Switching
+      document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.onclick = () => {
+          document.querySelectorAll(".tab-btn, .tab-content").forEach(el => el.classList.remove("active"));
+          btn.classList.add("active");
+          document.getElementById(btn.dataset.tab).classList.add("active");
+          
+          // Show engine 2 when needed
+          const altSect = document.getElementById("sphere-alt");
+          if (["rotations", "measure", "experiments"].includes(btn.dataset.tab)) {
+            altSect.style.display = "block";
+            drawAlt();
+          } else {
+            altSect.style.display = "none";
+          }
+        };
+      });
+
+    })();
+  </script>
+</body>
 
 </html>
