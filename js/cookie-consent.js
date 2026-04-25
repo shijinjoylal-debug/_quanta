@@ -65,4 +65,19 @@ document.addEventListener("DOMContentLoaded", function() {
         declineBtn.addEventListener('mouseenter', () => { declineBtn.style.background = '#00ffc8'; declineBtn.style.color = '#000'; });
         declineBtn.addEventListener('mouseleave', () => { declineBtn.style.background = 'transparent'; declineBtn.style.color = '#fff'; });
     }
+
+    // Expose function to open consent popup manually (for CCPA)
+    window.showCookieConsent = function() {
+        if (document.getElementById("cookie-consent-popup")) return;
+        localStorage.removeItem("cookieConsent");
+        location.reload(); // Simplest way to re-trigger the logic
+    };
+
+    // Add global listener for any "Do Not Sell" links
+    document.addEventListener('click', function(e) {
+        if (e.target && (e.target.id === 'ccpa-opt-out' || e.target.classList.contains('ccpa-opt-out'))) {
+            e.preventDefault();
+            window.showCookieConsent();
+        }
+    });
 });
