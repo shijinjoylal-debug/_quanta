@@ -1,0 +1,89 @@
+:root {
+  --nav-bg: rgba(15, 23, 36, 0.9);
+  --nav-text: #e6eef8;
+  --nav-accent: #00ffc8;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 9999;
+  box-sizing: border-box;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.nav-brand {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--nav-text);
+  letter-spacing: 1px;
+}
+
+.menu-btn {
+  display: none;
+  font-size: 26px;
+  background: none;
+  border: 0;
+  color: white;
+  cursor: pointer;
+}
+
+#navMenu ul {
+  list-style: none;
+  display: flex;
+  gap: 24px;
+  padding: 0;
+  margin: 0;
+}
+
+#navMenu a {
+  text-decoration: none;
+  color: var(--nav-text);
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+#navMenu a:hover {
+  color: var(--nav-accent);
+}
+
+@media (max-width: 700px) {
+  .menu-btn {
+    display: block;
+  }
+
+  #navMenu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 24px;
+    background: var(--nav-bg);
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  #navMenu.open {
+    display: block;
+  }
+
+  #navMenu ul {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+/* Adjust body padding to avoid content being hidden under fixed navbar */
+body {
+  padding-top: 80px !important;
+}
