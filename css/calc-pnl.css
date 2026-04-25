@@ -11,6 +11,10 @@
   --text: #ffffff;
 }
 
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
 .para {
   color: #ffffff;
   /* override default black  */
@@ -26,6 +30,8 @@ body {
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
   background: radial-gradient(1200px 800px at 65% 35%, var(--bg2), var(--bg1) 60%);
   padding: 20px;
+  margin: 0;
+  width: 100%;
 }
 
 .calculations {
@@ -94,7 +100,9 @@ body {
 
 .card.is-open .card-body {
   max-height: 1200px;
-  padding-bottom: 16px
+  padding-bottom: 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 /* color variants (cycle through cards) */
@@ -129,10 +137,18 @@ body {
 /* small responsive tweaks */
 @media (max-width:640px) {
   body {
-    padding: 12px
+    padding: 12px;
   }
 
   .card {
-    border-radius: 6px
+    border-radius: 6px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+  }
+
+  .card-toggle h3 {
+    font-size: 0.95rem;
   }
 }
