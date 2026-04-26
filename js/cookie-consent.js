@@ -32,11 +32,12 @@ document.addEventListener("DOMContentLoaded", function() {
             popup.style.transform = "translateY(100%)";
             setTimeout(() => popup.remove(), 500);
             
-            // Optionally push a consent update to Google tag if using Consent Mode:
+            // Push a consent update to Google tag:
             if(typeof gtag === 'function') {
                 gtag('consent', 'update', {
                     'ad_storage': 'granted',
-                    'analytics_storage': 'granted'
+                    'analytics_storage': 'granted',
+                    'personalization_storage': 'granted'
                 });
             }
         });
@@ -47,11 +48,12 @@ document.addEventListener("DOMContentLoaded", function() {
             popup.style.transform = "translateY(100%)";
             setTimeout(() => popup.remove(), 500);
             
-            // Optionally push a consent update to Google tag if using Consent Mode:
+            // Push a consent update to Google tag:
             if(typeof gtag === 'function') {
                 gtag('consent', 'update', {
                     'ad_storage': 'denied',
-                    'analytics_storage': 'denied'
+                    'analytics_storage': 'denied',
+                    'personalization_storage': 'denied'
                 });
             }
         });
