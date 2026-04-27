@@ -364,6 +364,11 @@
         }
       } catch (err) {
         console.log('Not logged in or API error', err);
+        localStorage.removeItem('user');
+        if (currentUser) {
+          currentUser = null;
+          updateUI(null);
+        }
       }
     }
 
@@ -486,13 +491,28 @@
         alert('Something went wrong. Check console for details.');
       }
     });
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('login') === 'true' && !currentUser) {
-        authModal.style.display = 'flex';
+    function handleAutoLogin() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('login') === 'true' && !currentUser) {
+          authModal.style.display = 'flex';
+        }
+      } catch (e) {
+        console.error('Error handling login query parameter:', e);
       }
-    } catch (e) {
-      console.error('Error handling login query parameter:', e);
+    }
+
+    // Delay auto-login until cookie consent is decided
+    if (localStorage.getItem('cookieConsent')) {
+      handleAutoLogin();
+    } else {
+      // Wait for the cookie banner choice
+      const checkConsent = setInterval(() => {
+        if (localStorage.getItem('cookieConsent')) {
+          clearInterval(checkConsent);
+          handleAutoLogin();
+        }
+      }, 500);
     }
   </script>
   <footer style="margin-top: 50px; padding: 30px; background-color: #0a2822; color: #fff; text-align: center; position: relative; z-index: 2;">

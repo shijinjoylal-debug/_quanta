@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function() {
         popup.innerHTML = `
             <div style="max-width: 900px; text-align: center; line-height: 1.6; font-size: 1rem; margin-bottom: 15px;">
                 <strong style="color: #00ffc8; font-size: 1.1rem;">We value your privacy!</strong><br>
-                We use cookies and third-party advertising services (like Google AdSense) to enhance your browsing experience, serve personalized ads, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies. 
+                We use essential cookies to enable secure login and core features. We also use third-party advertising services (like Google AdSense) to serve personalized ads and analyze traffic. By clicking "Accept All", you consent to all cookies. Clicking "Decline" will only block non-essential tracking cookies.
                 <br>Read our <a href="/privacy.html" style="color: #00ffc8; text-decoration: underline;">Privacy Policy</a> for more information.
             </div>
             <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
