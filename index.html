@@ -6,16 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EmerTezora</title>
 
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     * {
       margin: 0;
       padding: 0;
-      box-sizing: content-box;
+      box-sizing: border-box;
     }
 
     body {
       background-color: #bec5e4;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
       color: #111010;
       text-align: center;
       overflow-x: hidden;
@@ -178,26 +180,66 @@
 
     /* Extra Section */
     .extra-section {
-      max-width: 800px;
-      margin: 30px auto 60px;
+      max-width: 1000px;
+      margin: 60px auto;
       padding: 0 20px;
       z-index: 2;
       position: relative;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      text-align: left;
     }
 
     .extra-section h1 {
-      font-size: clamp(1.5rem, 5vw, 2.2rem);
-      font-weight: bold;
-      color: #1abc9c;
-      margin-bottom: 15px;
-      text-shadow: 0 0 10px rgba(0, 255, 200, 0.5);
+      grid-column: 1 / -1;
+      font-size: clamp(2rem, 6vw, 3rem);
+      font-weight: 800;
+      color: #0a2822;
+      margin-bottom: 20px;
+      text-align: center;
+      text-shadow: 0 0 10px rgba(0, 255, 200, 0.3);
     }
 
-    .extra-section p {
-      font-size: 1.05rem;
+    .info-card {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .info-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 40px rgba(0, 255, 200, 0.2);
+    }
+
+    .info-card h2 {
+      font-size: 1.5rem;
+      color: #1abc9c;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .info-card p {
+      font-size: 1rem;
       line-height: 1.8;
-      color: #000000;
-      text-align: justify;
+      color: #111;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+      text-align: center;
+    }
+
+    @media (max-width: 700px) {
+      .extra-section {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* Popup */
@@ -281,22 +323,56 @@
 </div> -->
 
   <div class="extra-section">
-    <h1>Welcome To EmerTezora</h1>
-    <h2> About Us</h2>
-    <p style="text-align:center">
-      <strong>This is a AI powered Quantum Mechanics Learning Platform.</strong><br>
-    </p>
-    <p>
-      We believe knowledge is limitless. Our mission is to create
-      a space where curiosity thrives, ideas grow, and learning never ends.
-      We provide a diverse range of resources — from articles and tutorials to
-      interactive lessons and community forums.
-    </p>
-    <h2>community</h2>
-    <p>
-      Connect with the world by joining our vibrant community of learners and
-      educators. Share your thoughts, ask meaningful questions and collaborate on projects. Together, let's explore new
-      frontiers of knowledge and innovation.</p>
+    <h1>Explore the Quantum Frontier</h1>
+    
+    <div class="info-card">
+      <h2><span>⚛️</span> Core Concepts</h2>
+      <p>
+        Quantum Mechanics is the fundamental theory in physics that provides a description of the physical properties of nature at the scale of atoms and subatomic particles. It is the foundation of all quantum physics including quantum chemistry, quantum field theory, and quantum technology.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2><span>🌀</span> Superposition</h2>
+      <p>
+        One of the most fascinating aspects of quantum mechanics is superposition—the ability of a quantum system to be in multiple states at the same time until it is measured. This principle is famously illustrated by Schrödinger's cat paradox.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2><span>🔗</span> Entanglement</h2>
+      <p>
+        Quantum entanglement is a phenomenon where particles become interconnected such that the state of one particle instantly influences the state of another, regardless of the distance between them. Einstein famously called this "spooky action at a distance."
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2><span>📏</span> Uncertainty Principle</h2>
+      <p>
+        Heisenberg's Uncertainty Principle states that it is impossible to know both the exact position and the exact momentum of an object simultaneously. The more precisely one is known, the less precisely the other can be determined.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2><span>🤖</span> AI-Powered Insights</h2>
+      <p>
+        EmerTezora leverages advanced AI to help you navigate these complex theories. Our AI models analyze quantum data and provide simplified explanations, making the unintuitive world of quantum mechanics accessible to everyone.
+      </p>
+    </div>
+
+    <div class="info-card">
+      <h2><span>🌍</span> Global Community</h2>
+      <p>
+        Join a vibrant network of learners and educators. Share your discoveries, ask challenging questions, and collaborate on projects that push the boundaries of our understanding of the universe.
+      </p>
+    </div>
+
+    <div class="info-card full-width">
+      <h2><span>🚀</span> Why EmerTezora?</h2>
+      <p>
+        We believe knowledge should be limitless. Our platform is designed to transform curiosity into mastery. With interactive simulations, community forums, and AI assistance, EmerTezora is your gateway to the infinite possibilities of the quantum realm.
+      </p>
+    </div>
   </div>
   </script>
   <script src="js/config.js"></script>
