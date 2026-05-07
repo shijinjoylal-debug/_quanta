@@ -5,13 +5,13 @@
 }
 
 .navbar {
-  position: fixed;
+  position: flex;
   top: 0;
   left: 0;
   width: 100%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: right;
   padding: 12px 24px;
   background: var(--nav-bg);
   backdrop-filter: blur(10px);
@@ -70,7 +70,7 @@
     padding: 16px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   }
 
   #navMenu.open {

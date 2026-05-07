@@ -7,6 +7,8 @@
   <title>EmerTezora — Quantum Mechanics</title>
 
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Muli&display=swap');
+
     :root {
       --bg1: #071427;
       --bg2: #0a2a50;
@@ -179,46 +181,170 @@
       padding: 0 20px;
     }
 
-    /* Button Styles */
-    .buttons {
+    /* ── Card Container ── */
+    .container {
       display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
+      flex-wrap: nowrap;
+      gap: 16px;
       justify-content: center;
-      margin: 40px auto 80px;
-      padding: 0 20px;
-      text-decoration: none;
+      align-items: stretch;
+      margin: 48px auto 100px;
+      padding: 0 24px;
+      width: 100%;
+      max-width: 1300px;
+      box-sizing: border-box;
     }
 
-    .btn {
-      flex: 1 1 250px;
-      max-width: 280px;
-      padding: 30px 10px;
-      font-size: 16px;
-      text-align: center;
-      border: none;
-      border-radius: 12px;
+    /* ── Base card ── */
+    .panel {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+      padding: 28px 20px;
+      border-radius: 18px;
       color: var(--text);
-      background: rgba(255, 255, 255, 0.05);
-      box-shadow: 0 0 10px rgba(127, 209, 255, 0.5);
+      background: linear-gradient(145deg, rgba(127,209,255,0.08), rgba(10,42,80,0.6));
+      border: 1px solid rgba(127,209,255,0.15);
+      box-shadow: 0 0 18px rgba(127,209,255,0.18), inset 0 0 30px rgba(0,0,0,0.3);
       cursor: pointer;
-      transition: transform 0.5s ease, box-shadow 0.5s ease, background 0.5s ease;
-      text-decoration: none;
+      transition: flex 0.65s cubic-bezier(0.4,0,0.2,1),
+                  box-shadow 0.4s ease,
+                  background 0.4s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .btn:hover,
-    .btn:active {
-      background: rgba(197, 200, 212, 0.1);
-      box-shadow: 0 0 25px rgba(127, 209, 255, 0.8), 0 0 35px rgba(127, 209, 255, 0.6);
-      transform: scale(1.05);
+    .panel:hover {
+      box-shadow: 0 0 30px rgba(127,209,255,0.4), inset 0 0 30px rgba(0,0,0,0.2);
     }
 
-    .btn span {
-      font-family: "Poppins", sans-serif;
-      font-size: 13px;
-      font-weight: 600;
-      color: rgb(205, 205, 232);
+    /* ── Expanded card ── */
+    .panel.active {
+      flex: 5;
+      background: linear-gradient(145deg, rgba(127,209,255,0.14), rgba(10,42,80,0.85));
+      border-color: rgba(127,209,255,0.45);
+      box-shadow: 0 0 48px rgba(127,209,255,0.5), inset 0 0 40px rgba(0,0,0,0.15);
+    }
+
+    /* ── Card icon ── */
+    .card-icon {
+      font-size: 2.4rem;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 0 8px var(--glow));
+      transition: transform 0.4s ease;
+    }
+    .panel.active .card-icon { transform: scale(1.15); }
+
+    /* ── Collapsed: title + teaser ── */
+    .card-preview h3 {
+      margin: 0 0 8px;
+      font-size: clamp(0.72rem, 1.4vw, 1rem);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--glow);
+      text-align: center;
+    }
+    .card-preview p {
+      margin: 0;
+      font-size: clamp(0.62rem, 1.1vw, 0.82rem);
+      opacity: 0.72;
       line-height: 1.5;
+      text-align: center;
+    }
+
+    /* ── Expanded extra content ── */
+    .card-expanded {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.65s cubic-bezier(0.4,0,0.2,1),
+                  opacity 0.45s ease 0.15s;
+      width: 100%;
+    }
+    .panel.active .card-expanded {
+      max-height: 700px;
+      opacity: 1;
+    }
+
+    .card-expanded .divider {
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow), transparent);
+      margin: 18px auto;
+    }
+
+    .card-expanded .detail-body {
+      font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+      line-height: 1.8;
+      opacity: 0.9;
+      padding: 0 12px;
+      text-align: left;
+    }
+
+    .card-expanded .fact-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(127,209,255,0.07);
+      border: 1px solid rgba(127,209,255,0.2);
+      font-size: clamp(0.72rem, 1.1vw, 0.86rem);
+      line-height: 1.65;
+      color: #c8eeff;
+    }
+    .card-expanded .fact-box strong {
+      color: var(--glow);
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+    }
+
+    .card-expanded .learn-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      border: 1px solid var(--glow);
+      background: rgba(127,209,255,0.1);
+      color: var(--glow);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+    .card-expanded .learn-btn:hover {
+      background: rgba(127,209,255,0.25);
+      transform: translateY(-2px);
+    }
+
+    /* expand/collapse arrow */
+    .expand-hint {
+      margin-top: 14px;
+      font-size: 1.1rem;
+      opacity: 0.4;
+      transition: opacity 0.3s, transform 0.4s;
+    }
+    .panel.active .expand-hint {
+      transform: rotate(180deg);
+      opacity: 0.7;
+    }
+
+    /* ── Mobile ── */
+    @media(max-width: 700px) {
+      .container {
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 16px;
+      }
+      .panel {
+        flex: none !important;
+        width: 100%;
+      }
     }
 
     /* Responsive Adjustments */
@@ -394,21 +520,135 @@
       adventure, try to think beyond the limits of your mind that focusing only on grades, exams and everything. It is
       one of the biggest discoveries in physics/science.</p>
   </div>
-  <!-- Interactive Buttons -->
-  <div class="buttons">
-    <a href="test2.html" class="btn"><span>SUPERPOSITION<br>Particles exist in multiple states simultaneously until
-        observed collapsing into one.</span></a>
-    <a href="test4.html" class="btn"><span>DOUBLE SLIT EXPERIMENT<br>Shows particles behave like waves and collapse upon
-        observation.</span></a>
-    <a href="test5 5.html" class="btn"><span>ENTANGLEMENT<br>Two particles remain connected so that the state of one
-        instantly affects the other.</span></a>
-    <a href="test7.html" class="btn" style=><span>UNCERTAINTY PRINCIPLE.<br>There are limitation to know the precision
-        with certain pairs of physical properties, such as position and momentum.</span></a>
+  <!-- Interactive Cards -->
+  <div class="container">
+
+    <!-- Card 1: Superposition -->
+    <div class="panel" tabindex="0" role="button" aria-expanded="false">
+      <div class="card-icon">&#x26DB;</div>
+      <div class="card-preview">
+        <h3>SUPERPOSITION</h3>
+        <p>Particles exist in multiple states simultaneously until observed.</p>
+      </div>
+      <div class="expand-hint">&#9662;</div>
+      <div class="card-expanded">
+        <div class="divider"></div>
+        <div class="detail-body">
+          Superposition is one of quantum mechanics' most mind-bending principles. A quantum particle — like an electron — doesn't have a definite state until it is measured. Instead, it exists as a <em>probability wave</em> across all possible states at once.
+          <br><br>
+          The famous thought experiment of <strong>Schr&#246;dinger's Cat</strong> captures this: a cat in a sealed box is simultaneously alive and dead until the box is opened and observed.
+        </div>
+        <div class="fact-box">
+          <strong>&#x26A1; KEY FACT</strong>
+          Quantum computers exploit superposition — a qubit can be 0 and 1 simultaneously — enabling massively parallel computation impossible on classical hardware.
+        </div>
+        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+      </div>
+    </div>
+
+    <!-- Card 2: Double Slit -->
+    <div class="panel" tabindex="0" role="button" aria-expanded="false">
+      <div class="card-icon">&#127754;</div>
+      <div class="card-preview">
+        <h3>DOUBLE SLIT EXPERIMENT</h3>
+        <p>Shows particles behave like waves and collapse upon observation.</p>
+      </div>
+      <div class="expand-hint">&#9662;</div>
+      <div class="card-expanded">
+        <div class="divider"></div>
+        <div class="detail-body">
+          When electrons are fired through two slits without observation, they create an <strong>interference pattern</strong> — as if each electron passes through both slits as a wave simultaneously.
+          <br><br>
+          But the moment a detector watches which slit the electron uses, the interference pattern <em>disappears</em> and the electron behaves like a particle. The act of observation collapses the wave function.
+        </div>
+        <div class="fact-box">
+          <strong>&#x26A1; KEY FACT</strong>
+          This experiment proved that quantum objects don't have fixed properties until observed — the universe at its smallest scale is fundamentally probabilistic.
+        </div>
+        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+      </div>
+    </div>
+
+    <!-- Card 3: Entanglement -->
+    <div class="panel" tabindex="0" role="button" aria-expanded="false">
+      <div class="card-icon">&#128279;</div>
+      <div class="card-preview">
+        <h3>ENTANGLEMENT</h3>
+        <p>Two particles remain connected; measuring one instantly affects the other.</p>
+      </div>
+      <div class="expand-hint">&#9662;</div>
+      <div class="card-expanded">
+        <div class="divider"></div>
+        <div class="detail-body">
+          Quantum entanglement links two particles so that the quantum state of each cannot be described independently — even across vast distances. Einstein famously called this <strong>"spooky action at a distance"</strong>.
+          <br><br>
+          When you measure the spin of one entangled particle and get "up", the other instantly shows "down" — regardless of the distance between them. This has been confirmed experimentally over distances exceeding 1,200 km.
+        </div>
+        <div class="fact-box">
+          <strong>&#x26A1; KEY FACT</strong>
+          Entanglement is the backbone of quantum cryptography and quantum teleportation — enabling theoretically unbreakable encryption protocols.
+        </div>
+        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+      </div>
+    </div>
+
+    <!-- Card 4: Uncertainty Principle -->
+    <div class="panel" tabindex="0" role="button" aria-expanded="false">
+      <div class="card-icon">&#128208;</div>
+      <div class="card-preview">
+        <h3>UNCERTAINTY PRINCIPLE</h3>
+        <p>The more precisely you know position, the less you know momentum — and vice versa.</p>
+      </div>
+      <div class="expand-hint">&#9662;</div>
+      <div class="card-expanded">
+        <div class="divider"></div>
+        <div class="detail-body">
+          Heisenberg's Uncertainty Principle states that it is fundamentally impossible to know both the exact <strong>position</strong> and <strong>momentum</strong> of a particle simultaneously. This isn't a limitation of our instruments — it's a deep truth about nature.
+          <br><br>
+          The more precisely we pin down a particle's location, the more uncertain its momentum becomes — and vice versa. The uncertainty is encoded in the formula: <em>&#916;x &middot; &#916;p &#8805; &#8463;/2</em>.
+        </div>
+        <div class="fact-box">
+          <strong>&#x26A1; KEY FACT</strong>
+          This principle explains why electrons don't spiral into atomic nuclei — their position uncertainty creates a minimum energy state that stabilises atoms.
+        </div>
+        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+      </div>
+    </div>
+
   </div>
 
   <img src="../assets/images/humanoid_pointing.png" alt="Futuristic Humanoid" class="humanoid-bg">
 
   <script>
+    const panels = document.querySelectorAll('.panel');
+
+    panels.forEach((panel) => {
+      panel.addEventListener('click', (e) => {
+        if (e.target.classList.contains('learn-btn')) return;
+        const isActive = panel.classList.contains('active');
+        panels.forEach(p => {
+          p.classList.remove('active');
+          p.setAttribute('aria-expanded', 'false');
+        });
+        if (!isActive) {
+          panel.classList.add('active');
+          panel.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      panel.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          panel.click();
+        }
+      });
+    });
+
+    // Open first card on load
+    if (panels.length) {
+      panels[0].classList.add('active');
+      panels[0].setAttribute('aria-expanded', 'true');
+    }
     // Mobile Menu Toggle
     function toggleMenu() {
       const menu = document.getElementById("navMenu");
