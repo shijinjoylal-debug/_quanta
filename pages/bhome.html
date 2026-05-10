@@ -34,58 +34,7 @@
       overflow-x: hidden;
     }
 
-    /* Navigation Bar */
-    nav {
-      width: 100%;
-      background-color: rgba(255, 255, 255, 0.05);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(6px);
-      position: fixed;
-      top: 0;
-      left: 0;
-      padding: 12px 20px;
-      z-index: 1000;
-    }
 
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 24px;
-      margin: 0;
-      padding: 0;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 600;
-      transition: color 0.3s;
-    }
-
-    nav a:hover,
-    nav a.active {
-      color: var(--glow);
-    }
-
-    /* Hamburger for Mobile */
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 26px;
-      height: 20px;
-      cursor: pointer;
-    }
-
-    .menu-toggle span {
-      display: block;
-      height: 3px;
-      background: var(--text);
-      border-radius: 2px;
-      transition: all 0.3s ease;
-    }
 
     /* Logo Section */
     .logo-wrap {
@@ -203,13 +152,13 @@
       padding: 28px 20px;
       border-radius: 18px;
       color: var(--text);
-      background: linear-gradient(145deg, rgba(127,209,255,0.08), rgba(10,42,80,0.6));
-      border: 1px solid rgba(127,209,255,0.15);
-      box-shadow: 0 0 18px rgba(127,209,255,0.18), inset 0 0 30px rgba(0,0,0,0.3);
+      background: linear-gradient(145deg, rgba(127, 209, 255, 0.08), rgba(10, 42, 80, 0.6));
+      border: 1px solid rgba(127, 209, 255, 0.15);
+      box-shadow: 0 0 18px rgba(127, 209, 255, 0.18), inset 0 0 30px rgba(0, 0, 0, 0.3);
       cursor: pointer;
-      transition: flex 0.65s cubic-bezier(0.4,0,0.2,1),
-                  box-shadow 0.4s ease,
-                  background 0.4s ease;
+      transition: flex 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.4s ease,
+        background 0.4s ease;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -217,15 +166,15 @@
     }
 
     .panel:hover {
-      box-shadow: 0 0 30px rgba(127,209,255,0.4), inset 0 0 30px rgba(0,0,0,0.2);
+      box-shadow: 0 0 30px rgba(127, 209, 255, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.2);
     }
 
     /* ── Expanded card ── */
     .panel.active {
       flex: 5;
-      background: linear-gradient(145deg, rgba(127,209,255,0.14), rgba(10,42,80,0.85));
-      border-color: rgba(127,209,255,0.45);
-      box-shadow: 0 0 48px rgba(127,209,255,0.5), inset 0 0 40px rgba(0,0,0,0.15);
+      background: linear-gradient(145deg, rgba(127, 209, 255, 0.14), rgba(10, 42, 80, 0.85));
+      border-color: rgba(127, 209, 255, 0.45);
+      box-shadow: 0 0 48px rgba(127, 209, 255, 0.5), inset 0 0 40px rgba(0, 0, 0, 0.15);
     }
 
     /* ── Card icon ── */
@@ -235,7 +184,10 @@
       filter: drop-shadow(0 0 8px var(--glow));
       transition: transform 0.4s ease;
     }
-    .panel.active .card-icon { transform: scale(1.15); }
+
+    .panel.active .card-icon {
+      transform: scale(1.15);
+    }
 
     /* ── Collapsed: title + teaser ── */
     .card-preview h3 {
@@ -246,6 +198,7 @@
       color: var(--glow);
       text-align: center;
     }
+
     .card-preview p {
       margin: 0;
       font-size: clamp(0.62rem, 1.1vw, 0.82rem);
@@ -259,12 +212,13 @@
       max-height: 0;
       opacity: 0;
       overflow: hidden;
-      transition: max-height 0.65s cubic-bezier(0.4,0,0.2,1),
-                  opacity 0.45s ease 0.15s;
+      transition: max-height 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.45s ease 0.15s;
       width: 100%;
     }
+
     .panel.active .card-expanded {
-      max-height: 700px;
+      max-height: 1200px;
       opacity: 1;
     }
 
@@ -287,12 +241,36 @@
       margin-top: 18px;
       padding: 14px 16px;
       border-radius: 12px;
-      background: rgba(127,209,255,0.07);
-      border: 1px solid rgba(127,209,255,0.2);
+      background: rgba(127, 209, 255, 0.07);
+      border: 1px solid rgba(127, 209, 255, 0.2);
       font-size: clamp(0.72rem, 1.1vw, 0.86rem);
       line-height: 1.65;
       color: #c8eeff;
+      height: 140px;
+      min-height: 100px;
+      overflow-y: auto;
+      resize: vertical;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(127, 209, 255, 0.3) transparent;
     }
+
+    .card-expanded .fact-box::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .card-expanded .fact-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .card-expanded .fact-box::-webkit-scrollbar-thumb {
+      background: rgba(127, 209, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    .card-expanded .fact-box::-webkit-scrollbar-thumb:hover {
+      background: rgba(127, 209, 255, 0.5);
+    }
+
     .card-expanded .fact-box strong {
       color: var(--glow);
       display: block;
@@ -307,7 +285,7 @@
       padding: 10px 22px;
       border-radius: 50px;
       border: 1px solid var(--glow);
-      background: rgba(127,209,255,0.1);
+      background: rgba(127, 209, 255, 0.1);
       color: var(--glow);
       font-size: 0.82rem;
       font-weight: 700;
@@ -316,8 +294,9 @@
       transition: background 0.3s, transform 0.2s;
       cursor: pointer;
     }
+
     .card-expanded .learn-btn:hover {
-      background: rgba(127,209,255,0.25);
+      background: rgba(127, 209, 255, 0.25);
       transform: translateY(-2px);
     }
 
@@ -328,6 +307,7 @@
       opacity: 0.4;
       transition: opacity 0.3s, transform 0.4s;
     }
+
     .panel.active .expand-hint {
       transform: rotate(180deg);
       opacity: 0.7;
@@ -341,6 +321,7 @@
         align-items: stretch;
         padding: 0 16px;
       }
+
       .panel {
         flex: none !important;
         width: 100%;
@@ -527,22 +508,34 @@
     <div class="panel" tabindex="0" role="button" aria-expanded="false">
       <div class="card-icon">&#x26DB;</div>
       <div class="card-preview">
-        <h3>SUPERPOSITION</h3>
+        <h3>Quantum SUPERPOSITION</h3>
         <p>Particles exist in multiple states simultaneously until observed.</p>
       </div>
       <div class="expand-hint">&#9662;</div>
       <div class="card-expanded">
         <div class="divider"></div>
         <div class="detail-body">
-          Superposition is one of quantum mechanics' most mind-bending principles. A quantum particle — like an electron — doesn't have a definite state until it is measured. Instead, it exists as a <em>probability wave</em> across all possible states at once.
+          Superposition is one of quantum mechanics' most known and mind-bending principles. A quantum particle — like
+          an electron — doesn't have a definite state until it is measured. Instead, it exists as a <em>probability
+            wave</em> across all possible states at once.
           <br><br>
-          The famous thought experiment of <strong>Schr&#246;dinger's Cat</strong> captures this: a cat in a sealed box is simultaneously alive and dead until the box is opened and observed.
+          The most famous thought experiment of <strong>Schr&#246;dinger's Cat</strong> illustrates this: a cat in a
+          sealed box with a radioactive atom is simultaneously alive and dead until the box is opened and observed.
+          There is chance for both the radioactive atom to decay or not to decay and due to this there is chance for
+          both the cat to be alive or dead and Schr&#246;dinger says that the cat is both dead and alive at the same
+          time until the box is opened and observed. This is just a thought experiment this is only true in the case of
+          quantum particles not in the case of macroscopic objects like cats. This is just for people to get a better
+          understanding of superposition.
         </div>
         <div class="fact-box">
           <strong>&#x26A1; KEY FACT</strong>
-          Quantum computers exploit superposition — a qubit can be 0 and 1 simultaneously — enabling massively parallel computation impossible on classical hardware.
+          Quantum computers uses this principle. A quibit(an electron can be used as a quibit) used in quantum
+          information processing/quantum computers is an abstract concept of a two state quantum system(superposition),
+          It is the fundamental unit of information in quantum computing and many different particles or systems can
+          serve as quibits including electron,photons, or superconducting circuits. A quibit state is most generally a
+          superposition of the basis states |0> and |1>. which can run highly complex parallel computations.
         </div>
-        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+        <a class="learn-btn" href="test2.html">Dive Deep&#8594;</a>
       </div>
     </div>
 
@@ -557,15 +550,46 @@
       <div class="card-expanded">
         <div class="divider"></div>
         <div class="detail-body">
-          When electrons are fired through two slits without observation, they create an <strong>interference pattern</strong> — as if each electron passes through both slits as a wave simultaneously.
+          The double slit experiment demonstrates that quantum particles (like electrons or photons) behave as both
+          waves and particles, producing an interference pattern when observed and acting as particles when measured.
+          When electrons are fired through two slits without observation, they create an <strong>interference
+            pattern</strong> — as if each electron passes through both slits as a wave simultaneously which will cause
+          the waves to cancel out each other appearing alternate bright and dark fringes.
           <br><br>
-          But the moment a detector watches which slit the electron uses, the interference pattern <em>disappears</em> and the electron behaves like a particle. The act of observation collapses the wave function.
+          But the moment a detector watches which slit the electron passes through, the interference pattern
+          <em>disappears</em>
+          and the electron behaves like a particle showing only some spots in surface as the photons hits the surface.
+          The act of observation collapses the wave function.<br>This type of experiment was first described by Thomas
+          Young in 1801 when making his case for the wave behavior of visible light.[1] In 1927, Davisson and Germer
+          and, independently, George Paget Thomson and his research student Alexander Reid[2] demonstrated that
+          electrons show the same behavior, which was later extended to atoms and molecules<br> The experiment belongs
+          to a general class of "double
+          path" experiments, in which two diffracted waves reconverge, creating an interference pattern. Another version
+          is the Mach–Zehnder interferometer, which splits the beam with a beam splitter.
         </div>
         <div class="fact-box">
           <strong>&#x26A1; KEY FACT</strong>
-          This experiment proved that quantum objects don't have fixed properties until observed — the universe at its smallest scale is fundamentally probabilistic.
+          Later on this experiment lead to the finding of many other phenomena like <ol>
+            <Li>Wave-particle duality:this is the most significant resulting from the experiment</Li>
+            <ul>
+              <li>particle behaviour</li>
+              <li>wave behaviour</li>
+            </ul>
+            <li>Interference pattern:when light pass through both slits, they act like waves, producing an interference
+              pattern on the screen</li>
+            <li>Self-Interference(single particle experiment)</li>
+            <li>The observer effect & Wavefunction Collapse</li>
+            <ul>
+              <li>wavefunction collaps: The act of measurement(observation) causes the wavefunction (wave of
+                probabilities)to collapse into a single definit location (a particle)</li>
+            </ul>
+            <li>Delayed-choice Quantum Eraser</li>
+            <li>Diffraction</li>
+          </ol>
+          This experiment proved that quantum objects don't have fixed properties until observed — the universe at its
+          smallest scale is fundamentally probabilistic rather than deterministic.
         </div>
-        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+        <a class="learn-btn" href="test4.html">Dive Deep &#8594;</a>
       </div>
     </div>
 
@@ -580,15 +604,29 @@
       <div class="card-expanded">
         <div class="divider"></div>
         <div class="detail-body">
-          Quantum entanglement links two particles so that the quantum state of each cannot be described independently — even across vast distances. Einstein famously called this <strong>"spooky action at a distance"</strong>.
+          Quantum entanglement is a phenomenon where state of one subatomic particle instantly affect the state of other
+          particle which have been entnagled with each other, wherein the quantum state of each particle in a group
+          cannot be described independently of the state of others,
+          even across vast distances. Einstein famously called this <strong>"spooky action at a distance"</strong>.
           <br><br>
-          When you measure the spin of one entangled particle and get "up", the other instantly shows "down" — regardless of the distance between them. This has been confirmed experimentally over distances exceeding 1,200 km.
+          When you measure the spin of one entangled particle and get "up", the other instantly shows "down" —
+          regardless of the distance between them. This has been confirmed experimentally over distances exceeding 1,200
+          km. The Important thing that even make Einstein question quantum mechanics is the fact that here distance is
+          not a matter ofcourse, light is the speed limit of the universe, But here two entangled particles somehow know
+          the position of the other particle instantly regardless of the distance between them denying the speed limit.
         </div>
         <div class="fact-box">
           <strong>&#x26A1; KEY FACT</strong>
-          Entanglement is the backbone of quantum cryptography and quantum teleportation — enabling theoretically unbreakable encryption protocols.
+          Entanglement is the backbone of quantum cryptography and quantum teleportation — enabling theoretically
+          unbreakable encryption protocols.Albert Einstien, Boris Podosky, and Nathan Rosen, John Bell and several
+          papers by Erwin Schrodinger further, describing what came to be known as the EPR paradox. Einstein and others
+          considered such behavior impossible, as it violated the local realism view of causality and argued that the
+          accepted formulation of quantum mechanics must therefore be incomplete. Later, Alain Aspect, John Clauser,
+          and Anton Zeilinger conducted experiments that confirmed the predictions of quantum mechanics, demonstrating
+          that entanglement is a real phenomenon disproving the need for "local hidden variables" proposed by Einstein.
+
         </div>
-        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+        <a class="learn-btn" href="test5 5.html">Dive Deep &#8594;</a>
       </div>
     </div>
 
@@ -603,15 +641,25 @@
       <div class="card-expanded">
         <div class="divider"></div>
         <div class="detail-body">
-          Heisenberg's Uncertainty Principle states that it is fundamentally impossible to know both the exact <strong>position</strong> and <strong>momentum</strong> of a particle simultaneously. This isn't a limitation of our instruments — it's a deep truth about nature.
+          Heisenberg's Uncertainty Principle states that it is fundamentally impossible to know both the exact
+          <strong>position</strong> and <strong>momentum</strong> of a particle simultaneously. This isn't a limitation
+          of our instruments — it's a deep truth about nature.
           <br><br>
-          The more precisely we pin down a particle's location, the more uncertain its momentum becomes — and vice versa. The uncertainty is encoded in the formula: <em>&#916;x &middot; &#916;p &#8805; &#8463;/2</em>.
+          The more precisely we pin down a particle's location, the more uncertain its momentum becomes — and vice
+          versa. The uncertainty is encoded in the formula: <em>&#916;x &middot; &#916;p &#8805; &#8463;/2</em>.
+          It states that there is a limit to the precision with which certain pairs of physical properties, such as
+          position and momentum, can be simultaneously known. In other words, the more accurately one property is
+          measured, the less accurately the other property can be known.
+
         </div>
         <div class="fact-box">
           <strong>&#x26A1; KEY FACT</strong>
-          This principle explains why electrons don't spiral into atomic nuclei — their position uncertainty creates a minimum energy state that stabilises atoms.
+          This principle explains why electrons don't spiral into atomic nuclei — their position uncertainty creates a
+          minimum energy state that stabilises atoms. If an electron looses energy and were restricted to the tiny space
+          of the nucleus, its momentum uncertainty would become immense, resulting in high kinetic energy that forces it
+          back out.
         </div>
-        <a class="learn-btn" href="calc pnl.html">Explore More &#8594;</a>
+        <a class="learn-btn" href="test7.html">Dive Deep &#8594;</a>
       </div>
     </div>
 

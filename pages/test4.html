@@ -11,63 +11,13 @@
       --glow: #00d4ff;
     }
 
-    /* Navigation Bar */
-    nav {
-      width: 100%;
-      background-color: transparent;
-      display: flex;
-      justify-content: space-between;
-      align-items: right;
-      position: flex;
-      top: 0;
-      left: 0;
-      padding: 12px 20px;
-      z-index: 1000;
-    }
 
-    nav ul {
-      list-style: none;
-      display: flex;
-      gap: 24px;
-      margin: 0;
-      padding: 0;
-    }
-
-    nav a {
-      text-decoration: none;
-      color: var(--text);
-      font-weight: 600;
-      transition: color 0.3s;
-    }
-
-    nav a:hover,
-    nav a.active {
-      color: var(--glow);
-    }
-
-    /* Hamburger for Mobile */
-    .menu-toggle {
-      display: none;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 26px;
-      height: 20px;
-      cursor: pointer;
-    }
-
-    .menu-toggle span {
-      display: block;
-      height: 3px;
-      background: var(--text);
-      border-radius: 2px;
-      transition: all 0.3s ease;
-    }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       line-height: 1.6;
       margin: 0;
-      padding: 0;
+      padding: 70px 0 0 0;
       background: #f0f4f8;
       color: #222;
     }
@@ -220,16 +170,7 @@
 </head>
 
 <body>
-  <!-- Navigation -->
-  <nav>
-    <div class="menu-toggle" onclick="toggleMenu()">
-      <span></span><span></span>
-    </div>
-    <ul id="navMenu">
-      <li><a class="active" href="test4.html">Home</a></li>
-      <li><a href="econnection.html">Community</a></li>
-    </ul>
-  </nav>
+
   <header>
     <h1>Young's Double-Slit Experiment</h1>
   </header>
