@@ -1,14 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Check if navbar already exists in HTML
+
+    // Check if navbar already exists
     if (document.querySelector('.navbar') && document.querySelector('#navMenu')) return;
 
     // Determine path to home
-    // If we're in /pages/, home is ../index.html. Otherwise it's index.html
     const path = window.location.pathname;
-    const isInsidePages = path.includes('/pages/') || (path.split('/').pop() !== 'index.html' && path.includes('calc%20pnl'));
-    // Fallback check: if the script is loaded with ../ prefix, we are likely in pages
+
+    const isInsidePages =
+        path.includes('/pages/') ||
+        (path.split('/').pop() !== 'index.html' && path.includes('calc%20pnl'));
+
+    // Detect if script uses ../js/navbar.js
     const scripts = document.getElementsByTagName('script');
+
     let useParentPath = isInsidePages;
+
     for (let s of scripts) {
         if (s.src.includes('../js/navbar.js')) {
             useParentPath = true;
@@ -18,56 +24,66 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const homePath = useParentPath ? '../index.html' : 'index.html';
 
-    const keyExpPath = useParentPath ? 'calc pnl.html' : 'pages/calc pnl.html';
+    const keyExpPath = useParentPath
+        ? 'calc pnl.html'
+        : 'pages/calc pnl.html';
 
     const isBhome = path.includes('bhome.html');
-    const keyExpLink = isBhome ? `<li><a href="${keyExpPath}">Key Experiments</a></li>` : '';
 
-    // Create Navbar HTML
+    const keyExpLink = isBhome
+        ? `<li><a href="${keyExpPath}">Key Experiments</a></li>`
+        : '';
+
+    // Create Navbar
     const header = document.createElement('header');
+
     header.className = 'navbar';
+
     header.innerHTML = `
         <div class="nav-brand">EmerTezora</div>
+
         <nav id="navMenu">
             <ul>
                 <li><a href="${homePath}">Home</a></li>
                 ${keyExpLink}
-                <li><a href="#" onclick="history.back(); return false;">&larr; Back</a></li>
+                <li>
+                    <a href="#" onclick="history.back(); return false;">
+                        &larr; Back
+                    </a>
+                </li>
             </ul>
         </nav>
+
         <button class="menu-btn" id="menuBtn">&#9776;</button>
     `;
 
-    // Append to body
+    // Add navbar to page
     document.body.prepend(header);
 
-    // Mobile Hamburger Menu Toggle
-    document.addEventListener('DOMContentLoaded', () => {
+    // Mobile Menu Toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const navMenu = document.getElementById('navMenu');
 
-        // Mobile Hamburger Menu Toggle
-        const menuBtn = document.getElementById('menuBtn');
-        const navMenu = document.getElementById('navMenu');
+    if (menuBtn && navMenu) {
 
-        if (menuBtn && navMenu) {
+        // Open / Close Menu
+        menuBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            navMenu.classList.toggle('open');
+        });
 
-            menuBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
+        // Close when clicking outside
+        document.addEventListener('click', function (e) {
 
-                // Toggle menu
-                navMenu.classList.toggle('open');
-            });
+            if (
+                navMenu.classList.contains('open') &&
+                !navMenu.contains(e.target) &&
+                !menuBtn.contains(e.target)
+            ) {
+                navMenu.classList.remove('open');
+            }
 
-            // Close menu when clicking outside
-            document.addEventListener('click', (e) => {
-                if (
-                    navMenu.classList.contains('open') &&
-                    !navMenu.contains(e.target) &&
-                    !menuBtn.contains(e.target)
-                ) {
-                    navMenu.classList.remove('open');
-                }
-            });
-        }
+        });
+    }
 
-    });
 });
