@@ -42,12 +42,32 @@ document.addEventListener("DOMContentLoaded", function () {
     document.body.prepend(header);
 
     // Mobile Hamburger Menu Toggle
-    const menuBtn = document.getElementById('menuBtn');
-    const navMenu = document.getElementById('navMenu');
+    document.addEventListener('DOMContentLoaded', () => {
 
-    if (menuBtn && navMenu) {
-        menuBtn.addEventListener('click', () => {
-            navMenu.classList.toggle('open');
-        });
-    }
+        // Mobile Hamburger Menu Toggle
+        const menuBtn = document.getElementById('menuBtn');
+        const navMenu = document.getElementById('navMenu');
+
+        if (menuBtn && navMenu) {
+
+            menuBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+
+                // Toggle menu
+                navMenu.classList.toggle('open');
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', (e) => {
+                if (
+                    navMenu.classList.contains('open') &&
+                    !navMenu.contains(e.target) &&
+                    !menuBtn.contains(e.target)
+                ) {
+                    navMenu.classList.remove('open');
+                }
+            });
+        }
+
+    });
 });
