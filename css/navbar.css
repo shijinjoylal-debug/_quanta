@@ -83,20 +83,6 @@ nav#navMenu a[onclick*="history.back"]:hover {
     display: block;
   }
 
-  #navMenu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 24px;
-    background: var(--nav-bg);
-    padding: 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    margin-left: 0;
-    /* Reset margin on mobile */
-  }
-
   #navMenu.open {
     display: block;
   }
