@@ -119,3 +119,11 @@ body {
   top: 60px;
   right: 20px;
 }
+
+#navMenu {
+  display: none;
+}
+
+#navMenu.open {
+  display: block;
+}
