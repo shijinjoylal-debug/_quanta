@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function() {
     
     const homePath = useParentPath ? '../index.html' : 'index.html';
 
+    const keyExpPath = useParentPath ? 'calc pnl.html' : 'pages/calc pnl.html';
+
     // Create Navbar HTML
     const header = document.createElement('header');
     header.className = 'navbar';
@@ -26,6 +28,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <nav id="navMenu">
             <ul>
                 <li><a href="${homePath}">Home</a></li>
+                <li><a href="${keyExpPath}">Key Experiments</a></li>
                 <li><a href="#" onclick="history.back(); return false;">&larr; Back</a></li>
             </ul>
         </nav>
