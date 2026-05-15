@@ -10,6 +10,214 @@
     rel="stylesheet">
 
   <style>
+    input[type="range"] {
+      touch-action: pan-y;
+      height: 28px;
+    }
+
+    @media (max-width:600px) {
+      .container {
+        margin: 48px auto;
+      }
+    }
+
+
+
+
+    /* Header */
+    header {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .title {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .logo {
+      width: 78px;
+      height: 78px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(127, 209, 255, 0.06), rgba(127, 209, 255, 0.02));
+      box-shadow: 0 6px 24px rgba(34, 58, 77, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .title h1 {
+      font-size: 20px;
+      margin: 0;
+      letter-spacing: 0.06em;
+    }
+
+    .title p {
+      margin: 0;
+      font-size: 12px;
+      color: rgba(234, 246, 255, 0.7);
+    }
+
+    /* Panel styles */
+    .panel {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(3, 8, 18, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+      backdrop-filter: blur(var(--blur));
+      border: 1px solid var(--glass-strong);
+    }
+
+    /* Left: simulation area */
+    .sim-wrap {
+      min-height: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.08));
+      border: 1px solid rgba(127, 209, 255, 0.04);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 320px;
+      background: transparent;
+    }
+
+    .controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-top: 8px;
+    }
+
+    .btn {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      border: 1px solid rgba(127, 209, 255, 0.08);
+      color: var(--text);
+      padding: 12px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 13px;
+      transition: transform .12s ease, box-shadow .12s;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(127, 209, 255, 0.08);
+    }
+
+    .btn.primary {
+      background: linear-gradient(90deg, rgba(127, 209, 255, 0.14), rgba(127, 209, 255, 0.08));
+      box-shadow: 0 8px 30px rgba(127, 209, 255, 0.08);
+      border: 1px solid rgba(127, 209, 255, 0.18);
+    }
+
+    .small {
+      font-size: 12px;
+      opacity: 0.85;
+      padding: 8px 10px;
+      border-radius: 8px;
+    }
+
+    /* Right: explanation column */
+    .info {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--glass);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.012), rgba(255, 255, 255, 0.008));
+    }
+
+    .card h3 {
+      margin: 0 0 6px 0;
+      font-size: 15px;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.45;
+      color: rgba(234, 246, 255, 0.9);
+    }
+
+    .note {
+      font-size: 12px;
+      color: rgba(234, 246, 255, 0.78);
+      opacity: 0.95;
+    }
+
+    /* popup / toast */
+    .toast {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 22px;
+      z-index: 40;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
+      padding: 10px 14px;
+      border-radius: 10px;
+      border: 1px solid rgba(127, 209, 255, 0.08);
+      box-shadow: 0 10px 30px rgba(6, 30, 48, 0.6);
+      font-weight: 700;
+      font-size: 13px;
+      display: none;
+    }
+
+    /* footer nav */
+    .nav-links {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .link-ghost {
+      font-size: 13px;
+      color: rgba(234, 246, 255, 0.8);
+      text-decoration: none;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .link-ghost:hover {
+      color: var(--accent);
+    }
+
+    /* small responsive */
+    @media (max-width:980px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 18px;
+        gap: 18px;
+      }
+
+      .sim-wrap {
+        order: 1
+      }
+
+      .info {
+        order: 2
+      }
+    }
+
     /* ------------------------------
    Mobile & Tablet Responsive Fixes
    ------------------------------ */
@@ -150,7 +358,7 @@
     html,
     body {
       margin: 0;
-      padding-top: 70px;
+      padding-top: 0;
       font-family: 'Poppins', system-ui, sans-serif;
       background: linear-gradient(180deg, var(--bg1), var(--bg2));
       color: var(--text);
@@ -161,17 +369,15 @@
 
     /* --- Header Section --- */
     header {
-      grid-column: 1 / -1;
       text-align: center;
-      margin-bottom: 24px;
+      margin-bottom: 0;
       animation: fadeIn 1s ease forwards;
+      width: 100%;
     }
 
     header .card {
       background: linear-gradient(145deg, rgba(29, 41, 89, 0.85), rgba(11, 19, 43, 0.85));
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--glow);
+      box-shadow: none;
       backdrop-filter: blur(12px);
     }
 
@@ -191,34 +397,57 @@
 
     /* --- Layout --- */
     .wrap {
-      max-width: 1150px;
-      margin: 28px auto;
-      padding: 20px;
-      display: grid;
-      grid-template-columns: 1fr 350px;
-      gap: 20px;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
     }
 
     .main,
     .sidebar {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 0;
+      width: 100%;
     }
 
     /* --- Cards --- */
     .card {
       background: var(--card);
-      padding: 18px;
-      border-radius: 14px;
-      box-shadow: 0 8px 30px rgba(2, 6, 23, 0.6);
+      padding: 60px 20px;
+      border-radius: 0;
+      width: 100%;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      box-shadow: none;
+      border-bottom: 1px solid rgba(125, 211, 252, 0.1);
       backdrop-filter: blur(10px);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      overflow-y: auto;
+    }
+
+    /* Ensure specific cards with short content don't stretch */
+    header .card,
+    .sidebar .card,
+    #blochCard {
+      min-height: auto;
+      padding: 40px 20px;
+    }
+
+    .card>* {
+      max-width: 900px;
+      width: 100%;
     }
 
     .card:hover {
       transform: translateY(-3px);
-      box-shadow: 0 0 25px rgba(125, 211, 252, 0.25);
+      box-shadow: inset 0 0 25px rgba(125, 211, 252, 0.1);
     }
 
     /* --- Section Headers --- */
@@ -393,62 +622,68 @@
             Reminder:
             "This is just a thought experiment meant to criticize the copenhagen interpretation of
             superposition".</strong>
-          Thinking of superposition in terms of waves is generally the most effective way.
+          Thinking of superposition in terms of waves is generally the most effective way. A quantum object is not a
+          wave but it shows properties of wave it is more likely to represent it as a spread.
         </p>
       </div>
 
       <div class="card section">
-        <h2>How Waves Combine</h2>
-        <p>Light, sound, and even quantum particles act like waves. When two waves meet, they can either <strong>add
-            up</strong> (constructive interference) or <strong>cancel out</strong> (destructive interference). there are
-          two amplitude crest and trough where crest is the highest point and trough is the lowest point. When opposite
-          amplitude meet they cause destructive interference, which results in the waves cancelling each other out and
-          if the amplitudes are equal they cause constructive interference it cause the waves overlap consistently.</p>
-        <a href="superposition.html" class="btn"><span>learn more with interactive animation</span></a>
-        <style>
-          /*superposition btn*/
-          .btn {
-            display: inline-block;
-            margin-top: 12px;
-            padding: 10px 18px;
-            border-radius: 30px;
-            background: rgba(14, 2, 53, 0.05);
-            box-shadow: 0 0 10px rgba(125, 211, 252, 0.5);
-            color: var(--text);
-            font-weight: 600;
-            font-size: 13px;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-          }
-
-          .btn:hover,
-          .btn:active {
-            background: rgba(197, 200, 212, 0.1);
-            box-shadow: 0 0 25px rgba(125, 211, 252, 0.8), 0 0 35px rgba(125, 211, 252, 0.6);
-            transform: scale(1.05);
-          }
-        </style>
-
-        <div class="demo"><canvas id="waveCanvas"></canvas></div>
-
-        <div class="controls">
-          <div style="flex:1">
-            <label>Left wave amplitude: <span id="a1Label">0.7</span></label>
-            <input id="a1" type="range" min="0" max="1" step="0.01" value="0.7">
-          </div>
-          <div style="flex:1">
-            <label>Right wave amplitude: <span id="a2Label">0.7</span></label>
-            <input id="a2" type="range" min="0" max="1" step="0.01" value="0.7">
-          </div>
-          <div style="width:160px">
-            <label>Phase difference: <span id="phiLabel">0.00</span></label>
-            <input id="phi" type="range" min="0" max="6.283" step="0.01" value="0">
-          </div>
-        </div>
-        <p class="note">Move the sliders to see interference — the same phenomenon behind the double-slit experiment!
+        <h2>Wave property of particles</h2>
+        <p>Light, sound etc are waves, and even quantum particles also act like waves. When two waves meet, they can
+          either
+          <strong>add
+            up</strong> (constructive interference) or <strong>cancel out</strong> (destructive interference) Learn more
+          about wave nature of particles <a href="test4.html">Double-Slit experiment</a> The principle of superposition
+          states that when two or more waves overlaps in a medium, the resultant displacement at any point is the
+          algebraic sum of the individual displacement of each wave. <bold> This wave behavior leads to interference.
+          </bold>
         </p>
+
+
+
+        <div id="learn-more">
+          Loading...
+        </div>
+
+        <button onclick="loadExternalContent()">Load File</button>
+
+        <script>
+          async function loadExternalContent() {
+            try {
+              const response = await fetch('superposition.html');
+
+              if (!response.ok) {
+                throw new Error('Failed to load content');
+              }
+
+              const data = await response.text();
+
+              const container = document.getElementById('learn-more');
+              container.innerHTML = data;
+
+              // Execute scripts manually
+              container.querySelectorAll("script").forEach(oldScript => {
+                const newScript = document.createElement("script");
+
+                if (oldScript.src) {
+                  newScript.src = oldScript.src;
+                } else {
+                  newScript.textContent = oldScript.textContent;
+                }
+
+                document.body.appendChild(newScript);
+                oldScript.remove();
+              });
+
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        </script>
+
+
+
+
       </div>
 
       <div class="card section">
@@ -461,7 +696,8 @@
       <div class="card section">
         <h2>Felix Bloach</h2>
         <p>Felix Bloch helped visualize superposition with the <strong>Bloch Sphere. </strong>The bloch sphere is a
-          geometrical model that visually represents the quantum state of a single quibit as a point on the surface of a
+          geometrical model that visually represents the quantum state of a single quibit as a point on the surface of
+          a
           unit sphere. A quibit (quantum bit) is the basic unit of quantum information. Click on the Bloch
           sphere animation to explore more!</p>
       </div>
@@ -479,27 +715,6 @@
         </ul>
       </div>
 
-      <div class="card" id="blochCard">
-        <h3>Mini Animation — Bloch Sphere</h3>
-        <div style="display:flex;justify-content:center;align-items:center;height:120px;">
-          <svg id="blochSphere" viewBox="0 0 120 120" width="120" height="120">
-            <defs>
-              <linearGradient id="g" x1="0" x2="1">
-                <stop offset="0" stop-color="#7dd3fc" stop-opacity="0.8" />
-                <stop offset="1" stop-color="#60a5fa" stop-opacity="0.6" />
-              </linearGradient>
-            </defs>
-            <circle cx="60" cy="60" r="44" fill="#071028" stroke="#7dd3fc" stroke-opacity="0.08" />
-            <g id="blochArrow">
-              <line x1="60" y1="60" x2="60" y2="20" stroke="url(#g)" stroke-width="3" stroke-linecap="round" />
-              <polygon points="60,12 56,22 64,22" fill="#7dd3fc" opacity="0.95" />
-            </g>
-          </svg>
-        </div>
-        <p class="muted">🌀 Every point on the Bloch Sphere represents a possible qubit state — a blend of 0 and 1, like
-          a direction on a globe.</p>
-      </div>
-
       <div class="card">
         <h3>Explore More</h3>
         <ul class="muted">
@@ -509,6 +724,89 @@
         </ul>
       </div>
     </aside>
+
+    <div class="card" id="blochCard">
+      <h3>Mini Animation — Bloch Sphere</h3>
+      <div id="blochContent"
+        style="display:flex;flex-direction:column;justify-content:center;align-items:center;height:auto;min-height:160px;gap:15px;padding-top:10px;">
+        <svg id="blochSphere" viewBox="0 0 120 120" width="120" height="120">
+          <defs>
+            <linearGradient id="g" x1="0" x2="1">
+              <stop offset="0" stop-color="#7dd3fc" stop-opacity="0.8" />
+              <stop offset="1" stop-color="#60a5fa" stop-opacity="0.6" />
+              </linear.Gradient>
+          </defs>
+          <circle cx="60" cy="60" r="44" fill="#071028" stroke="#7dd3fc" stroke-opacity="0.08" />
+          <g id="blochArrow">
+            <line x1="60" y1="60" x2="60" y2="20" stroke="url(#g)" stroke-width="3" stroke-linecap="round" />
+            <polygon points="60,12 56,22 64,22" fill="#7dd3fc" opacity="0.95" />
+          </g>
+        </svg>
+        <button onclick="loadContent()">Load File</button>
+
+        <script>
+          async function loadContent() {
+            try {
+              const response = await fetch('test3.html');
+
+              if (!response.ok) {
+                throw new Error('Failed to load content');
+              }
+
+              const data = await response.text();
+
+              const container = document.getElementById('blochContent');
+              container.style.height = '600px';
+              container.style.overflowY = 'auto';
+              container.style.alignItems = 'flex-start';
+              container.style.justifyContent = 'flex-start';
+              container.innerHTML = data;
+
+              // Execute scripts manually
+              container.querySelectorAll("script").forEach(oldScript => {
+                const newScript = document.createElement("script");
+
+                if (oldScript.src) {
+                  newScript.src = oldScript.src;
+                } else {
+                  newScript.textContent = oldScript.textContent;
+                }
+
+                document.body.appendChild(newScript);
+                oldScript.remove();
+              });
+
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        </script>
+      </div>
+      <p class="muted">🌀 Every point on the Bloch Sphere represents a possible qubit state — a blend of 0 and 1, like
+        a direction on a globe. The blochsphere is a unit 2-sphere, with antipodal points(antipodal points-represents
+        completely orthogonal quantum states, meaning their inner product is exactly zero) corresponding to a pair of
+        mutually orthogonal state vectors(orthigonal state vectors- are quantum states or vectors in an inner product
+        space that are perpendicular to each othermeaning their inner product or dot product is zero). The north and
+        south poles of the blochsphere are typically
+        choosen to represent the basis states |0⟩ and |1⟩ respectively. It maps the complex two-dimensional Hilbert
+        space(2-dimensional complex vector space of a quibit to a real three-dimensional space)(3-dimensional real
+        vector space).<br>
+        <strong>Vector pointing to some place on the blochsphere. theta- angle with z axis, phi- relative phase between
+          the two parts of the
+          superposion, We cant simultaneously know a quibits exact X Y and Z values (they have a uncertainty relation)
+          because they dont commute with each other. Physically the blochsphere represents a lot of ideas- Spin up is
+          along
+          the plus Z direction and spin down
+          is along the minus Z direction. If you plot a point on blochsphere you will notice a couple of important
+          angles- theta ,which is the angle that the point on the sphere makes with the z-axis. This angle tells us how
+          much of a superposition we are in. For a theta angle of zero the state is 100% spin up. Where a theta angle of
+          pi or 180 degree the state is a 100% spin down. For anywhere in between there are a bunch of different
+          possible states that make a circle all the way around the sphere. This is where the second angle phi comes in
+          phi doesn't control the probability that you will measure spin up or spin down in a single quibit, it allows
+          for different quibits to interfere with one another in quantum algorithms. </strong>
+      </p>
+    </div>
+
   </div>
 
   <script>
@@ -570,21 +868,21 @@
       }
       draw();
 
-      const blochCard = document.getElementById('blochCard');
-      if (blochCard) { blochCard.onclick = () => window.location.assign('test3.html'); }
+      //const blochCard = document.getElementById('blochCard');
+      //if (blochCard) { blochCard.onclick = () => window.location.assign('test3.html'); }
 
-      const blochSphere = document.getElementById('blochSphere');
-      const blochArrow = document.getElementById('blochArrow');
-      if (blochSphere && blochArrow) {
-        let angle = 0, dir = 1;
-        function animate() {
-          angle += dir * 0.8;
-          if (angle > 45 || angle < -45) dir *= -1;
-          blochArrow.setAttribute('transform', `rotate(${angle} 60 60)`);
-          requestAnimationFrame(animate);
-        }
-        animate();
-      }
+      /* const blochSphere = document.getElementById('blochSphere');
+       const blochArrow = document.getElementById('blochArrow');
+       if (blochSphere && blochArrow) {
+         let angle = 0, dir = 1;
+         function animate() {
+           angle += dir * 0.8;
+           if (angle > 45 || angle < -45) dir *= -1;
+           blochArrow.setAttribute('transform', `rotate(${angle} 60 60)`);
+           requestAnimationFrame(animate);
+         }
+         animate();
+       }*/
     });
   </script>
   <script src="../js/voice-assistant.js" defer></script>

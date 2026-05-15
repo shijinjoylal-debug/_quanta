@@ -17,38 +17,8 @@
       }
     }
 
-    :root {
-      --bg: #071427;
-      --panel: #0b1220;
-      --accent: #7fd1ff;
-      --muted: rgba(255, 255, 255, 0.08);
-      --glass: rgba(255, 255, 255, 0.04);
-      --text: #eaf6ff;
-      --glass-strong: rgba(255, 255, 255, 0.06);
-      --blur: 6px;
-      --radius: 14px;
-    }
 
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
-      background:
-        radial-gradient(900px 600px at 20% 10%, #06203b 0%, var(--bg) 40%, #040514 100%);
-      color: var(--text);
-    }
 
-    .container {
-      max-width: 1100px;
-      margin: 72px auto;
-      padding: 28px;
-      box-sizing: border-box;
-      display: grid;
-      grid-template-columns: 1fr 360px;
-      gap: 28px;
-      align-items: start;
-    }
 
     /* Header */
     header {
@@ -191,21 +161,62 @@
       opacity: 0.95;
     }
 
-    /* popup / toast */
-    .toast {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 22px;
-      z-index: 40;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.01));
-      padding: 10px 14px;
-      border-radius: 10px;
+    /* Equation Panel */
+    .equation-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      padding: 16px;
+      border-radius: 12px;
       border: 1px solid rgba(127, 209, 255, 0.08);
-      box-shadow: 0 10px 30px rgba(6, 30, 48, 0.6);
-      font-weight: 700;
+    }
+
+    .eq-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .eq-row span.math {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: 600;
+      min-width: 200px;
+    }
+
+    .eq-input {
+      display: flex;
+      align-items: center;
+      gap: 8px;
       font-size: 13px;
-      display: none;
+      color: rgba(234, 246, 255, 0.8);
+    }
+
+    .eq-input input[type="range"] {
+      width: 90px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 2px;
+      -webkit-appearance: none;
+      outline: none;
+    }
+
+    .eq-input input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #7fd1ff;
+      cursor: pointer;
+    }
+
+    .eq-input span {
+      display: inline-block;
+      width: 28px;
+      text-align: right;
     }
 
     /* footer nav */
@@ -244,24 +255,25 @@
       }
     }
   </style>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  (function() {
-    var consent = localStorage.getItem('cookieConsent');
-    var status = (consent === 'accepted') ? 'granted' : 'denied';
-    gtag('consent', 'default', {
-      'ad_storage': status,
-      'analytics_storage': status,
-      'personalization_storage': status,
-      'wait_for_update': 500
-    });
-  })();
-</script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
-    <script src="../js/cookie-consent.js" defer></script>
-    <link rel="stylesheet" href="../css/navbar.css">
-    <script src="../js/navbar.js" defer></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
+      var consent = localStorage.getItem('cookieConsent');
+      var status = (consent === 'accepted') ? 'granted' : 'denied';
+      gtag('consent', 'default', {
+        'ad_storage': status,
+        'analytics_storage': status,
+        'personalization_storage': status,
+        'wait_for_update': 500
+      });
+    })();
+  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579"
+    crossorigin="anonymous"></script>
+  <script src="../js/cookie-consent.js" defer></script>
+  <link rel="stylesheet" href="../css/navbar.css">
+  <script src="../js/navbar.js" defer></script>
 </head>
 
 <body>
@@ -295,27 +307,40 @@
         <h2 id="sim-title" style="margin:0 0 12px 0; font-size:16px;">Superposition visualizer</h2>
         <!-- Canvas for wave rendering -->
         <canvas id="waveCanvas" width="800" height="320" role="img"
-          aria-label="Animated wave representing superposition"></canvas>
-
-        <!-- toast / popup -->
-        <div id="toast" class="toast" role="status" aria-live="polite">Observation: wave collapsed</div>
+          aria-label="Animated waves representing superposition"></canvas>
       </div>
 
       <!-- controls -->
-      <div class="controls">
-        <button id="observeBtn" class="btn primary" aria-pressed="false">Observe (Collapse)</button>
-        <button id="restartBtn" class="btn small">Restart</button>
-        <div style="flex:1"></div>
-        <label style="font-size:13px; color:rgba(234,246,255,0.75);">
-          Amplitude
-          <input id="amp" type="range" min="0.3" max="2.2" step="0.1" value="1"
-            style="vertical-align:middle;margin-left:8px;">
-        </label>
+      <div class="equation-panel">
+        <div class="eq-row">
+          <span class="math" style="color: #ff7e67;">f(x) = a · sin(bx - vt)</span>
+          <label class="eq-input">a: <input type="range" id="w1_a" min="0" max="3" step="0.1" value="1"><span
+              id="w1_a_val">1</span></label>
+          <label class="eq-input">b: <input type="range" id="w1_b" min="0" max="10" step="0.1" value="5"><span
+              id="w1_b_val">5</span></label>
+          <label class="eq-input">v: <input type="range" id="w1_v" min="-10" max="10" step="0.1" value="2"><span
+              id="w1_v_val">2</span></label>
+        </div>
+        <div class="eq-row">
+          <span class="math" style="color: #4ade80;">g(x) = A · sin(Bx - Vt)</span>
+          <label class="eq-input">A: <input type="range" id="w2_a" min="0" max="3" step="0.1" value="1"><span
+              id="w2_a_val">1</span></label>
+          <label class="eq-input">B: <input type="range" id="w2_b" min="0" max="10" step="0.1" value="5"><span
+              id="w2_b_val">5</span></label>
+          <label class="eq-input">V: <input type="range" id="w2_v" min="-10" max="10" step="0.1" value="-2"><span
+              id="w2_v_val">-2</span></label>
+        </div>
+        <div class="eq-row">
+          <span class="math" style="color: #60a5fa;">h(x) = f(x) + g(x)</span>
+          <button id="playPauseBtn" class="btn small">Pause</button>
+          <label class="eq-input">t: <input type="range" id="time_slider" min="0" max="100" step="0.1" value="0"><span
+              id="time_val">0</span></label>
+        </div>
       </div>
 
       <p class="note" style="margin-top:6px;">
-        Tip: Click <strong>Observe</strong> to cause a collapse. Use <strong>Restart</strong> to reset the
-        superposition.
+        Tip: Adjust the parameters to see constructive and destructive interference. Pause and use the time slider to
+        manually scrub through time. The thick blue wave is the summation of two waves(green and red)
       </p>
     </section>
 
@@ -323,9 +348,11 @@
     <aside class="info">
       <div class="card">
         <h3>What you’ll see</h3>
-        <p>Two wave-like possibilities are shown (this is an analogy). The bright combined pattern is the superposition.
-          When you "observe", the superposition collapses into a single measurement represented by a dot at one
-          location.</p>
+        <p>Two wave-like possibilities are shown (this is an analogy). The bright blue wave is the superposition of two
+          waves.
+          What you "observe"- You can observe the behaviour of standing waves and can adjust the amplitude, frequency,
+          wavelength
+          and each variables on your wish.</p>
       </div>
 
       <div class="card">
@@ -336,7 +363,22 @@
       <div class="card">
         <h3>Quick facts</h3>
         <p>Superposition means a quantum system can be in many states simultaneously. Measurement forces the system into
-          one of the possible states. The outcome is probabilistic, not deterministic.</p>
+          one of the possible states. The outcome is probabilistic, not deterministic. The superposition principle </p>
+        states that for all linear systems, the net response caused by two or more stimuli is the vector sum of the
+        responses that would have been produced by each stimulus individually. So that if input A produces response x,
+        and input B produces response Y, then input (A+B) will produce response(x+y). It have particular Amplitude and a
+        particular Wave Length.
+        <h3>Functions</h3>f(x) = sin x -describes a foundational, stationary sine wave (or sinusoid) that
+        oscillates between a maximum of 1 and a minimum of -1 with a period of 2π. Add a constant to the front of the
+        function f(x)=a sin x - Can now modify the amplitude, Put a variable in front of x f(x)=a sin bx Now can change
+        the wavelength. Now to show the aspect of moving add - c to the function f(x)= a sin (bx-c) And for continues
+        movement add velocity and time f(x)= a sin (bx - vt). Add another wave g(x) = A sin(Bx-VT) summation - sum of
+        the other two functions h(x)= f(x)+g(x)+10.
+        <h3> Some examples of superposition</h3>
+        Set same values of both waves and press time to see them stay in the phase that you press them in, If you have
+        one going in the opposite direction then we get constructive and destructive over a period of time, Now it is a
+        standing waves -Two waves that having same amplitude and same frequency, It is created by the interference of
+        two identical wave traveling in opposite directions.
       </div>
     </aside>
 
@@ -354,291 +396,156 @@
     }
 
     /*
-     Lightweight Superposition visualizer
-     - Animates two gaussian-like waves and their sum (superposition)
-     - "Observe" collapses to a single random position (sampled from probability distribution)
-     - Restart resets animation
-     - Minimal dependencies, works with plain JS + canvas
+     Wave Superposition Visualizer
+     - Animates two customizable sine waves and their summation.
     */
 
-    // ---------- Utilities ----------
     const canvas = document.getElementById('waveCanvas');
     const ctx = canvas.getContext('2d', { alpha: true });
     let W = canvas.width, H = canvas.height;
+
     function resize() {
-      // keep internal resolution in ratio for crispness
       const rect = canvas.getBoundingClientRect();
-      canvas.width = Math.max(600, Math.floor(rect.width * 1.0));
-      canvas.height = 320;
-      W = canvas.width; H = canvas.height;
+      const scale = window.devicePixelRatio || 1;
+      canvas.width = Math.max(600, Math.floor(rect.width * scale));
+      canvas.height = 320 * scale;
+      ctx.scale(scale, scale);
+      W = canvas.width / scale;
+      H = canvas.height / scale;
     }
     resize();
     window.addEventListener('resize', () => { resize(); drawFrame(); });
 
-    // parameters
-    let t = 0;
-    let running = true;
-    let amplitudeControl = document.getElementById('amp');
-
-    const params = {
-      speed: 0.012,
-      amp: parseFloat(amplitudeControl.value),
-      sigma: 0.08,           // controls width of each gaussian
-      centerSeparation: 0.18 // relative positions of two basis states
+    // Params
+    const wParams = {
+      w1: { a: 1, b: 5, v: 2 },
+      w2: { a: 1, b: 5, v: -2 },
+      t: 0,
+      playing: true
     };
 
-    // probability density function (normalized) will be computed from combined wave amplitude squared
-    const toast = document.getElementById('toast');
-    const observeBtn = document.getElementById('observeBtn');
-    const restartBtn = document.getElementById('restartBtn');
+    const ui = {
+      w1_a: document.getElementById('w1_a'),
+      w1_b: document.getElementById('w1_b'),
+      w1_v: document.getElementById('w1_v'),
+      w2_a: document.getElementById('w2_a'),
+      w2_b: document.getElementById('w2_b'),
+      w2_v: document.getElementById('w2_v'),
+      t: document.getElementById('time_slider'),
+      playBtn: document.getElementById('playPauseBtn'),
+      w1_a_val: document.getElementById('w1_a_val'),
+      w1_b_val: document.getElementById('w1_b_val'),
+      w1_v_val: document.getElementById('w1_v_val'),
+      w2_a_val: document.getElementById('w2_a_val'),
+      w2_b_val: document.getElementById('w2_b_val'),
+      w2_v_val: document.getElementById('w2_v_val'),
+      time_val: document.getElementById('time_val')
+    };
 
-    amplitudeControl.addEventListener('input', (e) => { params.amp = parseFloat(e.target.value); });
+    function updateParams() {
+      wParams.w1.a = parseFloat(ui.w1_a.value);
+      wParams.w1.b = parseFloat(ui.w1_b.value);
+      wParams.w1.v = parseFloat(ui.w1_v.value);
+      wParams.w2.a = parseFloat(ui.w2_a.value);
+      wParams.w2.b = parseFloat(ui.w2_b.value);
+      wParams.w2.v = parseFloat(ui.w2_v.value);
 
-    // ---------- Math helpers (1D) ----------
-    function gaussian(x, mu, sigma) {
-      const a = 1 / (Math.sqrt(2 * Math.PI) * sigma);
-      return a * Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
+      ui.w1_a_val.textContent = wParams.w1.a.toFixed(1);
+      ui.w1_b_val.textContent = wParams.w1.b.toFixed(1);
+      ui.w1_v_val.textContent = wParams.w1.v.toFixed(1);
+      ui.w2_a_val.textContent = wParams.w2.a.toFixed(1);
+      ui.w2_b_val.textContent = wParams.w2.b.toFixed(1);
+      ui.w2_v_val.textContent = wParams.w2.v.toFixed(1);
+      ui.time_val.textContent = wParams.t.toFixed(1);
     }
 
-    // create two basis gaussians on domain [0,1]
-    function basisWave(x, mu, phase = 0, k = 20) {
-      // small oscillatory factor to create wave-like look
-      return gaussian(x, mu, params.sigma) * Math.cos(2 * Math.PI * k * (x) + phase);
-    }
+    [ui.w1_a, ui.w1_b, ui.w1_v, ui.w2_a, ui.w2_b, ui.w2_v].forEach(el => {
+      el.addEventListener('input', () => {
+        updateParams();
+        if (!wParams.playing) drawFrame();
+      });
+    });
 
-    // compute combined wave function (psi) at discrete x
-    function computePsiArray(phaseShift = 0) {
-      const n = W;
-      const psi = new Float32Array(n);
-      const mu1 = 0.5 - params.centerSeparation;
-      const mu2 = 0.5 + params.centerSeparation;
-      for (let i = 0; i < n; i++) {
-        const x = i / (n - 1);
-        // simple superposition: equal weight 1/sqrt(2)
-        const a1 = basisWave(x, mu1, phaseShift, 18);
-        const a2 = basisWave(x, mu2, -phaseShift, 18);
-        psi[i] = params.amp * (a1 + a2);
+    ui.t.addEventListener('input', () => {
+      if (wParams.playing) {
+        wParams.playing = false;
+        ui.playBtn.textContent = 'Play';
       }
-      return psi;
-    }
+      wParams.t = parseFloat(ui.t.value);
+      updateParams();
+      drawFrame();
+    });
 
-    // compute probability density (|psi|^2) normalized
-    function computeDensity(psi) {
-      const n = psi.length;
-      const density = new Float32Array(n);
-      let sum = 0;
-      for (let i = 0; i < n; i++) { density[i] = psi[i] * psi[i]; sum += density[i]; }
-      if (sum === 0) return density;
-      const norm = 1 / sum;
-      for (let i = 0; i < n; i++) density[i] *= norm;
-      return density;
-    }
-
-    // sample an index from discrete distribution density
-    function sampleIndex(density) {
-      const r = Math.random();
-      let c = 0;
-      for (let i = 0; i < density.length; i++) {
-        c += density[i];
-        if (r <= c) return i;
+    ui.playBtn.addEventListener('click', () => {
+      wParams.playing = !wParams.playing;
+      ui.playBtn.textContent = wParams.playing ? 'Pause' : 'Play';
+      if (wParams.playing) {
+        step();
       }
-      return density.length - 1;
-    }
+    });
 
-    // ---------- Drawing ----------
     function clear() {
       ctx.clearRect(0, 0, W, H);
-      // subtle background grid lines
       ctx.fillStyle = 'rgba(255,255,255,0.01)';
       ctx.fillRect(0, 0, W, H);
+
+      // axis
+      ctx.beginPath();
+      ctx.moveTo(0, H / 2);
+      ctx.lineTo(W, H / 2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+
+    function drawWave(fn, color, lineWidth, dash = []) {
+      ctx.beginPath();
+      for (let i = 0; i <= W; i++) {
+        const x = (i / W) * Math.PI * 4; // x range from 0 to 4pi
+        const y = fn(x, wParams.t);
+        const cy = H / 2 - y * 40; // 40px scale for amplitude
+        if (i === 0) ctx.moveTo(i, cy);
+        else ctx.lineTo(i, cy);
+      }
+      ctx.strokeStyle = color;
+      ctx.lineWidth = lineWidth;
+      ctx.setLineDash(dash);
+      ctx.stroke();
+      ctx.setLineDash([]);
     }
 
     function drawFrame() {
       clear();
-      // compute frames with small time variant
-      const phase = Math.sin(t * 0.9) * 0.9;
-      const psi = computePsiArray(phase);
-      const density = computeDensity(psi);
 
-      // draw axis baseline
-      ctx.beginPath();
-      ctx.moveTo(0, H * 0.7);
-      ctx.lineTo(W, H * 0.7);
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-      ctx.lineWidth = 1;
-      ctx.stroke();
+      // f(x)
+      drawWave((x, t) => wParams.w1.a * Math.sin(wParams.w1.b * x - wParams.w1.v * t), 'rgba(255, 126, 103, 0.8)', 2, [5, 5]);
 
-      // draw density as translucent glow
-      const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, 'rgba(127,209,255,0.14)');
-      grad.addColorStop(1, 'rgba(127,209,255,0.02)');
-      ctx.fillStyle = grad;
+      // g(x)
+      drawWave((x, t) => wParams.w2.a * Math.sin(wParams.w2.b * x - wParams.w2.v * t), 'rgba(74, 222, 128, 0.8)', 2, [5, 5]);
 
-      // density path (filled)
-      ctx.beginPath();
-      ctx.moveTo(0, H);
-      for (let i = 0; i < W; i++) {
-        const x = i;
-        const y = H * 0.7 - density[i] * H * 0.6 * 6; // exaggerate for visibility
-        ctx.lineTo(x, y);
-      }
-      ctx.lineTo(W, H);
-      ctx.closePath();
-      ctx.fill();
-
-      // draw wave outline (psi)
-      ctx.beginPath();
-      for (let i = 0; i < W; i++) {
-        const x = i;
-        const y = H * 0.7 - psi[i] * H * 0.22;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = 'rgba(191,233,255,0.86)';
-      ctx.lineWidth = 1.8;
-      ctx.stroke();
-
-      // second thin glowing trace
-      ctx.beginPath();
-      for (let i = 0; i < W; i++) {
-        const x = i;
-        const y = H * 0.7 - psi[i] * H * 0.12;
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = 'rgba(127,209,255,0.28)';
-      ctx.lineWidth = 6;
-      ctx.globalAlpha = 0.12;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-
-      // small moving particle markers at high-probability zones
-      const peakCount = 3;
-      for (let k = 0; k < peakCount; k++) {
-        const idx = Math.floor((k + 0.5) * W / (peakCount + 1) + Math.sin(t * 0.7 + k) * 10);
-        const px = idx;
-        const py = H * 0.7 - psi[idx] * H * 0.22;
-        ctx.beginPath();
-        ctx.arc(px, py, 3.2, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.74)';
-        ctx.fill();
-      }
+      // h(x)
+      drawWave((x, t) => {
+        const f = wParams.w1.a * Math.sin(wParams.w1.b * x - wParams.w1.v * t);
+        const g = wParams.w2.a * Math.sin(wParams.w2.b * x - wParams.w2.v * t);
+        return f + g;
+      }, 'rgba(96, 165, 250, 1)', 3);
     }
 
-    // animation loop
     function step() {
-      if (running) {
-        t += params.speed;
+      if (wParams.playing) {
+        wParams.t += 0.05;
+        if (wParams.t > parseFloat(ui.t.max)) {
+          wParams.t = 0; // loop time
+        }
+        ui.t.value = wParams.t.toFixed(1);
+        updateParams();
         drawFrame();
+        requestAnimationFrame(step);
       }
-      requestAnimationFrame(step);
     }
+
+    updateParams();
     step();
-
-    // ---------- Observation (collapse) ----------
-    let hasCollapsed = false;
-    function showToast(msg, delay = 1800) {
-      toast.textContent = msg;
-      toast.style.display = 'block';
-      toast.style.opacity = 1;
-      setTimeout(() => {
-        toast.style.transition = 'opacity 360ms ease';
-        toast.style.opacity = 0;
-        setTimeout(() => { toast.style.display = 'none'; toast.style.transition = ''; }, 380);
-      }, delay);
-    }
-
-    function speak(text) {
-      if (!('speechSynthesis' in window)) return;
-      const utter = new SpeechSynthesisUtterance(text);
-      utter.lang = navigator.language || 'en-US';
-      utter.rate = 1.02; utter.pitch = 1.0;
-      window.speechSynthesis.cancel(); // avoid overlapping
-      window.speechSynthesis.speak(utter);
-    }
-
-    function collapse() {
-      if (hasCollapsed) return;
-      hasCollapsed = true;
-      running = false;
-      observeBtn.setAttribute('aria-pressed', 'true');
-
-      // compute psi & density at collapse moment
-      const psi = computePsiArray(Math.sin(t * 0.9) * 0.9);
-      const density = computeDensity(psi);
-
-      // sample an index (probabilistic outcome)
-      const idx = sampleIndex(density);
-      const x = idx;
-      const y = H * 0.7 - psi[idx] * H * 0.22;
-
-      // fade canvas slightly and draw a single bright particle
-      ctx.globalCompositeOperation = 'source-over';
-      // dim background
-      ctx.fillStyle = 'rgba(2,6,10,0.45)';
-      ctx.fillRect(0, 0, W, H);
-
-      // draw the chosen dot big and glowing
-      const gradient = ctx.createRadialGradient(x, y, 0, x, y, 30);
-      gradient.addColorStop(0, 'rgba(255,255,255,0.98)');
-      gradient.addColorStop(0.25, 'rgba(191,233,255,0.9)');
-      gradient.addColorStop(0.5, 'rgba(127,209,255,0.45)');
-      gradient.addColorStop(1, 'rgba(127,209,255,0.03)');
-
-      ctx.beginPath();
-      ctx.fillStyle = gradient;
-      ctx.arc(x, y, 18, 0, Math.PI * 2);
-      ctx.fill();
-
-      // small crisp dot
-      ctx.beginPath(); ctx.arc(x, y, 4.2, 0, Math.PI * 2);
-      ctx.fillStyle = '#031722';
-      ctx.fill();
-
-      // informational popup + voice
-      const measuredX = (idx / W).toFixed(3);
-      showToast(`Observed at x ≈ ${measuredX}`);
-      try { speak(`Observation result: position ${measuredX}`); } catch (e) { }
-
-      // add a descriptive card result in the right info column (non persistent)
-      const resultCard = document.createElement('div');
-      resultCard.className = 'card';
-      resultCard.style.marginTop = '10px';
-      resultCard.innerHTML = `<h3>Measurement result</h3>
-    <p>The system collapsed to one definite outcome at x ≈ <strong>${measuredX}</strong>. Note that repeated observations may yield different positions — the pattern is probabilistic.</p>`;
-      document.querySelector('.info').prepend(resultCard);
-    }
-
-    // ---------- Buttons ----------
-    observeBtn.addEventListener('click', () => {
-      collapse();
-    });
-
-    restartBtn.addEventListener('click', () => {
-      // reset state and remove any previous result cards
-      hasCollapsed = false;
-      running = true;
-      observeBtn.setAttribute('aria-pressed', 'false');
-      // remove ephemeral result cards (first .card which is a measurement result)
-      const info = document.querySelector('.info');
-      const cards = info.querySelectorAll('.card');
-      // remove cards that contain "Measurement result" heading
-      cards.forEach(c => {
-        if (c.textContent && c.textContent.includes('Measurement result')) c.remove();
-      });
-      // redraw fresh
-      t = 0;
-      drawFrame();
-    });
-
-    // keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (e.key === ' ') { e.preventDefault(); if (!hasCollapsed) collapse(); }
-      if (e.key.toLowerCase() === 'r') { restartBtn.click(); }
-    });
-
-    // small accessibility: announce state on load
-    window.setTimeout(() => {
-      showToast('Ready — click Observe to collapse the superposition', 1600);
-    }, 700);
 
   </script>
   <script src="../js/voice-assistant.js" defer></script>
