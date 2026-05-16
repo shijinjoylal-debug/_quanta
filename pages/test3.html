@@ -12,47 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Outfit:wght@400;600;700&family=Roboto+Mono&display=swap" rel="stylesheet">
 
   <style>
-    :root {
-      --bg-0: #071028;
-      --bg-1: #071827;
-      --card: rgba(11, 18, 32, 0.8);
-      --muted: #94a3b8;
-      --accent: #7dd3fc;
-      --glass: rgba(255, 255, 255, 0.04);
-      --radius: 16px;
-      --maxw: 1200px;
-      --gap: 24px;
-      --mono: 'Roboto Mono', ui-monospace, SFMono-Regular, monospace;
-      --ui-font: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
-    }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html,
-    body {
-      min-height: 100%;
-      padding-top: 70px;
-      font-family: var(--ui-font);
-      color: #e6eef6;
-      background: radial-gradient(circle at top, #0c1b3d 0%, #071028 100%);
-      -webkit-font-smoothing: antialiased;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    a {
-      color: var(--accent);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    a:hover {
-      color: #bae6fd;
-    }
 
     .container {
       max-width: var(--maxw);
@@ -63,44 +23,9 @@
       gap: var(--gap);
     }
 
-    header {
-      width: 100%;
-    }
-
-    .header-card {
-      background: var(--card);
-      backdrop-filter: blur(12px);
-      border-radius: var(--radius);
-      padding: 24px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-
-    h1 {
-      font-size: 24px;
-      font-weight: 700;
-      background: linear-gradient(90deg, #7dd3fc, #60a5fa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 4px;
-    }
-
     .subtitle {
       color: var(--muted);
       font-size: 15px;
-    }
-
-    .card {
-      background: var(--card);
-      backdrop-filter: blur(12px);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: 0 8px 32px rgba(2, 6, 23, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      height: 100%;
     }
 
     /* Main Layout Grid */
@@ -201,7 +126,7 @@
       margin-top: 8px;
     }
 
-    button {
+    .btn-group button {
       padding: 10px 20px;
       border-radius: 10px;
       background: rgba(125, 211, 252, 0.1);
@@ -215,13 +140,13 @@
       min-width: 140px;
     }
 
-    button:hover {
+    .btn-group button:hover {
       background: rgba(125, 211, 252, 0.2);
       border-color: var(--accent);
       transform: translateY(-2px);
     }
 
-    button:active {
+    .btn-group button:active {
       transform: translateY(0);
     }
 
@@ -272,15 +197,7 @@
       margin: 12px 0;
     }
 
-    ul {
-      list-style-position: inside;
-      margin-top: 8px;
-    }
 
-    li {
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
 
     /* Tabs System */
     .tabs-container {
@@ -358,12 +275,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    footer {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--muted);
-      font-size: 14px;
-    }
+
 
     /* Custom Checkbox */
     .checkbox-row {
