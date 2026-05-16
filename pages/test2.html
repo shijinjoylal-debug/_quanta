@@ -769,7 +769,13 @@
               const data = await response.text();
 
               const container = document.getElementById('blochContent');
-              container.style.height = '600px';
+              if (window.innerWidth <= 600) {
+                container.style.height = '1500px';
+              } else if (window.innerWidth <= 820) {
+                container.style.height = '1000px';
+              } else {
+                container.style.height = '800px';
+              }
               container.style.overflowY = 'auto';
               container.style.alignItems = 'flex-start';
               container.style.justifyContent = 'flex-start';
