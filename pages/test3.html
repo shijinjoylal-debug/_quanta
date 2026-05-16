@@ -365,10 +365,22 @@
         flex-wrap: nowrap;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(125, 211, 252, 0.3) transparent;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
       }
       .tabs-nav::-webkit-scrollbar {
-        display: none;
+        display: block;
+        height: 4px;
+      }
+      .tabs-nav::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 4px;
+      }
+      .tabs-nav::-webkit-scrollbar-thumb {
+        background: rgba(125, 211, 252, 0.4);
+        border-radius: 4px;
       }
       .btn-group button {
         min-width: 100px;
