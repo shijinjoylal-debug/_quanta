@@ -265,6 +265,87 @@
       animation: fadeIn 0.3s ease;
     }
 
+    /* Scroll Indicators */
+    .tabs-nav-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .scroll-indicator {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 40px;
+      display: none; /* Hidden by default, shown via JS */
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.3s ease;
+    }
+
+    .scroll-indicator.visible {
+      display: flex;
+      opacity: 1;
+    }
+
+    .scroll-indicator.right {
+      right: 0;
+      background: linear-gradient(to right, transparent, rgba(125, 211, 252, 0.15));
+    }
+
+    .scroll-indicator.left {
+      left: 0;
+      background: linear-gradient(to left, transparent, rgba(125, 211, 252, 0.15));
+    }
+
+    .scroll-indicator::after {
+      content: '›';
+      font-size: 24px;
+      color: var(--accent);
+      text-shadow: 0 0 10px var(--accent), 0 0 20px rgba(125, 211, 252, 0.5);
+      animation: arrowPulse 1.5s infinite;
+      font-weight: bold;
+    }
+
+    .scroll-indicator.left::after {
+      content: '‹';
+    }
+
+    @keyframes arrowPulse {
+
+      0%,
+      100% {
+        transform: translateX(0);
+        opacity: 0.6;
+      }
+
+      50% {
+        transform: translateX(4px);
+        opacity: 1;
+      }
+    }
+
+    .scroll-indicator.left::after {
+      animation-name: arrowPulseLeft;
+    }
+
+    @keyframes arrowPulseLeft {
+
+      0%,
+      100% {
+        transform: translateX(0);
+        opacity: 0.6;
+      }
+
+      50% {
+        transform: translateX(-4px);
+        opacity: 1;
+      }
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -387,6 +468,10 @@
         grid-template-columns: 1fr;
       }
 
+      .tabs-nav-wrapper {
+        margin-bottom: 12px;
+      }
+
       .tabs-nav {
         flex-wrap: nowrap;
         overflow-x: auto;
@@ -394,7 +479,11 @@
         scrollbar-width: thin;
         scrollbar-color: rgba(78, 15, 180, 0.3) transparent;
         padding-bottom: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 0;
+      }
+
+      .scroll-indicator {
+        bottom: 8px; /* Offset for scrollbar */
       }
 
       .tabs-nav::-webkit-scrollbar {
@@ -512,11 +601,15 @@
           <div class="math-block">|ψ⟩ = cos(θ/2) |0⟩ + e^{iφ} sin(θ/2) |1⟩</div>
 
           <div class="tabs-container">
-            <div class="tabs-nav">
-              <button class="tab-btn active" data-tab="details">Math Details</button>
-              <button class="tab-btn" data-tab="rotations">Rotations</button>
-              <button class="tab-btn" data-tab="measure">Measurement</button>
-              <button class="tab-btn" data-tab="experiments">Experiments</button>
+            <div class="tabs-nav-wrapper">
+              <div class="scroll-indicator left"></div>
+              <div class="tabs-nav">
+                <button class="tab-btn active" data-tab="details">Math Details</button>
+                <button class="tab-btn" data-tab="rotations">Rotations</button>
+                <button class="tab-btn" data-tab="measure">Measurement</button>
+                <button class="tab-btn" data-tab="experiments">Experiments</button>
+              </div>
+              <div class="scroll-indicator right"></div>
             </div>
 
             <div id="details" class="tab-content active">
@@ -813,8 +906,36 @@
           } else {
             altSect.style.display = "none";
           }
+          
+          // Re-check indicators after potential layout change
+          setTimeout(updateIndicators, 50);
         };
       });
+
+      // Scroll Indicators Logic
+      const tabsNav = document.querySelector('.tabs-nav');
+      const indicatorRight = document.querySelector('.scroll-indicator.right');
+      const indicatorLeft = document.querySelector('.scroll-indicator.left');
+
+      function updateIndicators() {
+        if (!tabsNav) return;
+        const scrollLeft = tabsNav.scrollLeft;
+        const maxScroll = tabsNav.scrollWidth - tabsNav.clientWidth;
+
+        if (indicatorLeft) {
+          indicatorLeft.classList.toggle('visible', scrollLeft > 10);
+        }
+        if (indicatorRight) {
+          indicatorRight.classList.toggle('visible', scrollLeft < maxScroll - 10);
+        }
+      }
+
+      if (tabsNav) {
+        tabsNav.addEventListener('scroll', updateIndicators);
+        window.addEventListener('resize', updateIndicators);
+        // Initial check with a small delay to ensure rendering
+        setTimeout(updateIndicators, 100);
+      }
 
     })();
   </script>
