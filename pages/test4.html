@@ -209,12 +209,12 @@
     <h2>Path length difference</h2>
     <p> Draw a reference line that goes straigth through the centerl, the centerline would allow us to measure angles.
       let measure angle of some point on the screen from the center line. let's call it as theta
-      <img src="../assets/images/img1.jpeg" alt="path length difference"><br>
+      <img class="jpg" src="../assets/images/img1.jpeg" alt="path length difference"><br>
       Now draw line from center of both slits to the point on the screen and a third line cut through in right angle
-      like in the image given below then the remainder of these paths will be equal. <img src="../assets/images/img2.jpeg"
+      like in the image given below then the remainder of these paths will be equal. <img class="jpg" src="../assets/images/img2.jpeg"
         alt="path length remainder"> .Now lets do some basic trignometry.
-      <img src="../assets/images/img3.jpeg" alt="path length remainder triangle"><br>
-      So, now we can see that the path length difference is Δx. <img src="../assets/images/img4.jpeg" alt="delta x"><br>
+      <img class="jpg" src="../assets/images/img3.jpeg" alt="path length remainder triangle"><br>
+      So, now we can see that the path length difference is Δx. <img class="jpg" src="../assets/images/img4.jpeg" alt="delta x"><br>
       The relationship between this sinθ = Δx/d so, The path length difference for a double slit is Δx = d sinθ
     <h3> The Double-Slit Formula - Δx = d sinθ</h3>
     It's says mλ = d.sinθ for constructive interference, So Δx was integers times wavelength, eg: 0, λ, 2λ etc.., So, in
@@ -277,10 +277,56 @@
       Modern experiments with electrons or photons reveal that light and matter can behave as both particles and waves,
       introducing the fascinating concept of <span class="highlight">wave-particle duality</span>.
     </p>
+    <div class="wave-pasrticle", id="explore-container">
+      </div>
+      <style>
+        .wave-pasrticle {
+          text-align: center;
+          display: flex;
+          width: 100%;
+        }
+        .jpg {
+          max-width: 350px;
+          height: auto;
+        }
+      </style>
+    <button class="button1" onclick="loadExternalContent()">Explore Wave-Particle Duality</button>
 
-    <a href="test5.html">
-      <button class="button1">Explore Wave-Particle Duality</button>
-    </a>
+  <script>
+          async function loadExternalContent() {
+            try {
+              const response = await fetch('test5.html');
+
+              if (!response.ok) {
+                throw new Error('Failed to load content');
+              }
+
+              const data = await response.text();
+
+              const container = document.getElementById('explore-container');
+              container.innerHTML = data;
+            // Execute scripts manually
+              container.querySelectorAll("script").forEach(oldScript => {
+                const newScript = document.createElement("script");
+
+                if (oldScript.src) {
+                  newScript.src = oldScript.src;
+                } else {
+                  newScript.textContent = oldScript.textContent;
+                }
+
+                document.body.appendChild(newScript);
+                oldScript.remove();
+              });
+
+            } catch (error) {
+              console.error(error);
+            }
+          }
+        </script>
+
+
+              
   </section>
 
   <footer>

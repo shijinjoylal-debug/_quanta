@@ -1,0 +1,388 @@
+<html>
+    <head><meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" /><title>Schrodinger's Cat</title>
+    </head>
+    <body>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Muli&display=swap');
+
+    :root {
+      --bg1: #071427;
+      --bg2: #0a2a50;
+      --glow: #7fd1ff;
+      --stroke: #bfe9ff;
+      --dot: #ffffff;
+      --text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: radial-gradient(1200px 800px at 65% 35%, var(--bg2), var(--bg1) 60%);
+      font-family: "Inter", "Poppins", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+
+
+    /* Logo Section */
+    .logo-wrap {
+      width: min(90vw, 720px);
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: clamp(16px, 3vw, 36px);
+      align-items: center;
+      padding: clamp(16px, 3vw, 40px);
+      border-radius: 24px;
+      background: linear-gradient(170deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(6px);
+      margin-top: 100px;
+      animation: fadeIn 2s ease;
+    }
+
+    svg {
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      display: block;
+      justify-self: center;
+    }
+
+    .wordmark h1 {
+      margin: 0 0 .25em 0;
+      font-weight: 800;
+      font-size: clamp(28px, 6vw, 56px);
+      animation: slideUp 1.5s ease;
+    }
+
+    .wordmark h2 {
+      margin: 0;
+      font-weight: 700;
+      font-size: clamp(14px, 2.75vw, 26px);
+      letter-spacing: .2em;
+      opacity: .95;
+      animation: slideUp 2s ease;
+    }
+
+    /* Glow Animation */
+    @keyframes glow-shift {
+      0% {
+        stroke-dashoffset: 0;
+      }
+
+      100% {
+        stroke-dashoffset: -240;
+      }
+    }
+
+    .trace {
+      stroke-dasharray: 6 10;
+      animation: glow-shift 12s linear infinite;
+      opacity: .75;
+    }
+
+    /* Keyframes */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Description Text */
+    .description {
+      font-family: "Arial Black", Gadget, sans-serif;
+      font-weight: 900;
+      font-size: large;
+      margin-top: 20px;
+      line-height: 1.5;
+      text-align: left;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+
+    /* ── Card Container ── */
+    .container {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: stretch;
+      margin: 48px auto 100px;
+      padding: 0 24px;
+      width: 100%;
+      max-width: 1300px;
+      box-sizing: border-box;
+    }
+
+    /* ── Base card ── */
+    .panel {
+      flex: 1 1 0;
+      min-width: 0;
+      overflow: hidden;
+      padding: 28px 20px;
+      border-radius: 18px;
+      color: var(--text);
+      background: linear-gradient(145deg, rgba(127, 209, 255, 0.08), rgba(10, 42, 80, 0.6));
+      border: 1px solid rgba(127, 209, 255, 0.15);
+      box-shadow: 0 0 18px rgba(127, 209, 255, 0.18), inset 0 0 30px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: flex 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.4s ease,
+        background 0.4s ease;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .panel:hover {
+      box-shadow: 0 0 30px rgba(127, 209, 255, 0.4), inset 0 0 30px rgba(0, 0, 0, 0.2);
+    }
+
+    /* ── Expanded card ── */
+    .panel.active {
+      flex: 5;
+      background: linear-gradient(145deg, rgba(127, 209, 255, 0.14), rgba(10, 42, 80, 0.85));
+      border-color: rgba(127, 209, 255, 0.45);
+      box-shadow: 0 0 48px rgba(127, 209, 255, 0.5), inset 0 0 40px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ── Card icon ── */
+    .card-icon {
+      font-size: 2.4rem;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 0 8px var(--glow));
+      transition: transform 0.4s ease;
+    }
+
+    .panel.active .card-icon {
+      transform: scale(1.15);
+    }
+
+    /* ── Collapsed: title + teaser ── */
+    .card-preview h3 {
+      margin: 0 0 8px;
+      font-size: clamp(0.72rem, 1.4vw, 1rem);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: var(--glow);
+      text-align: center;
+    }
+
+    .card-preview p {
+      margin: 0;
+      font-size: clamp(0.62rem, 1.1vw, 0.82rem);
+      opacity: 0.72;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    /* ── Expanded extra content ── */
+    .card-expanded {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: max-height 0.65s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.45s ease 0.15s;
+      width: 100%;
+    }
+
+    .panel.active .card-expanded {
+      max-height: 1200px;
+      opacity: 1;
+    }
+
+    .card-expanded .divider {
+      width: 60%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--glow), transparent);
+      margin: 18px auto;
+    }
+
+    .card-expanded .detail-body {
+      font-size: clamp(0.8rem, 1.3vw, 0.95rem);
+      line-height: 1.8;
+      opacity: 0.9;
+      padding: 0 12px;
+      text-align: left;
+    }
+
+    .card-expanded .fact-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(127, 209, 255, 0.07);
+      border: 1px solid rgba(127, 209, 255, 0.2);
+      font-size: clamp(0.72rem, 1.1vw, 0.86rem);
+      line-height: 1.65;
+      color: #c8eeff;
+      height: 140px;
+      min-height: 100px;
+      overflow-y: auto;
+      resize: vertical;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(127, 209, 255, 0.3) transparent;
+    }
+
+    .card-expanded .fact-box::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .card-expanded .fact-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .card-expanded .fact-box::-webkit-scrollbar-thumb {
+      background: rgba(127, 209, 255, 0.3);
+      border-radius: 10px;
+    }
+
+    .card-expanded .fact-box::-webkit-scrollbar-thumb:hover {
+      background: rgba(127, 209, 255, 0.5);
+    }
+
+    .card-expanded .fact-box strong {
+      color: var(--glow);
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+    }
+
+    .card-expanded .learn-btn {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 22px;
+      border-radius: 50px;
+      border: 1px solid var(--glow);
+      background: rgba(127, 209, 255, 0.1);
+      color: var(--glow);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      transition: background 0.3s, transform 0.2s;
+      cursor: pointer;
+    }
+
+    .card-expanded .learn-btn:hover {
+      background: rgba(127, 209, 255, 0.25);
+      transform: translateY(-2px);
+    }
+
+    /* expand/collapse arrow */
+    .expand-hint {
+      margin-top: 14px;
+      font-size: 1.1rem;
+      opacity: 0.4;
+      transition: opacity 0.3s, transform 0.4s;
+    }
+
+    .panel.active .expand-hint {
+      transform: rotate(180deg);
+      opacity: 0.7;
+    }
+
+    /* ── Mobile ── */
+    @media(max-width: 700px) {
+      .container {
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 16px;
+      }
+
+      .panel {
+        flex: none !important;
+        width: 100%;
+      }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 700px) {
+      .logo-wrap {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .buttons {
+        margin-top: 20px;
+      }
+    }
+
+    /* Background Humanoid Animation */
+    .humanoid-bg {
+      position: fixed;
+      bottom: 0;
+      left: -5%;
+      height: 85vh;
+      max-height: 900px;
+      z-index: -1;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.6;
+      animation: floatHumanoid 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.3));
+    }
+
+    @keyframes floatHumanoid {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1.1);
+      }
+
+      50% {
+        transform: translateY(-20px) scale(1.1);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .humanoid-bg {
+        left: -15%;
+        opacity: 0.3;
+        height: 60vh;
+      }
+    }
+  </style>
+  <h1>Erwin Rudolf Alexander Schrodinger</h1>
+  <img src="https://cdn.jsdelivr.net/gh/aykutkardas/sciart-assets@main/humanoid.svg" alt="Humanoid Background" class="humanoid-bg" />
+  <div class="container">
+      <h3>Erwin Rudolf Alexander Schrodinger, AKA Schroedinger or Schrodinger, was an Austrian-Irish theoritical physicist who developed fundamental rsults in quantum theory.</h3>
+      <h4>He is recoginised for devising the Schrodinger's equation that provides a way to calculate the wave function of a system and how it changes dinamically in time. He coined the term "quantum entanglement" in 1933 Nobel prize in physics with Paul Dirac for the discovery of new productive forms of atomic theory. Schrodinger wrote many works on various aspects of physics and he made several attempts to construct a unified field theory, He also paid attention to the philosophical aspect of science, ancient and oriental philosophical concepts,ethics and religion. He is best known for "Schrodinger's Cat": A thought experiment meant to critisize the copenhagen iterpretation(The traditional "standard view of quantum mechanics) developed in the late 1920s.</h4>
+      </div>
+      <h1>Schrodinger's Cat</h1>
+      <p>  Erwin Schrodinger is a famous Austrian physicist but he is most famous for something he never actually did: A thought experiment with a imaginary cat. He placed a cat inside a cealed box with a device that has a 50%c chance to kill the cat. An atom is placed and the device is triggered by the decay of atom. If the atom decays, the device will triggered and kill the cat, if the atom does not decay, the cat will be alive. For the next hour what will be the situation of the cat, Common sense suggest either the cat is alive or dead both have fifty fifty chance, but Schrodinger point out that according to quantum mechanics at the instance before the box is opened, the cat is in a superposition of being both alive and dead at the same time, It is when the box is opened we see a single definite state, until then the cat is in a blur of probabilities. It's so sophesticated and counterintuitive that he abondoned the theory and turned to writing about biology. As absurd as it may seem though, Schrodinger's cat is very real, It's essential If it weren't possible for quantum objects to be in two states at once, The computer you are using to read this would not exist, The quantum superposition is a consiquence of the dual particle and wave nature of everything. A cat cant show superposition because its too big and it's wavelength is too small that we can't detect, but an electron is very small and its wavelength is big enough to show superposition. The double slit experiment is a good example of superposition, when electrons are fired at a barrier with two slits, they will pass one by one like a particle but eventually they will create an interference pattern which is a property of waves, Cause the electron is not going through any one of the slit but it is going through both the slits at the same time, and it is only when we try to measure, the electron's superposition collapse and shows up as a particle going through one of the slits.  
+      </p>
+      <h2>Chemical bonds</h2>
+      <p>Superposition of states also leads to modern technology, An electron near the nucleus of an atom exists in a spread out wave-like orbit now a days it is describes as an electron cloud. When we bring two atoms together the electron dont need to choose just one atom but are shared between them. This is how some chemical bonds form, An electron in a molucule is not just on an atom A or atom B but on atom A+B. As atoms increase the electron spreads out more That's why it can be more precisely be said as an electron cloud.</p> <h2>How Conductors and Transistors works--</h2> <p>The electron aren't bound to a particular atom but are shared among vast number of atoms at the same time extending over a large amount of space this gigantic superposition of states determines the ways electron moves through the material whether it's a conductor, insulator or a semiconductor knowing how electron are spread among atoms let us precisely control the properties of semiconductor materials, like silicon, combining different semi conductors in the rigth way allows us to make transistors on a tiny scale millions of a single computer chip those chips and their spread out electrons power the computer. <strong> At a very deep level, The internet ows it's existance to a Austrian physicist and his imaginary cat</strong></p>
+
+  </body>
+</html>
