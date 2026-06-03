@@ -186,7 +186,21 @@ p {
     font-size: 0.9rem;
     font-style: italic;
 }
-
+.button{
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    color: white;
+    border: none;
+    border-radius: 12px;
+    width: 200px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(56, 189, 248, 0.3);
+    text-decoration: none;
+    display: inline-block;
+    margin: 10px 0; 
+    text-align: center;
+}
 /* Interactive Elements */
 .btn {
     background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
