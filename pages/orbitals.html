@@ -1,0 +1,276 @@
+<html>
+    <head><meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" /><title>Orbitals</title>
+    </head>
+    <body>
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Muli&display=swap');
+
+    :root {
+      --bg1: #071427;
+      --bg2: #0a2a50;
+      --glow: #7fd1ff;
+      --stroke: #bfe9ff;
+      --dot: #ffffff;
+      --text: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: radial-gradient(1200px 800px at 65% 35%, var(--bg2), var(--bg1) 60%);
+      font-family: "Inter", "Poppins", system-ui, -apple-system, Roboto, Arial, sans-serif;
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+
+
+    /* Logo Section */
+    .logo-wrap {
+      width: min(90vw, 720px);
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: clamp(16px, 3vw, 36px);
+      align-items: center;
+      padding: clamp(16px, 3vw, 40px);
+      border-radius: 24px;
+      background: linear-gradient(170deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(6px);
+      margin-top: 100px;
+      animation: fadeIn 2s ease;
+    }
+
+    svg {
+      width: 100%;
+      max-width: 320px;
+      height: auto;
+      display: block;
+      justify-self: center;
+    }
+
+    .wordmark h1 {
+      margin: 0 0 .25em 0;
+      font-weight: 800;
+      font-size: clamp(28px, 6vw, 56px);
+      animation: slideUp 1.5s ease;
+    }
+
+    .wordmark h2 {
+      margin: 0;
+      font-weight: 700;
+      font-size: clamp(14px, 2.75vw, 26px);
+      letter-spacing: .2em;
+      opacity: .95;
+      animation: slideUp 2s ease;
+    }
+p{
+  font-size: 18px;
+  line-height: 1.6;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-family:serif;
+
+}
+h3{
+  font-size: 24px;
+  line-height: 1.6;
+  margin-left: 20px;
+  margin-right: 20px;
+  font-family:serif;
+
+}
+    /* Glow Animation */
+    @keyframes glow-shift {
+      0% {
+        stroke-dashoffset: 0;
+      }
+
+      100% {
+        stroke-dashoffset: -240;
+      }
+    }
+
+    .trace {
+      stroke-dasharray: 6 10;
+      animation: glow-shift 12s linear infinite;
+      opacity: .75;
+    }
+
+    /* Keyframes */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Description Text */
+    .description {
+      font-family: "Arial Black", Gadget, sans-serif;
+      font-weight: 900;
+      font-size: large;
+      margin-top: 20px;
+      line-height: 1.5;
+      text-align: left;
+      max-width: 800px;
+      padding: 0 20px;
+    }
+
+    /* ── Card Container ── */
+    .container {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 16px;
+      justify-content: center;
+      align-items: stretch;
+      margin: 48px auto 100px;
+      padding: 0 24px;
+      width: 100%;
+      max-width: 1300px;
+      box-sizing: border-box;
+    }
+
+    .title h1 {
+      font-size: 20px;
+      margin: 0;
+      letter-spacing: 0.06em;
+    }
+
+    .title p {
+      margin: 0;
+      font-size: 12px;
+      color: rgba(234, 246, 255, 0.7);
+    }
+      /* Academic header style */
+    header {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    header h1 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+
+    header p {
+      margin: 0;
+      color: #9aa4b2;
+      font-size: 0.95rem;
+    }
+
+
+    /* ── Mobile ── */
+    @media(max-width: 700px) {
+      .container {
+        flex-wrap: wrap;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0 16px;
+      }
+
+      .panel {
+        flex: none !important;
+        width: 100%;
+      }
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 700px) {
+      .logo-wrap {
+        grid-template-columns: 1fr;
+        text-align: center;
+      }
+
+      .buttons {
+        margin-top: 20px;
+      }
+    }
+
+    /* Background Humanoid Animation */
+    .humanoid-bg {
+      position: fixed;
+      bottom: 0;
+      left: -5%;
+      height: 85vh;
+      max-height: 900px;
+      z-index: -1;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.6;
+      animation: floatHumanoid 8s ease-in-out infinite;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.3));
+    }
+
+    @keyframes floatHumanoid {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1.1);
+      }
+
+      50% {
+        transform: translateY(-20px) scale(1.1);
+      }
+    }
+
+    @media (max-width: 1000px) {
+      .humanoid-bg {
+        left: -15%;
+        opacity: 0.3;
+        height: 60vh;
+      }
+    }
+    .left-content {
+      display: flex;
+      margin-top: 200px;
+    }
+    
+  
+  </style>
+  <h1>Orbitals</h1>
+   <img src="../_Images/bg1.png" alt="Humanoid Background" class="humanoid-bg" />
+     <div class="container">
+    
+     <p class="left-content"> When we first learned about atomic structure we visualise it as electron orbiting the nucleus like the planet going around the sun which is quite a simple way to visualise it, but now we came this far learning many lessons of quantum mechanics, apparently we know that this is a terrible way to visualise a quantum system. Quantum Numbers--<br>
+     A better way to think about it is in terms of quantum numbers. there are few quantum numbers and they have their own rules and that let electrons doing oribitals which is a 3D structure</p>
+     
+     <p><dl><strong>Erwin Schrodinger revolutionized this idea, he revolutionized atomic theory by formulating the schrodinger wave equation in 1926. Thus forming the Orbital, the concept that proved electron behaves as matter waves giving rise to 3D regions(orbitals) where electrons are most likely to be found.<br>---------<br> His Key contributions---- 
+      <dt>wave funstions: </dt><dd> Mathematical descriptions representing the quantum state of an electron. By squaring wavefunction we will get the probability to find the electron</dd>
+     <dt>quantization of energy:</dt> <dd> Treating electron as stationary matter waves. the electrons can only exist in states that satisfy the wave equation.</dd> <dt>Quantum numbers:</dt> <dd>these numbers dictate the size/energy, the shape, and the orientation in space of atomic orbitals. </dd> <dt>nodes: </dt><dd>Regions within orbitals where the probability of finding the electron drops to zero.</dd></dl></strong></p>
+    </div>
+    <h1> 1D analogy</h1>
+     <p>We need a wave that is confined in a 3D space. For that there is an analogy where we have a wave that is confined on a streched string</p>
+     <p><strong>Waves on a streched string</strong><br>
+      A string is connected at the end and when we pluck it it will produce standing waves. The fundamental frequency is where half a wave fits the string and the next possible standing waves increments by adding exactly half a wavelength. So, when we confine the wave discrete frequencies are allowed no frequency in between are allowed</p>
