@@ -1,9 +1,13 @@
 <html>
-    <head><meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" /><title>Orbitals</title>
-    </head>
-    <body>
-    <style>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Orbitals</title>
+</head>
+
+<body>
+  <style>
     @import url('https://fonts.googleapis.com/css2?family=Muli&display=swap');
 
     :root {
@@ -20,7 +24,6 @@
     }
 
     body {
-      margin: 0;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -29,6 +32,10 @@
       font-family: "Inter", "Poppins", system-ui, -apple-system, Roboto, Arial, sans-serif;
       color: var(--text);
       overflow-x: hidden;
+      margin-left: 55px;
+      margin-right: 55px;
+      margin-top: 100px;
+      margin-bottom: 100px;
     }
 
 
@@ -72,22 +79,25 @@
       opacity: .95;
       animation: slideUp 2s ease;
     }
-p{
-  font-size: 18px;
-  line-height: 1.6;
-  margin-left: 20px;
-  margin-right: 20px;
-  font-family:serif;
 
-}
-h3{
-  font-size: 24px;
-  line-height: 1.6;
-  margin-left: 20px;
-  margin-right: 20px;
-  font-family:serif;
+    p {
+      font-size: 18px;
+      line-height: 1.6;
+      margin-left: 20px;
+      margin-right: 20px;
+      font-family: serif;
 
-}
+    }
+
+    h3 {
+      font-size: 24px;
+      line-height: 1.6;
+      margin-left: 20px;
+      margin-right: 20px;
+      font-family: serif;
+
+    }
+
     /* Glow Animation */
     @keyframes glow-shift {
       0% {
@@ -167,7 +177,8 @@ h3{
       font-size: 12px;
       color: rgba(234, 246, 255, 0.7);
     }
-      /* Academic header style */
+
+    /* Academic header style */
     header {
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding-bottom: 12px;
@@ -252,25 +263,464 @@ h3{
         height: 60vh;
       }
     }
+
     .left-content {
       display: flex;
       margin-top: 200px;
+      height: fit-content;
     }
-    
-  
+
+    /* ── Shared image container base ── */
+    .image-container,
+    .image-container1,
+    .image-container2,
+    .image-container3,
+    .image-container4,
+    .image-container5,
+    .image-container6,
+    .image-container7,
+    .image-container8,
+    .image-container9,
+    .image-container10,
+    .image-container11 {
+      margin: 40px auto;
+      text-align: center;
+    }
+
+    /* Shared img styling */
+    .image-container img,
+    .image-container1 img,
+    .image-container4 img,
+    .image-container5 img,
+    .image-container7 img,
+    .image-container9 img {
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(127, 209, 255, 0.15);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .image-container2 img,
+    .image-container3 img {
+      height: 70%;
+      width: auto;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(127, 209, 255, 0.15);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .image-container8 img,
+    .image-container6 img {
+      height: 80%;
+      width: auto;
+      border-radius: 26px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(127, 209, 255, 0.15);
+      display: block;
+      margin: 0 auto;
+    }
+
+    .image-container11 img,
+    .image-container10 img {
+      height: 90%;
+      width: auto;
+      border-radius: 26px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(127, 209, 255, 0.15);
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* Screenshot (71).png — wide 16:9 waveform screenshot */
+    .image-container img {
+      width: min(90vw, 860px);
+      padding: 0;
+    }
+
+    /* orbital1.jpeg — near-square ground state cloud, centred */
+    .image-container1 {
+      padding: 20px 0;
+    }
+
+    .image-container1 img {
+      width: min(60vw, 420px);
+    }
+
+    /* orbital3.jpeg — wide landscape, 2nd harmonic electron cloud */
+    .image-container2 {
+      padding: 16px 0;
+    }
+
+    .image-container2 img {
+      width: min(85vw, 780px);
+    }
+
+    /* orbital4.jpeg — very wide landscape comparison of both harmonics */
+    .image-container3 {
+      padding: 16px 0;
+    }
+
+    .image-container3 img {
+      width: min(90vw, 900px);
+    }
+
+    /* orbital5.jpeg — tall portrait energy map (vertical arrow) */
+    .image-container4 {
+      padding: 20px 0;
+    }
+
+    .image-container4 img {
+      width: min(55vw, 380px);
+    }
+
+    /* orbital6.jpeg — portrait P orbital (symmetrical cut) */
+    .image-container5 {
+      padding: 16px 0;
+    }
+
+    .image-container5 img {
+      width: min(55vw, 400px);
+    }
+
+    /* orbital7.jpeg — very wide landscape (4 orbitals + energy map) */
+    .image-container6 {
+      padding: 16px 0;
+    }
+
+    .image-container6 img {
+      width: min(95vw, 1100px);
+    }
+
+    /* orbital8.jpeg — small portrait (2 radial nodes, tight square) */
+    .image-container7 {
+      padding: 16px 0;
+    }
+
+    .image-container7 img {
+      width: min(40vw, 260px);
+    }
+
+    /* orbital9.jpeg — very wide landscape full energy map */
+    .image-container8 {
+      padding: 16px 0;
+    }
+
+    .image-container8 img {
+      width: min(95vw, 1100px);
+    }
+
+    /* orbital10.jpeg — near-square D orbital (4 lobes) */
+    .image-container9 {
+      padding: 20px 0;
+    }
+
+    .image-container9 img {
+      width: min(65vw, 480px);
+    }
+
+    /* orbital11.jpeg — very wide landscape (P + D energy map) */
+    .image-container10 {
+      padding: 16px 0;
+    }
+
+    .image-container10 img {
+      width: min(95vw, 1100px);
+    }
+
+    /* orbital12.jpeg — very wide landscape (full quantum number map) */
+    .image-container11 {
+      padding: 16px 0;
+    }
+
+    .image-container11 img {
+      width: min(95vw, 1100px);
+    }
+
+    .image-container-1 {
+      max-width: 50%;
+      height: auto;
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(127, 209, 255, 0.15);
+    }
+
+    .image-caption {
+      display: block;
+      margin-top: 15px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    .image-caption {
+      display: block;
+      margin-top: 15px;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+
+    .iframe-container-wide {
+      width: min(95vw, 1200px);
+      height: 700px;
+      margin: 30px auto 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: #050d1a;
+    }
+
+    .iframe-container-wide iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .iframe-container-narrow {
+      width: min(95vw, 650px);
+      height: 600px;
+      margin: 30px auto 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      background: #0b0c10;
+    }
+
+    .iframe-container-narrow iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .iframe-link-container {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .iframe-link {
+      display: inline-block;
+      text-decoration: none;
+      color: #00ffc8;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: color 0.2s, transform 0.2s;
+      font-family: sans-serif;
+    }
+
+    .iframe-link:hover {
+      color: #7fd1ff;
+      transform: translateY(-1px);
+    }
   </style>
   <h1>Orbitals</h1>
-   <img src="../_Images/bg1.png" alt="Humanoid Background" class="humanoid-bg" />
-     <div class="container">
-    
-     <p class="left-content"> When we first learned about atomic structure we visualise it as electron orbiting the nucleus like the planet going around the sun which is quite a simple way to visualise it, but now we came this far learning many lessons of quantum mechanics, apparently we know that this is a terrible way to visualise a quantum system. Quantum Numbers--<br>
-     A better way to think about it is in terms of quantum numbers. there are few quantum numbers and they have their own rules and that let electrons doing oribitals which is a 3D structure</p>
-     
-     <p><dl><strong>Erwin Schrodinger revolutionized this idea, he revolutionized atomic theory by formulating the schrodinger wave equation in 1926. Thus forming the Orbital, the concept that proved electron behaves as matter waves giving rise to 3D regions(orbitals) where electrons are most likely to be found.<br>---------<br> His Key contributions---- 
-      <dt>wave funstions: </dt><dd> Mathematical descriptions representing the quantum state of an electron. By squaring wavefunction we will get the probability to find the electron</dd>
-     <dt>quantization of energy:</dt> <dd> Treating electron as stationary matter waves. the electrons can only exist in states that satisfy the wave equation.</dd> <dt>Quantum numbers:</dt> <dd>these numbers dictate the size/energy, the shape, and the orientation in space of atomic orbitals. </dd> <dt>nodes: </dt><dd>Regions within orbitals where the probability of finding the electron drops to zero.</dd></dl></strong></p>
-    </div>
-    <h1> 1D analogy</h1>
-     <p>We need a wave that is confined in a 3D space. For that there is an analogy where we have a wave that is confined on a streched string</p>
-     <p><strong>Waves on a streched string</strong><br>
-      A string is connected at the end and when we pluck it it will produce standing waves. The fundamental frequency is where half a wave fits the string and the next possible standing waves increments by adding exactly half a wavelength. So, when we confine the wave discrete frequencies are allowed no frequency in between are allowed</p>
+  <img src="../_Images/bg1.png" alt="Humanoid Background" class="humanoid-bg" />
+  <div class="container">
+
+    <p class="left-content"> When we first learned about atomic structure we visualise it as electron orbiting the
+      nucleus like the planet going around the sun which is quite a simple way to visualise it, but now we came this far
+      learning many lessons of quantum mechanics, apparently we know that this is a terrible way to visualise a quantum
+      system. Quantum Numbers--<br>
+      A better way to think about it is in terms of quantum numbers. there are few quantum numbers and they have their
+      own rules and that let electrons doing oribitals which is a 3D structure</p>
+
+    <p>
+    <dl><strong>Erwin Schrodinger revolutionized this idea, he revolutionized atomic theory by formulating the
+        schrodinger wave equation in 1926. Thus forming the Orbital, the concept that proved electron behaves as matter
+        waves giving rise to 3D regions(orbitals) where electrons are most likely to be found.<br>---------<br> His Key
+        contributions----
+        <dt>wave funstions: </dt>
+        <dd> Mathematical descriptions representing the quantum state of an electron. By squaring wavefunction we will
+          get the probability to find the electron</dd>
+        <dt>quantization of energy:</dt>
+        <dd> Treating electron as stationary matter waves. the electrons can only exist in states that satisfy the wave
+          equation.</dd>
+        <dt>Quantum numbers:</dt>
+        <dd>these numbers dictate the size/energy, the shape, and the orientation in space of atomic orbitals. </dd>
+        <dt>nodes: </dt>
+        <dd>Regions within orbitals where the probability of finding the electron drops to zero.</dd>
+    </dl></strong></p>
+  </div>
+  <h1> 1D analogy</h1>
+  <p>We need a wave that is confined in a 3D space. For that there is an analogy where we have a wave that is confined
+    on a streched string</p>
+  <p><strong>Waves on a streched string</strong><br>
+    A string is connected at the end and when we pluck it it will produce standing waves. The fundamental frequency is
+    where half a wave fits the string and the next possible standing waves increments by adding exactly half a
+    wavelength. So, when we confine the wave discrete frequencies are allowed no frequency in between are allowed.
+  </p>
+  <div class="iframe-container-wide">
+    <iframe src="strechedwavesim.html" title="Stretched String Wave Simulator"></iframe>
+  </div>
+  <div class="iframe-link-container">
+    <a href="strechedwavesim.html" target="_blank" class="iframe-link">Open Simulator in New Tab &rarr;</a>
+  </div>
+  <p> <strong>--------ENERGY--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    for physical wave we can esstimate the energy by looking the wave's frequency, for the fundamental wave it is
+    vibrating with the lowest frequency so it is vibrating very slowly so it has the lowest energy and for the next
+    harmonics energy increases as the frequency gets higher. That's okay with physical waves but for
+    quantum mechanics there is only mathematical wave which means nothing actually oscilating up and down it is
+    <strong>probability
+      wave</strong> the fundemantal wave has a probability of finding an electron around these region (yellow
+    region)<br>
+  <div class="image-container"><img src="../_Images/Screenshot (71).png" alt="wave1"></div><br>In the second wave there
+  is a node that means the amplitude
+  is zero in between so the probability
+  of finding the electron is confined in to these two regions (yellow region) <br>
+  <div class="image-container"><img src="../_Images/Screenshot (73).png" alt="wave2"></div><br>And from the uncertainty
+  principle we know that if we try to confine the electron, reduce the uncertainty in it's position will inevitably
+  increases it's momentum thus end up in higher kinetic energy. That's how a node represents a higher energy. So the
+  standing waves states thet more the excited states, more the energy more the nodes.
+  </p>
+  <h1>Visualising 2 Dimension</h1>
+  <p>From the streched string how can we draw a 2D visualisation of electrons around the proton(hygrogen's ground
+    state)</p>
+  <p><strong>--------Ground State--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In the ground state the probability starts
+    from zero and reaches a maximum and then goes back to zero. That's what
+    it looks like if it is a confined wave. When we picturise, one end could be nucleus and the ohter end will be
+    infinity(all of space). As we radially go outward from the proton to space the probability starts from zero
+    increases and reaches a maximum and then decreases and tends to zero as approaching to infinity.
+  </p>Lets Draw The same thing in prespective of a hydrogen atom<br>
+  <!--ground state radial interactive animation-->
+  <div class="iframe-container-narrow">
+    <iframe src="radialprob.html" title="Radial Probability Simulator"></iframe>
+  </div>
+  <div class="iframe-link-container">
+    <a href="radialprob.html" target="_blank" class="iframe-link">Open Simulator in New Tab &rarr;</a>
+  </div>
+
+  <strong>--Final Look</strong>
+  <div class="image-container1"><img src="../_Images/orbital1.jpeg" alt="gorundstate"></div>
+  <!--it's a 2D projection of 3D
+       dots represent the probability-->
+  <p>
+    From the above image you may run in to a common misunderstanding, when you look carefully in the center it is
+    brighter than the other parts even though the probability is less there near the proton. But it is just a problem
+    of
+    visualisation -- because of the density, The dots are confined in a small space so it looks very bright, what
+    matters
+    is
+    not the density(not how crowded the dots are) what matters is that in a given radius how many total dots are there,
+    that represents the probability.</p>
+
+  <p> <strong>--------Orbitals--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This is a probability map-- You can predict
+    where it is most
+    likely to find the electron.
+    The dots represent
+    the
+    probability of finding an electron at that specific location. These diagrams are also called Electron Density
+    Maps or Dot-Density Diagrams.
+  </p>
+  <p><strong>--------First Excited State--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    When we go to the first excited state which is 2nd Harmonic (n = 2) there is a node in between. So when we consider
+    the probability, the probability starts with zero then increases and reaches a maximum, decreases and goes to zero
+    again(first node), increases and goes
+    to a maximum again (negative amplitude does not
+    matter because probability is amplitude squared) and decrease to zero. We can confine this between the nucleus and
+    radially going outwards to infinity </p><br>
+  <!--2nd harmonic animation this is a qualitative pattern not quantative-->
+  <div class="iframe-container-narrow">
+    <iframe src="radialprob2.html" title="Radial Probability Simulator for 2nd Harmonic"></iframe>
+  </div>
+  <div class="iframe-link-container">
+    <a href="radialprob2.html" target="_blank" class="iframe-link">Open Simulator in New Tab &rarr;</a>
+  </div>
+  <strong>--Final Look</strong>
+  <div class="image-container2"><img src="../_Images/orbital3.jpeg" alt="2nd harmonic">
+  </div><br><!--add description about node etc.. within the diagram-->
+  <div class="image-container3"><img src="../_Images/orbital4.jpeg" alt="comparing both harmonics">
+  </div><br>
+  <p>As compared to the ground state first excited state-- electron has more energy than in the ground state, you can
+    see
+    that by just looking both diagrams-- the first excited state is more spread out than the ground state, as the waves
+    are more confined thus more energy (uncertainty principle).<br>
+    <strong>Energy Map</strong><br>
+  <div class="image-container4"><img src="../_Images/orbital5.jpeg" alt="energy state comp both n">
+    <span class="image-caption">S Orbitals</span>
+  </div><!--s-orbitals--> </p>
+  <h1>P orbitals</h1>
+  <p>
+    In one dimension a nod is just a point<br> in 2 dimensional node becomes a straight line<br>In 3 dimension node
+    becomes a plane.<br>
+    Slice a plane through the center because we should respect the symmetry like cutting a cake in equal halfs, The
+    coloumbs potential over here is symetric.</p>
+  <div class="image-container5"><img src="../_Images/orbital6.jpeg" alt="p orbital"><!--symmetrical cut and p orbital-->
+  </div>
+  <br>
+  There are two more ways to get the first excited wave. We can slice it to three different ways so, there are total
+  four
+  ways.<br>
+  <div class="image-container6"><img src="../_Images/orbital7.jpeg"
+      alt="4 ways"><!--all four ways of p orbitals plus directions.-->
+  </div>
+  <p>
+    But we can't slice it diagonally because diagonals can give you a linear combination of these three. Eg: If you have
+    three basis vector then any other vectors of different directions can be written as linear combination of these
+    basis
+    vectors.
+    The spherical node does not give any directional property we call it as <strong> radial node </strong>(the node has
+    the same distance
+    from the center anywhere you go). The next three nodes gives directional property they are called <strong>angular
+      node</strong> (plane
+    slicing giving three P orbitals). The ground state has zero nodes. <strong>These are the 3 basis Orbitals (P
+      orbitals)</strong>.
+  </p>
+
+  <p><strong>-------- Second excited state--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    The second excited state is the 3rd harmonic which has 2 radial nodes.
+  <div class="image-container7"><img src="../_Images/orbital8.jpeg" alt="2nd excited node"><!--2nd radial node-->
+  </div>
+  <strong>--------Angular--------</strong>
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  We can make it one radial and one angular node.
+  <div class="image-container8"><img src="../_Images/orbital9.jpeg"
+      alt="1 radial and 1 angular node"><!--one radial and one angular node all three ways -->
+  </div>
+  </p>
+  <h1>D-Orbitals</h1>
+  <P>
+    If both nodes are angular nodes.There are 5 ways to set up these nodes.
+  <div class="image-container9"><img src="../_Images/orbital10.jpeg" alt="two angular node">
+  </div><!--Contains all 5 D orbitals-->
+  <div class="image-container10"><img src="../_Images/orbital11.jpeg" alt="energy map of p orbital and d orbital">
+  </div>
+  </P>
+  <h1>Quantum Numbers</h1>
+  <p><strong>--------Principle Quantum Number--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    We need numbers to identify where the electron is in the atom. The first number identifies by the energy level -
+    n=1,n=2,n=3... which is called the principle quantum number.<br>
+    <strong>--------Azimuthal quantum number--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    The second number is the azimuthal quantum number symbol(l) which is l=0,1,2,3...n-1 It runs from 0 to n-1 because
+    n=1 is the ground state and ground state has zero node that's why maximum has n-1 nodes. It shows how many angular
+    nodes are there. This is to identify the geometrical shape of the orbital.<br>
+    <strong>--------Magnetic Quantum Number--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    The third number is the magnetic quantum number which shows the spatial 3d orientation of a orbital, The symbol is
+    mₗ. The values depends on the azimuthal quantum numbers (l) ranging from -l to +l (including zero). mₗ =
+    -l...0...+l. this tells you exactly how many different orientations that specific type of orbital can have. mₗ
+    cannot exist without l (l - how many angular nodes do that orbital have) We can find the orientations by knowing how
+    many angular nodes are there in the orbital, It directly limits it's possible orientation, that's the relationship
+    between azimuthal and magnetic quantum numbers. For example, if l=0 (s orbital) then mₗ=0 (only one spherical
+    orientation). If l=1 (p orbital) then mₗ=-1,0,+1 (three orientations). If l=2 (d orbital) then mₗ=-2,-1,0,+1,+2
+    (five orientations). If l=3 (f orbital) then mₗ=-3,-2,-1,0,+1,+2,+3 (seven orientations).<br>
+    <strong>--------Electron Spin--------</strong><br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    The fourth number arises from the pauli exclusion principle which states that two electrons cannot have the same
+    quantum numbers. Each electron has a property called spin which can be either up or down. The electron spin (symbol
+    - m<sub>s</sub>) ---- If it's going up the spin is +1/2 and if it is going down it is -1/2. m<sub>s</sub> will only
+    be either +1/2 or -1/2 and this gives us the last quantum number.<br>
+  <div class="image-container11"><img src="../_Images/orbital12.jpeg" alt="final pic">
+  </div><!--all quantum numbers + energy map fully explained-->
+  </p>

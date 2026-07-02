@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radial Probability Simulation (2nd Harmonic)</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body {
+            background-color: #0b0c10;
+            color: #ecf0f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        h2 {
+            margin: 5px 0 10px 0;
+            color: #00ff88;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        canvas {
+            background-color: #000000;
+            border: 2px solid #1f2833;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            max-height: 70vh;
+            max-width: 95vw;
+        }
+
+        .controls {
+            margin-top: 10px;
+            width: 500px;
+            max-width: 90vw;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        input[type=range] {
+            flex-grow: 1;
+            margin: 0 15px;
+            accent-color: #00ff88;
+        }
+
+        .counter {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Radial Probability Simulation (n = 2 Standing Wave)</h2>
+    <div class="counter">Dot Count: <span id="dotCount">0</span></div>
+    <canvas id="simCanvas" width="600" height="500"></canvas>
+
+    <div class="controls">
+        <div class="slider-container">
+            <span>Radial Distance (r)</span>
+            <input type="range" id="radiusSlider" min="0" max="6" step="0.05" value="0">
+            <span id="radiusVal">0.00</span>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+        const slider = document.getElementById('radiusSlider');
+        const radiusVal = document.getElementById('radiusVal');
+        const dotCountText = document.getElementById('dotCount');
+
+        // Center of the orbital visualization
+        const centerX = canvas.width / 2;
+        const centerY = 175;
+        const maxVisualRadius = 150; // Max radius in pixels
+
+        // --- Wave (n=2 standing wave) configuration ---
+        const graphX      = 50;    // left x of the wave string
+        const graphY      = 390;   // vertical midline of the wave
+        const graphWidth  = 500;   // total horizontal length (L)
+        const waveAmp     = 75;    // peak amplitude in pixels
+
+        // 2s Radial Probability Density Function: aligned with the first excited state wave function ψ ∝ sin(2πr/6)
+        // Probability Density P(r) ∝ sin²(2πr/6)
+        function getProbability(r) {
+            if (r <= 0 || r >= 6) return 0;
+            const maxDots = 600;
+            return maxDots * Math.pow(Math.sin(2 * Math.PI * r / 6), 2);
+        }
+
+        // n=2 standing wave profile (snapshot): y(x) = -A · sin(2π·x/L)
+        // Note: subtracting waveAmp makes the curve bend upwards/downwards on the HTML5 canvas
+        function waveY(xPx) {
+            return -waveAmp * Math.sin(2 * Math.PI * xPx / graphWidth);
+        }
+
+        function drawStandingWave(sliderR) {
+            const numPts  = 300;
+            const dx      = graphWidth / (numPts - 1);
+            const waveColor = '#00ff88';  // mode-2 neon green (matches strechedwavesim)
+
+            // Pre-compute wave points
+            const px = new Float32Array(numPts);
+            const py = new Float32Array(numPts);
+            for (let i = 0; i < numPts; i++) {
+                px[i] = graphX + i * dx;
+                py[i] = graphY + waveY(i * dx);
+            }
+
+            // Filled glow under wave with nodes at 0, L/2, L
+            ctx.beginPath();
+            ctx.moveTo(graphX, graphY);
+            for (let i = 0; i < numPts; i++) ctx.lineTo(px[i], py[i]);
+            ctx.lineTo(graphX + graphWidth, graphY);
+            const grad = ctx.createLinearGradient(graphX, 0, graphX + graphWidth, 0);
+            grad.addColorStop(0,    'rgba(0,0,0,0)');
+            grad.addColorStop(0.25, 'rgba(0,255,136,0.08)'); // first antinode peak
+            grad.addColorStop(0.5,  'rgba(0,0,0,0)');          // central node
+            grad.addColorStop(0.75, 'rgba(0,255,136,0.08)'); // second antinode peak
+            grad.addColorStop(1,    'rgba(0,0,0,0)');
+            ctx.fillStyle = grad;
+            ctx.fill();
+
+            // Main glowing wave string
+            ctx.beginPath();
+            ctx.moveTo(graphX, graphY);
+            for (let i = 0; i < numPts; i++) ctx.lineTo(px[i], py[i]);
+            ctx.strokeStyle = waveColor;
+            ctx.lineWidth   = 3;
+            ctx.shadowBlur  = 14;
+            ctx.shadowColor = waveColor;
+            ctx.stroke();
+            ctx.shadowBlur  = 0;
+
+            // Clamped endpoints and central node (white dots)
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(graphX, graphY, 5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(graphX + graphWidth / 2, graphY, 4, 0, Math.PI * 2); // central node
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(graphX + graphWidth, graphY, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Labels
+            ctx.fillStyle    = 'rgba(255,255,255,0.35)';
+            ctx.font         = '12px Arial';
+            ctx.textAlign    = 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('n = 2 Standing Wave (ψ ∝ sin(2πr/L))', graphX + 4, graphY - waveAmp - 14);
+
+            ctx.fillStyle = 'rgba(255,255,255,0.2)';
+            ctx.font = '11px Arial';
+            ctx.fillText('r = 0', graphX, graphY + waveAmp + 16);
+            ctx.textAlign = 'center';
+            ctx.fillText('r = 3a₀ (Node)', graphX + graphWidth / 2, graphY + waveAmp + 16);
+            ctx.textAlign = 'right';
+            ctx.fillText('r = 6a₀', graphX + graphWidth, graphY + waveAmp + 16);
+
+            // --- Current position marker ---
+            const frac     = Math.min(sliderR / 6, 1);
+            const markerXpx = frac * graphWidth;
+            const markerY  = graphY + waveY(markerXpx);
+
+            // Dashed vertical from axis to wave point
+            ctx.beginPath();
+            ctx.setLineDash([4, 4]);
+            ctx.moveTo(graphX + markerXpx, graphY);
+            ctx.lineTo(graphX + markerXpx, markerY);
+            ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+            ctx.lineWidth   = 1;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Glowing marker dot
+            ctx.beginPath();
+            ctx.arc(graphX + markerXpx, markerY, 6, 0, Math.PI * 2);
+            ctx.fillStyle  = '#ffffff';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = waveColor;
+            ctx.fill();
+            ctx.strokeStyle = '#ff4d4d';
+            ctx.lineWidth   = 2;
+            ctx.stroke();
+            ctx.shadowBlur  = 0;
+        }
+
+        function drawSimulation() {
+            const r = parseFloat(slider.value);
+            radiusVal.innerText = r.toFixed(2);
+
+            const numDots = Math.round(getProbability(r));
+            dotCountText.innerText = numDots;
+
+            const pixelRadius = (r / 6) * maxVisualRadius;
+
+            // Clear canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // ── 1. ORBITAL VISUALIZATION ──────────────────────────────────────
+
+            // Nucleus
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 6, 0, 2 * Math.PI);
+            ctx.fillStyle   = '#ff4d4d';
+            ctx.fill();
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth   = 1;
+            ctx.stroke();
+
+            ctx.fillStyle    = '#fff';
+            ctx.font         = '10px Arial';
+            ctx.textAlign    = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('+', centerX, centerY);
+
+            // Probability Ring Dots — opacity and jitter align with the static wave amplitude
+            if (pixelRadius > 0 && numDots > 0) {
+                const frac         = Math.min(r / 6, 1);
+                const waveAmpNorm  = Math.abs(Math.sin(2 * Math.PI * frac)); // 0 to 1 wave envelope height (absolute)
+                const dotAlpha     = 0.50 + 0.50 * waveAmpNorm;
+                ctx.fillStyle      = `rgba(241, 196, 15, ${dotAlpha.toFixed(3)})`;
+
+                for (let i = 0; i < numDots; i++) {
+                    const angle  = Math.random() * 2 * Math.PI;
+                    const jitter = (Math.random() - 0.5) * 6 + waveAmpNorm * 4;
+                    const dotX   = centerX + (pixelRadius + jitter) * Math.cos(angle);
+                    const dotY   = centerY + (pixelRadius + jitter) * Math.sin(angle);
+
+                    ctx.beginPath();
+                    ctx.arc(dotX, dotY, 1.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                }
+            }
+
+            // ── 2. N=2 STANDING WAVE ──────────────────────────────────────────
+            drawStandingWave(r);
+        }
+
+        // Re-draw immediately on slider change
+        slider.addEventListener('input', drawSimulation);
+
+        // Initial draw
+        drawSimulation();
+    </script>
+</body>
+
+</html>
