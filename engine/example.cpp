@@ -1,22 +1,9 @@
 #include<iostream>
-//reccursive
-int factorial(int num);
-
-
-int main(){
-int num;
-std::cout<<"how many numbers you want to find factorial of";
-std::cin>>num;
-
-std::cout<<factorial(num);
-return 0;
-
+template <typename T,typename U>
+auto max(T x, U y){
+  return (x > y)? x:y;
 }
-int factorial(int num){
-  if(num > 1){
-    return num*factorial(num - 1);
-  }
-  else{
-    return 1;
-  }
+int main(){
+std::cout<< max(3,8)<<'\n';
+return 0;
 }
