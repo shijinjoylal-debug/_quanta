@@ -469,26 +469,24 @@
       font-style: italic;
     }
 
-    /* Responsive fetch-loaded simulator frame */
+    /* Responsive fetch-loaded simulator mount */
     .iframe-container-wide {
       width: min(100%, 1200px);
       height: clamp(620px, 82vh, 900px);
       margin: 30px auto 10px;
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 16px;
-      overflow: hidden;
+      overflow: auto;
       box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
       background: #050d1a;
       position: relative;
     }
 
-    .iframe-container-wide iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      position: absolute;
-      top: 0;
-      left: 0;
+    .wave-sim-host {
+      display: block;
+      min-height: 100%;
+      opacity: 0;
+      transition: opacity 0.4s ease;
     }
 
     /* Fetch loader overlay */
@@ -689,8 +687,8 @@
       <p class="sim-error-msg" id="waveSimErrorMsg">Could not load the simulator.</p>
       <a href="strechedwavesim.html" target="_blank" class="sim-error-link">Open directly -&gt;</a>
     </div>
-    <!-- iframe populated via Fetch API -->
-    <iframe id="waveSimFrame" title="Stretched String Wave Simulator" style="opacity:0;transition:opacity 0.4s ease;"></iframe>
+    <!-- Simulator populated via Fetch API and JavaScript (no iframe) -->
+    <div id="waveSimMount" class="wave-sim-host" role="region" aria-label="Stretched String Wave Simulator"></div>
   </div>
   <div class="iframe-link-container">
     <a href="strechedwavesim.html" target="_blank" class="iframe-link">Open Simulator in New Tab &rarr;</a>
@@ -862,15 +860,14 @@
 
   <script>
     (function loadWaveSimulator() {
-      const frame = document.getElementById('waveSimFrame');
+      const mount = document.getElementById('waveSimMount');
       const loader = document.getElementById('waveSimLoader');
       const error = document.getElementById('waveSimError');
       const errorMsg = document.getElementById('waveSimErrorMsg');
       const simulatorUrl = new URL('strechedwavesim.html', window.location.href);
-      let simulatorAssigned = false;
 
       function showSimulator() {
-        frame.style.opacity = '1';
+        mount.style.opacity = '1';
         loader.classList.add('hidden');
       }
 
@@ -880,11 +877,72 @@
         error.classList.add('visible');
       }
 
-      frame.addEventListener('load', function() {
-        if (simulatorAssigned) {
-          showSimulator();
+      function loadScriptOnce(src) {
+        const scriptUrl = new URL(src, simulatorUrl).href;
+
+        if (window.WaveEngine || Array.from(document.scripts).some(function(script) {
+          return script.src === scriptUrl;
+        })) {
+          return Promise.resolve();
         }
-      });
+
+        return new Promise(function(resolve, reject) {
+          const script = document.createElement('script');
+          script.src = scriptUrl;
+          script.onload = resolve;
+          script.onerror = function() {
+            reject(new Error('Could not load ' + scriptUrl));
+          };
+          document.head.appendChild(script);
+        });
+      }
+
+      function prepareSimulatorCss(css) {
+        return css
+          .replace(/:root/g, ':host')
+          .replace(/\bbody\b/g, '.wave-sim-document')
+          .replace(/padding-top:\s*80px;\s*\/\*\s*Leave space for navbar\s*\*\//g, 'padding: 0');
+      }
+
+      function createShadowDocument(shadowRoot, host) {
+        return {
+          documentElement: host,
+          getElementById: function(id) {
+            return shadowRoot.getElementById(id);
+          },
+          querySelector: function(selector) {
+            return shadowRoot.querySelector(selector);
+          },
+          querySelectorAll: function(selector) {
+            return shadowRoot.querySelectorAll(selector);
+          },
+          createElement: document.createElement.bind(document)
+        };
+      }
+
+      function runSimulatorScript(scriptText, shadowRoot) {
+        if (!window.WaveEngine) {
+          throw new Error('WaveEngine is not available.');
+        }
+
+        const shadowDocument = createShadowDocument(shadowRoot, mount);
+        const executeSimulator = new Function(
+          'document',
+          'window',
+          'WaveEngine',
+          'getComputedStyle',
+          'requestAnimationFrame',
+          scriptText + '\n//# sourceURL=strechedwavesim-embedded.js'
+        );
+
+        executeSimulator(
+          shadowDocument,
+          window,
+          window.WaveEngine,
+          window.getComputedStyle.bind(window),
+          window.requestAnimationFrame.bind(window)
+        );
+      }
 
       fetch(simulatorUrl.href)
         .then(function(response) {
@@ -894,14 +952,38 @@
           return response.text();
         })
         .then(function(html) {
-          const baseTag = '<base href="' + simulatorUrl.href + '">';
-          const htmlWithBase = /<head[^>]*>/i.test(html)
-            ? html.replace(/<head([^>]*)>/i, '<head$1>' + baseTag)
-            : baseTag + html;
+          const parser = new DOMParser();
+          const simulatorDocument = parser.parseFromString(html, 'text/html');
+          const appScript = Array.from(simulatorDocument.scripts).find(function(script) {
+            return script.textContent.indexOf('Application Initialization') !== -1;
+          });
 
-          simulatorAssigned = true;
-          frame.srcdoc = htmlWithBase;
-          window.setTimeout(showSimulator, 100);
+          if (!appScript) {
+            throw new Error('Simulator script was not found.');
+          }
+
+          mount.innerHTML = '';
+          const shadowRoot = mount.attachShadow({ mode: 'open' });
+
+          const style = document.createElement('style');
+          style.textContent = Array.from(simulatorDocument.querySelectorAll('style'))
+            .map(function(styleTag) {
+              return prepareSimulatorCss(styleTag.textContent);
+            })
+            .join('\n');
+
+          const simulatorShell = document.createElement('div');
+          simulatorShell.className = 'wave-sim-document';
+          simulatorShell.innerHTML = simulatorDocument.body.innerHTML;
+
+          shadowRoot.appendChild(style);
+          shadowRoot.appendChild(simulatorShell);
+
+          return loadScriptOnce('../engine/wave_engine_js.js').then(function() {
+            runSimulatorScript(appScript.textContent, shadowRoot);
+            window.dispatchEvent(new Event('resize'));
+            window.setTimeout(showSimulator, 100);
+          });
         })
         .catch(function(err) {
           showError('Could not fetch strechedwavesim.html. Try running the site from a local server. ' + err.message);
