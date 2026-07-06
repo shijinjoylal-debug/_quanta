@@ -232,6 +232,51 @@
     .small.muted {
       word-break: break-word;
     }
+
+    /* Responsive de Broglie Grid */
+    .db-grid {
+      display: grid;
+      grid-template-columns: 1fr 260px;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .db-figure {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .db-text {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .db-calculator {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+    }
+
+    @media (max-width: 768px) {
+      .db-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .db-figure {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .db-calculator {
+        grid-column: 1;
+        grid-row: 2;
+      }
+
+      .db-text {
+        grid-column: 1;
+        grid-row: 3;
+      }
+    }
   </style>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -313,8 +358,8 @@
         <!-- de Broglie diagram + calculator -->
         <section class="card" style="margin-top:14px">
           <h2>de Broglie — Concept &amp; Calculator</h2>
-          <div style="display:grid;grid-template-columns:1fr 260px;gap:12px">
-            <div>
+          <div class="db-grid">
+            <div class="db-figure">
               <div aria-hidden="true" class="figure">
                 <!-- de Broglie SVG -->
                 <svg preserveaspectratio="xMidYMid meet" viewbox="0 0 600 200">
@@ -338,11 +383,8 @@
                   </g>
                 </svg>
               </div>
-              <p class="small muted" style="margin-top:8px">A moving particle's wavelength dpapends on its momentum p You can calculate de broglie  wavelength using the formula λ = h / p (h is
-                Planck's constant). For fast electrons, λ is comparable to atomic spacing and diffraction can occur. 
-              </p>
             </div>
-            <div>
+            <div class="db-calculator">
               <div class="controls">
                 <label>Mass (kg)
                   <input id="dbMass" type="text" value="9.11e-31" />
@@ -356,6 +398,11 @@
                 </div>
                 <div class="result-box" style="margin-top:10px">λ = <span id="dbOut">—</span></div>
               </div>
+            </div>
+            <div class="db-text">
+              <p class="small muted" style="margin-top:8px">A moving particle's wavelength dpapends on its momentum p You can calculate de broglie  wavelength using the formula λ = h / p (h is
+                Planck's constant). For fast electrons, λ is comparable to atomic spacing and diffraction can occur. 
+              </p>
             </div>
           </div>
         </section>
