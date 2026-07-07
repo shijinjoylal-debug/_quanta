@@ -76,5 +76,12 @@ const searchData = [
         url: "pages/test7.html",
         description: "Learn about Heizenbierg's Uncertainty Principle.",
         keywords: ["Uncertainty Principle", "Heizenbierg's Uncertainty Principle", "uncertainty", "position", "momentum", "wave", "wavelength", "uncertainty in position", "uncertainty in wavelength", "heizenbierg", "missuderstanding about uncertainty", "spread",]
+    },
+    {
+        title: "Orbitals",
+        url: "pages/orbitals.html",
+        description: "Learn about Orbitals - A 3D region around an atom's nucleus where an electron is most likely to be found. Orbitals are currently the most scientifically accurate model to visualize atomic structure.",
+        keywords: ["orbitals", "atomic structure", "quantum numbers", "nodes", "quantization of energy", "Erwin Schrodinger", "waves on a streched string", "waves on a streched string animation", "P orbital", "S orbital", "D orbital", "F orbital", "principle quantum number"
+            , "azimuthal quantum number", "magnetic quantum number", "electron spin"]
     }
 ];
