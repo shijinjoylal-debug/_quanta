@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const isInsidePages =
         path.includes('/pages/') ||
-        (path.split('/').pop() !== 'index.html' && path.includes('calc%20pnl'));
+        (path.split('/').pop() !== 'index.html' && path.includes('calc%20pnl') || ('formulas.html'));
 
     // Detect if script uses ../js/navbar.js
     const scripts = document.getElementsByTagName('script');
@@ -27,11 +27,17 @@ document.addEventListener("DOMContentLoaded", function () {
     const keyExpPath = useParentPath
         ? 'calc pnl.html'
         : 'pages/calc pnl.html';
-
+    const formulaspath = useParentPath
+        ? 'formulas.html'
+        : 'pages/formulas.html';
     const isBhome = path.includes('bhome.html');
+    const isFormulas = path.includes('formulas.html');
 
     const keyExpLink = isBhome
         ? `<li><a href="${keyExpPath}">Key Experiments</a></li>`
+        : '';
+    const formulaslink = isBhome
+        ? `<li><a href="${formulaspath}">Formulas</a></li>`
         : '';
 
     // Create Navbar
@@ -46,6 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <ul>
                 <li><a href="${homePath}">Home</a></li>
                 ${keyExpLink}
+                ${formulaslink}
                 <li>
                     <a href="#" onclick="history.back(); return false;">
                         &larr; Back

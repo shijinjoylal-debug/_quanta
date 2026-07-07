@@ -5,44 +5,37 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Unrealmind — Quantum Formula Archive</title>
-    <link rel="stylesheet" href="./src/styles/main.css">
-    <link rel="stylesheet" href="./src/styles/home.css">
-    <link rel="stylesheet" href="./src/styles/formulas.css">
+    <link rel="stylesheet" href="../frontend/src/styles/main.css">
+    <link rel="stylesheet" href="../frontend/src/styles/home.css">
+    <link rel="stylesheet" href="../frontend/src/styles/formulas.css">
     <!-- MathJax -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    (function() {
-      var consent = localStorage.getItem('cookieConsent');
-      var status = (consent === 'accepted') ? 'granted' : 'denied';
-      gtag('consent', 'default', {
-        'ad_storage': status,
-        'analytics_storage': status,
-        'personalization_storage': status,
-        'wait_for_update': 500
-      });
-    })();
-  </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        (function () {
+            var consent = localStorage.getItem('cookieConsent');
+            var status = (consent === 'accepted') ? 'granted' : 'denied';
+            gtag('consent', 'default', {
+                'ad_storage': status,
+                'analytics_storage': status,
+                'personalization_storage': status,
+                'wait_for_update': 500
+            });
+        })();
+    </script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579"
+        crossorigin="anonymous"></script>
+    <script src="../js/cookie-consent.js" defer></script>
+    <link rel="stylesheet" href="../css/navbar.css">
+    <script src="../js/navbar.js" defer></script>
 </head>
 
 <body>
 
     <!-- Navigation -->
-    <nav>
-        <div class="nav-brand" style="font-weight:bold;font-size:1.2rem;color:var(--glow);">Unrealmind</div>
-        <div class="menu-toggle" onclick="document.getElementById('navMenu').classList.toggle('open')">
-            <span></span><span></span><span></span>
-        </div>
-        <ul id="navMenu">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="community.html">Community</a></li>
-            <li><a href="calculations.html">Calculations</a></li>
-            <li><a class="active" href="formulas.html">Formulas</a></li>
-        </ul>
-    </nav>
+
 
     <div class="container">
         <header class="page-header">
