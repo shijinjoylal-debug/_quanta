@@ -78,17 +78,17 @@ const searchData = [
         keywords: ["Uncertainty Principle", "Heizenbierg's Uncertainty Principle", "uncertainty", "position", "momentum", "wave", "wavelength", "uncertainty in position", "uncertainty in wavelength", "heizenbierg", "missuderstanding about uncertainty", "spread",]
     },
     {
+        title: "Schrodinger's Cat",
+        url: "pages/schrocat.html",
+        description: "A famous thought experiment devised by physicist Erwin Schrodinger in 1935.",
+        keywords: ["schrodinger's cat", "erwin rudolf alexander schrodinger", "chemical bond", "ionic bond", "covalent bond", "energy's role in formation of molicules", "how conductors and transistors works", "austrian physicist", "Nobel prize", "imaginary cat", "austrian-irish theoritical physicist"]
+    },
+    {
         title: "Orbitals",
         url: "pages/orbitals.html",
         description: "Learn about Orbitals - A 3D region around an atom's nucleus where an electron is most likely to be found. Orbitals are currently the most scientifically accurate model to visualize atomic structure.",
         keywords: ["orbitals", "atomic structure", "quantum numbers", "nodes", "quantization of energy", "Erwin Schrodinger", "waves on a streched string", "waves on a streched string", "P orbital", "S orbital", "D orbital", "F orbital", "principle quantum number"
             , "azimuthal quantum number", "magnetic quantum number", "electron spin"]
-    },
-    {
-        title: "Schrodinger's Cat",
-        url: "pages/schrocat.html",
-        description: "A famous thought experiment devised by physicist Erwin Schrodinger in 1935.",
-        keywords: ["schrodinger's cat", "erwin rudolf alexander schrodinger", "chemical bond", "ionic bond", "covalent bond", "energy's role in formation of molicules", "how conductors and transistors works", "austrian physicist", "Nobel prize", "imaginary cat", "austrian-irish theoritical physicist"]
     },
     {
         title: "Resonant standing waves",

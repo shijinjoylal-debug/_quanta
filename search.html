@@ -14,20 +14,21 @@
     <script src="js/learning_client.js" defer></script>
     <script src="js/gemini_client.js" defer></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      (function() {
-        var consent = localStorage.getItem('cookieConsent');
-        var status = (consent === 'accepted') ? 'granted' : 'denied';
-        gtag('consent', 'default', {
-          'ad_storage': status,
-          'analytics_storage': status,
-          'personalization_storage': status,
-          'wait_for_update': 500
-        });
-      })();
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        (function () {
+            var consent = localStorage.getItem('cookieConsent');
+            var status = (consent === 'accepted') ? 'granted' : 'denied';
+            gtag('consent', 'default', {
+                'ad_storage': status,
+                'analytics_storage': status,
+                'personalization_storage': status,
+                'wait_for_update': 500
+            });
+        })();
     </script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579"
+        crossorigin="anonymous"></script>
     <script src="js/cookie-consent.js" defer></script>
     <link rel="stylesheet" href="css/navbar.css">
     <script src="js/navbar.js" defer></script>
@@ -51,7 +52,7 @@
     <!-- Standard Search Container -->
     <div id="standard-search-view">
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Type to search modules, formulas, or topics...">
+            <input type="text" id="searchInput" placeholder="Type to search topics...">
         </div>
         <div id="resultsContainer">
             <p style="opacity: 0.6;">Start typing to explore...</p>
