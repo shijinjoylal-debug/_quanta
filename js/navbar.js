@@ -36,9 +36,9 @@ document.addEventListener("DOMContentLoaded", function () {
     const keyExpLink = isBhome
         ? `<li><a href="${keyExpPath}">Key Experiments</a></li>`
         : '';
-    const formulaslink = isBhome
-        ? `<li><a href="${formulaspath}">Formulas</a></li>`
-        : '';
+    /* const formulaslink = isBhome
+         ? `<li><a href="${formulaspath}">Formulas</a></li>`
+         : '';*/
 
     // Create Navbar
     const header = document.createElement('header');
@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <ul>
                 <li><a href="${homePath}">Home</a></li>
                 ${keyExpLink}
-                ${formulaslink}
+               
                 <li>
                     <a href="#" onclick="history.back(); return false;">
                         &larr; Back

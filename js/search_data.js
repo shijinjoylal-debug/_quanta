@@ -57,7 +57,7 @@ const searchData = [
         title: "wave-particle duality",
         url: "pages/test5.html",
         description: "Wave–Particle Duality — Clean Academic Interactive Guide",
-        keywords: ["wave particle duality", "wave-particle duality", "de broglie calculation", "wave particle duality clean academic guide"]
+        keywords: ["wave particle duality", "wave-particle duality", "de broglie calculation", "wave particle duality clean academic guide", "waveparticle duality "]
     },
     {
         title: "quantum entanglement",
@@ -81,7 +81,19 @@ const searchData = [
         title: "Orbitals",
         url: "pages/orbitals.html",
         description: "Learn about Orbitals - A 3D region around an atom's nucleus where an electron is most likely to be found. Orbitals are currently the most scientifically accurate model to visualize atomic structure.",
-        keywords: ["orbitals", "atomic structure", "quantum numbers", "nodes", "quantization of energy", "Erwin Schrodinger", "waves on a streched string", "waves on a streched string animation", "P orbital", "S orbital", "D orbital", "F orbital", "principle quantum number"
+        keywords: ["orbitals", "atomic structure", "quantum numbers", "nodes", "quantization of energy", "Erwin Schrodinger", "waves on a streched string", "waves on a streched string", "P orbital", "S orbital", "D orbital", "F orbital", "principle quantum number"
             , "azimuthal quantum number", "magnetic quantum number", "electron spin"]
+    },
+    {
+        title: "Schrodinger's Cat",
+        url: "pages/schrocat.html",
+        description: "A famous thought experiment devised by physicist Erwin Schrodinger in 1935.",
+        keywords: ["schrodinger's cat", "erwin rudolf alexander schrodinger", "chemical bond", "ionic bond", "covalent bond", "energy's role in formation of molicules", "how conductors and transistors works", "austrian physicist", "Nobel prize", "imaginary cat", "austrian-irish theoritical physicist"]
+    },
+    {
+        title: "Resonant standing waves",
+        url: "pages/strechedwavesim.html",
+        description: "Explore the spatial confinement and quantization of harmonics on a clamped streched string, modeling the 1D quantum potential analogy.",
+        keywords: ["resonant standing waves", "standing waves", "waves on a streched string", "waves on a streched string simulation", "harmonics simulation", "harmonics simulation n1-n4", "quantum confinement", "harmonics", "streched string animation"]
     }
 ];
