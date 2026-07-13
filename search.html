@@ -78,19 +78,35 @@
 
     <!-- Quantum Learning View -->
     <div id="quantum-view" style="display: none;">
-        <div class="search-container">
-            <input type="text" id="quantumInput" placeholder="Ask about Quantum Mechanics (External Knowledge)...">
+
+        <!-- URL + Question Inputs -->
+        <div class="quantum-input-panel">
+            <div class="quantum-input-group">
+                <label for="quantumUrlInput" class="quantum-label">
+                    <span class="quantum-label-icon">🔗</span> External Resource URL
+                </label>
+                <input type="url" id="quantumUrlInput"
+                    placeholder="Paste a URL to study (e.g. https://en.wikipedia.org/wiki/Quantum_entanglement)"
+                    class="quantum-url-input">
+            </div>
+
+            <div class="quantum-input-group">
+                <label for="quantumInput" class="quantum-label">
+                    <span class="quantum-label-icon">💬</span> Your Question
+                </label>
+                <input type="text" id="quantumInput"
+                    placeholder="What would you like to know from this resource?"
+                    class="quantum-question-input">
+            </div>
+
+            <button id="quantumAnalyzeBtn" class="quantum-analyze-btn">
+                <span class="btn-icon">⚛️</span>
+                Analyze &amp; Answer
+            </button>
         </div>
 
-        <div id="quantumResultsContainer" style="width: 100%; max-width: 800px; margin: 0 auto;">
-            <p style="opacity: 0.6;">Learn purely from external resources.</p>
-        </div>
-        <div class="search-container"
-            style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-            <p style="font-size: 0.9rem; opacity: 0.8;">Unsure about external topics? Ask Gemini:</p>
-            <button id="askGeminiQuantumBtn" class="ingest-btn"
-                style="background: #9b59b6; box-shadow: 0 0 10px #9b59b6;">Ask
-                Gemini General</button>
+        <div id="quantumResultsContainer" style="width: 100%; max-width: 800px; margin: 20px auto 0;">
+            <p class="quantum-hint">🌐 Paste any external URL and ask a question — the AI will read and explain it for you.</p>
         </div>
     </div>
 

@@ -282,16 +282,192 @@ body {
   color: #333;
 }
 
+/* ─── Quantum Learning Panel ─────────────────────────────────────── */
+.quantum-input-panel {
+  width: 100%;
+  max-width: 680px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(14px);
+  border-radius: 24px;
+  padding: 32px 36px;
+  box-shadow: 0 8px 32px rgba(155, 89, 182, 0.18), 0 2px 8px rgba(0,0,0,0.07);
+  border: 1.5px solid rgba(155, 89, 182, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.quantum-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.quantum-label {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: #5b2c8d;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.quantum-label-icon {
+  font-size: 1.1rem;
+}
+
+.quantum-url-input,
+.quantum-question-input,
 #quantumInput {
   width: 100%;
-  padding: 15px 25px;
-  font-size: 1.2rem;
-  border: 2px solid transparent;
-  border-radius: 50px;
-  background: rgba(255, 255, 255, 0.8);
+  padding: 14px 22px;
+  font-size: 1.05rem;
+  border: 2px solid rgba(155, 89, 182, 0.3);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(155, 89, 182, 0.08);
   outline: none;
   transition: all 0.3s ease;
-  color: #333;
+  color: #222;
+  font-family: inherit;
+}
+
+.quantum-url-input:focus,
+.quantum-question-input:focus,
+#quantumInput:focus {
+  border-color: #9b59b6;
+  box-shadow: 0 0 0 3px rgba(155, 89, 182, 0.18), 0 2px 10px rgba(155, 89, 182, 0.12);
+  background: #fff;
+}
+
+.quantum-analyze-btn {
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 40px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #9b59b6 0%, #6c3483 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(155, 89, 182, 0.45);
+  transition: all 0.3s ease;
+  letter-spacing: 0.5px;
+}
+
+.quantum-analyze-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(155, 89, 182, 0.55);
+  background: linear-gradient(135deg, #af7ac5 0%, #9b59b6 100%);
+}
+
+.quantum-analyze-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.quantum-analyze-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-icon {
+  font-size: 1.15rem;
+}
+
+/* Response Card */
+.quantum-response-card {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border-radius: 20px;
+  border-left: 6px solid #9b59b6;
+  box-shadow: 0 8px 30px rgba(155, 89, 182, 0.12);
+  overflow: hidden;
+  animation: fadeInUp 0.5s ease-out;
+  text-align: left;
+}
+
+.quantum-response-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 24px 12px;
+  border-bottom: 1px solid rgba(155, 89, 182, 0.15);
+}
+
+.quantum-response-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
+
+.quantum-response-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #6c3483;
+  margin: 0 0 2px;
+}
+
+.quantum-response-subtitle {
+  font-size: 0.82rem;
+  color: #888;
+  margin: 0;
+  word-break: break-all;
+}
+
+.quantum-source-link {
+  color: #9b59b6;
+  text-decoration: none;
+  font-weight: 600;
+}
+.quantum-source-link:hover {
+  text-decoration: underline;
+}
+
+.quantum-question-badge {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 24px;
+  background: rgba(155, 89, 182, 0.07);
+  font-size: 0.97rem;
+  font-weight: 600;
+  color: #5b2c8d;
+  border-bottom: 1px solid rgba(155, 89, 182, 0.1);
+}
+
+.quantum-response-body {
+  padding: 20px 24px 24px;
+  line-height: 1.85;
+  font-size: 1rem;
+  color: #2c2c2c;
+}
+
+/* Error Box */
+.quantum-error-box {
+  background: rgba(255, 235, 230, 0.95);
+  border: 1.5px solid #e74c3c;
+  border-radius: 14px;
+  padding: 16px 22px;
+  color: #c0392b;
+  font-weight: 600;
+  font-size: 0.97rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeInUp 0.4s ease-out;
+  text-align: left;
+}
+
+/* Hint text */
+.quantum-hint {
+  opacity: 0.65;
+  font-size: 0.97rem;
+  padding: 10px 0;
 }

@@ -11,9 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const aiResultsContainer = document.getElementById('aiResultsContainer');
 
     const quantumInput = document.getElementById('quantumInput');
+    const quantumUrlInput = document.getElementById('quantumUrlInput');
     const quantumResultsContainer = document.getElementById('quantumResultsContainer');
     const askGeminiAiBtn = document.getElementById('askGeminiAiBtn');
-    const askGeminiQuantumBtn = document.getElementById('askGeminiQuantumBtn');
+    const quantumAnalyzeBtn = document.getElementById('quantumAnalyzeBtn');
 
     const API_BASE = window.CONFIG.API_BASE_URL + '/api/learning';
 
@@ -33,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (tabName === 'quantum') {
             tabQuantum.classList.add('active');
             quantumView.style.display = 'block';
-            quantumInput.focus();
+            quantumUrlInput.focus();
         }
     }
 
@@ -105,8 +106,172 @@ document.addEventListener('DOMContentLoaded', () => {
         handleGeminiChat(aiInput, aiResultsContainer);
     });
 
-    askGeminiQuantumBtn.addEventListener('click', () => {
-        handleGeminiChat(quantumInput, quantumResultsContainer);
+    // ─── Quantum Learning: URL + Question → Gemini ────────────────────────────
+    async function handleQuantumAnalyze() {
+        const url = quantumUrlInput.value.trim();
+        const question = quantumInput.value.trim();
+
+        if (!url) {
+            showQuantumError('Please paste a URL to study.');
+            return;
+        }
+        if (!question) {
+            showQuantumError('Please enter a question about the resource.');
+            return;
+        }
+
+        // Basic URL validation
+        try { new URL(url); } catch (_) {
+            showQuantumError('That doesn\'t look like a valid URL. Please include https://');
+            return;
+        }
+
+        quantumResultsContainer.innerHTML = `
+            <div class="loading-spinner"></div>
+            <p style="text-align:center; color:#9b59b6; margin-top:10px;">
+                ⚛️ Fetching resource and consulting AI...
+            </p>`;
+
+        // Disable button while loading
+        quantumAnalyzeBtn.disabled = true;
+        quantumAnalyzeBtn.textContent = 'Analyzing...';
+
+        let pageText = '';
+        let fetchSuccess = false;
+
+        // Try Proxy 1: corsproxy.io (returns raw html/text directly)
+        try {
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+            const res = await fetch(proxyUrl);
+            if (res.ok) {
+                const text = await res.text();
+                if (text && text.trim().length > 100) {
+                    pageText = text;
+                    fetchSuccess = true;
+                }
+            }
+        } catch (e) {
+            console.warn('Proxy 1 failed:', e);
+        }
+
+        // Try Proxy 2: allorigins (returns JSON wrapper) if Proxy 1 failed
+        if (!fetchSuccess) {
+            try {
+                const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+                const res = await fetch(proxyUrl);
+                if (res.ok) {
+                    const data = await res.json();
+                    const text = data.contents || '';
+                    if (text && text.trim().length > 100) {
+                        pageText = text;
+                        fetchSuccess = true;
+                    }
+                }
+            } catch (e) {
+                console.warn('Proxy 2 failed:', e);
+            }
+        }
+
+        try {
+            let prompt = '';
+            
+            if (fetchSuccess) {
+                // Strip HTML tags and condense whitespace
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = pageText;
+
+                // Remove scripts & styles from parsed DOM
+                tempDiv.querySelectorAll('script, style, nav, footer, header').forEach(el => el.remove());
+                let cleanText = (tempDiv.textContent || tempDiv.innerText || '').replace(/\s+/g, ' ').trim();
+
+                // Limit context length to avoid token overflows (~12,000 chars)
+                const MAX_CHARS = 12000;
+                if (cleanText.length > MAX_CHARS) {
+                    cleanText = cleanText.substring(0, MAX_CHARS) + '\n\n[Content truncated for length]';
+                }
+
+                // Build prompt with fetched content
+                prompt = `You are an expert tutor. A student has provided you with the following text extracted from the URL: ${url}
+
+---BEGIN RESOURCE TEXT---
+${cleanText}
+---END RESOURCE TEXT---
+
+Based ONLY on the above resource, answer the student's question in a clear, structured way.
+If the resource does not contain relevant information, say so and provide your general knowledge.
+
+Student's Question: ${question}`;
+            } else {
+                // Fallback: Inform Gemini that we couldn't fetch the page, but ask it to answer using its knowledge of the URL/topic.
+                prompt = `You are an expert tutor. A student wanted to study this specific URL: ${url}
+However, the URL content could not be directly fetched due to network restrictions.
+
+Please answer the student's question by utilizing your knowledge/understanding of that specific URL's topic and contents (and general knowledge of quantum science if needed). Let the student know you are answering based on your knowledge of the resource/topic since direct fetching failed.
+
+Student's Question: ${question}`;
+            }
+
+            const result = await window.askGemini(prompt, [], { credentials: 'omit' });
+
+            if (result.success) {
+                renderQuantumResponse(result.text, url, question, !fetchSuccess);
+            } else {
+                showQuantumError(`Gemini Error: ${result.error}`);
+            }
+
+        } catch (err) {
+            console.error('Quantum Analyze Error:', err);
+            showQuantumError('An unexpected error occurred during analysis.');
+        } finally {
+            quantumAnalyzeBtn.disabled = false;
+            quantumAnalyzeBtn.innerHTML = '<span class="btn-icon">⚛️</span> Analyze &amp; Answer';
+        }
+    }
+
+    function showQuantumError(message) {
+        quantumResultsContainer.innerHTML = `
+            <div class="quantum-error-box">
+                <span>⚠️</span> ${message}
+            </div>`;
+    }
+
+    function renderQuantumResponse(text, sourceUrl, question, isFallback = false) {
+        const formattedText = text
+            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.+?)\*/g, '<em>$1</em>')
+            .replace(/^#{1,3} (.+)$/gm, '<h4 style="margin: 12px 0 6px; color:#7d3cba;">$1</h4>')
+            .replace(/^[-•] (.+)$/gm, '<li>$1</li>')
+            .replace(/(<li>.*<\/li>)/gs, '<ul style="margin: 8px 0 8px 20px;">$1</ul>')
+            .replace(/\n/g, '<br>');
+
+        const fallbackDisclaimer = isFallback ? `
+            <div style="background: rgba(243, 156, 18, 0.1); border-left: 4px solid #f39c12; padding: 12px 24px; font-size: 0.9rem; color: #d35400; font-weight: 500; display: flex; align-items: center; gap: 8px;">
+                <span>⚠️</span> Note: This site blocked direct scraping. AI generated this explanation using general knowledge of the requested resource.
+            </div>
+        ` : '';
+
+        quantumResultsContainer.innerHTML = `
+            <div class="quantum-response-card">
+                <div class="quantum-response-header">
+                    <span class="quantum-response-icon">⚛️</span>
+                    <div>
+                        <h3 class="quantum-response-title">AI Analysis</h3>
+                        <p class="quantum-response-subtitle">Based on: <a href="${sourceUrl}" target="_blank" class="quantum-source-link">${sourceUrl}</a></p>
+                    </div>
+                </div>
+                ${fallbackDisclaimer}
+                <div class="quantum-question-badge">
+                    <span>❓</span> ${question}
+                </div>
+                <div class="quantum-response-body">${formattedText}</div>
+            </div>`;
+    }
+
+    quantumAnalyzeBtn.addEventListener('click', handleQuantumAnalyze);
+
+    // Also allow Enter key on question input to trigger analysis
+    quantumInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') handleQuantumAnalyze();
     });
 
     function renderGeminiResponse(text, container) {

@@ -4,14 +4,15 @@
 
 const GEMINI_API_BASE = window.CONFIG.API_BASE_URL + '/api/gemini/chat';
 
-async function askGemini(prompt, history = []) {
+async function askGemini(prompt, history = [], options = {}) {
     try {
+        const credentialsOption = options.credentials || 'include';
         const response = await fetch(GEMINI_API_BASE, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            credentials: 'include',
+            credentials: credentialsOption,
             body: JSON.stringify({ prompt })
         });
 
