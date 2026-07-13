@@ -86,7 +86,9 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color:#9b59b6;">Connecting to Gemini AI...</p>';
 
         try {
-            const result = await window.askGemini(query);
+            // Direct the model to ignore any previous URL contexts and answer only this query
+            const systemDirectedQuery = `[SYSTEM INSTRUCTION: This is a general knowledge question. Ignore any previously loaded URL content, articles, or resources from other tabs/searches. Answer only this query.]\n\nQuery: ${query}`;
+            const result = await window.askGemini(systemDirectedQuery);
             if (result.success) {
                 renderGeminiResponse(result.text, container);
             } else {
@@ -211,7 +213,7 @@ Please answer the student's question by utilizing your knowledge/understanding o
 Student's Question: ${question}`;
             }
 
-            const result = await window.askGemini(prompt, [], { credentials: 'omit' });
+            const result = await window.askGemini(prompt);
 
             if (result.success) {
                 renderQuantumResponse(result.text, url, question, !fetchSuccess);
