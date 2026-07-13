@@ -1,0 +1,17 @@
+User-agent: Mediapartners-Google
+Disallow: /search.html
+Disallow: /pages/formulas.html
+Disallow: /pages/econnection.html
+Disallow: /pages/chomesample.html
+Disallow: /pages/dhome4.html
+Disallow: /pages/fconnection2.html
+Disallow: /pages/gcontact4.html
+
+User-agent: *
+Disallow: /search.html
+Disallow: /pages/formulas.html
+Disallow: /pages/econnection.html
+Disallow: /pages/chomesample.html
+Disallow: /pages/dhome4.html
+Disallow: /pages/fconnection2.html
+Disallow: /pages/gcontact4.html

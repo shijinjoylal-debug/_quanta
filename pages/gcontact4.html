@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Upload Image & Text</title>
@@ -31,7 +32,8 @@
       color: #f0f3fa;
     }
 
-    input[type="text"], input[type="file"] {
+    input[type="text"],
+    input[type="file"] {
       width: 90%;
       padding: 10px;
       margin: 10px 0;
@@ -74,8 +76,8 @@
   </style>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    (function() {
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
       var consent = localStorage.getItem('cookieConsent');
       var status = (consent === 'accepted') ? 'granted' : 'denied';
       gtag('consent', 'default', {
@@ -86,87 +88,87 @@
       });
     })();
   </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
-    <script src="../js/cookie-consent.js" defer></script>
-    <link rel="stylesheet" href="../css/navbar.css">
-    <script src="../js/navbar.js" defer></script>
+  <script src="../js/cookie-consent.js" defer></script>
+  <link rel="stylesheet" href="../css/navbar.css">
+  <script src="../js/navbar.js" defer></script>
 </head>
+
 <body>
   <div class="contact">
     <ul>
       <li><a href="dhome4.html">Home</a></li>
       <li><a href="gcontact4.html">Contact</a></li>
     </ul>
-  <div class="container">
-    <h2>📤 Upload Image & Text</h2>
-    
-    <form id="uploadForm">
-      <input type="text" id="message" placeholder="Enter your text" required><br>
-      <input type="file" id="imageFile" accept="image/*" required><br>
-      <button type="submit">Upload</button>
-    </form>
+    <div class="container">
+      <h2>📤 Upload Image & Text</h2>
 
-    <p id="status"></p>
-  </div>
+      <form id="uploadForm">
+        <input type="text" id="message" placeholder="Enter your text" required><br>
+        <input type="file" id="imageFile" accept="image/*" required><br>
+        <button type="submit">Upload</button>
+      </form>
 
-  <script type="module">
-    // Import Firebase modules
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
+      <p id="status"></p>
+    </div>
 
-    // 🔹 Replace with your Firebase config
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
+    <script type="module">
+      // Import Firebase modules
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+      import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+      import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+      // 🔹 Replace with your Firebase config
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_PROJECT.firebaseapp.com",
+        projectId: "YOUR_PROJECT_ID",
+        storageBucket: "YOUR_PROJECT.appspot.com",
+        messagingSenderId: "YOUR_SENDER_ID",
+        appId: "YOUR_APP_ID"
+      };
 
-    // Handle Form Submission
-    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const storage = getStorage(app);
 
-      const message = document.getElementById("message").value;
-      const file = document.getElementById("imageFile").files[0];
-      const status = document.getElementById("status");
+      // Handle Form Submission
+      document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
 
-      if (!file) {
-        status.textContent = "⚠️ Please select an image.";
-        return;
-      }
+        const message = document.getElementById("message").value;
+        const file = document.getElementById("imageFile").files[0];
+        const status = document.getElementById("status");
 
-      try {
-        // Upload image to Firebase Storage
-        const storageRef = ref(storage, "uploads/" + file.name);
-        await uploadBytes(storageRef, file);
+        if (!file) {
+          status.textContent = "⚠️ Please select an image.";
+          return;
+        }
 
-        // Get file URL
-        const imageUrl = await getDownloadURL(storageRef);
+        try {
+          // Upload image to Firebase Storage
+          const storageRef = ref(storage, "uploads/" + file.name);
+          await uploadBytes(storageRef, file);
 
-        // Save text + image URL in Firestore
-        await addDoc(collection(db, "posts"), {
-          text: message,
-          imageUrl: imageUrl,
-          timestamp: new Date()
-        });
+          // Get file URL
+          const imageUrl = await getDownloadURL(storageRef);
 
-        status.textContent = "✅ Uploaded successfully!";
-        status.style.color = "lightgreen";
-      } catch (error) {
-        console.error("Error uploading:", error);
-        status.textContent = "❌ Upload failed.";
-        status.style.color = "red";
-      }
-    });
-  </script>
+          // Save text + image URL in Firestore
+          await addDoc(collection(db, "posts"), {
+            text: message,
+            imageUrl: imageUrl,
+            timestamp: new Date()
+          });
+
+          status.textContent = "✅ Uploaded successfully!";
+          status.style.color = "lightgreen";
+        } catch (error) {
+          console.error("Error uploading:", error);
+          status.textContent = "❌ Upload failed.";
+          status.style.color = "red";
+        }
+      });
+    </script>
 </body>
-</html>
 
+</html>

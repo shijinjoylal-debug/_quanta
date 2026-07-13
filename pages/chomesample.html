@@ -1,162 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>UNREALMIND</title>
-<style>
-  :root {
-    --bg: #0b0f18;
-    --ring: #9ecbff;
-    --grid: #7fb0ff;
-    --core: #2b6cff;
-    --glow: #3ea6ff;
-    --text: #eaf2ff;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: radial-gradient(
-      1200px 800px at 50% 40%,
-      #0f1626 0%,
-      var(--bg) 55%,
-      #080b12 100%
-    );
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
-    color: var(--text);
-  }
-
-  header {
-    background: rgba(15, 22, 38, 0.85);
-    padding: 1rem;
-  }
-
-  .topnav ul {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-  }
-
-  .topnav a {
-    text-decoration: none;
-    color: var(--text);
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-  }
-
-  .topnav a:hover {
-    background: rgba(62, 166, 255, 0.2);
-  }
-
-  h1.brand {
-    text-align: center;
-    letter-spacing: .18em;
-    text-transform: uppercase;
-    font-weight: 600;
-    opacity: .9;
-    margin-top: 20px;
-  }
-
-  /* Flex layout: logo (left) + card (right) */
-  .content {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2rem;
-    margin: 2rem auto;
-    flex-wrap: wrap; /* stack on small screens */
-    padding: 1rem;
-  }
-
-  .logo-container {
-    width: 240px;  /* smaller size */
-    aspect-ratio: 1 / 1;
-    display: block;
-    filter: drop-shadow(0 8px 24px rgba(62,166,255,.25));
-  }
-
-  /* Text card on right */
-  .text-card {
-    flex: 1;
-    min-width: 250px;
-    max-width: 400px;
-    background: rgba(20, 30, 50, 0.75);
-    border: 1px solid var(--grid);
-    border-radius: 16px;
-    padding: 1.5rem;
-    box-shadow: 0 0 20px rgba(62,166,255,.25);
-    line-height: 1.6;
-    font-size: 0.95rem;
-    animation: glowPulse 4s ease-in-out infinite;
-  }
-
-  .text-card h2 {
-    color: var(--glow);
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  @keyframes glowPulse {
-    0%, 100% {
-      box-shadow: 0 0 20px rgba(62,166,255,.25);
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UNREALMIND</title>
+  <style>
+    :root {
+      --bg: #0b0f18;
+      --ring: #9ecbff;
+      --grid: #7fb0ff;
+      --core: #2b6cff;
+      --glow: #3ea6ff;
+      --text: #eaf2ff;
     }
-    50% {
-      box-shadow: 0 0 35px rgba(62,166,255,.45);
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
-  }
 
-  main {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-    line-height: 1.6;
-  }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: radial-gradient(1200px 800px at 50% 40%,
+          #0f1626 0%,
+          var(--bg) 55%,
+          #080b12 100%);
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial, sans-serif;
+      color: var(--text);
+    }
 
-  footer {
-    text-align: center;
-    margin: 2rem 0;
-  }
+    header {
+      background: rgba(15, 22, 38, 0.85);
+      padding: 1rem;
+    }
 
-  footer a {
-    text-decoration: none;
-    color: var(--glow);
-    font-weight: bold;
-    transition: color 0.3s ease;
-  }
+    .topnav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
 
-  footer a:hover {
-    color: var(--ring);
-  }
+    .topnav a {
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 500;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .pulse { animation: pulse 4s ease-in-out infinite; }
-    @keyframes pulse {
-      0%, 100% {
-        opacity: .9;
-        filter: drop-shadow(0 6px 16px rgba(62,166,255,.22));
+    .topnav a:hover {
+      background: rgba(62, 166, 255, 0.2);
+    }
+
+    h1.brand {
+      text-align: center;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      font-weight: 600;
+      opacity: .9;
+      margin-top: 20px;
+    }
+
+    /* Flex layout: logo (left) + card (right) */
+    .content {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 2rem;
+      margin: 2rem auto;
+      flex-wrap: wrap;
+      /* stack on small screens */
+      padding: 1rem;
+    }
+
+    .logo-container {
+      width: 240px;
+      /* smaller size */
+      aspect-ratio: 1 / 1;
+      display: block;
+      filter: drop-shadow(0 8px 24px rgba(62, 166, 255, .25));
+    }
+
+    /* Text card on right */
+    .text-card {
+      flex: 1;
+      min-width: 250px;
+      max-width: 400px;
+      background: rgba(20, 30, 50, 0.75);
+      border: 1px solid var(--grid);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 0 20px rgba(62, 166, 255, .25);
+      line-height: 1.6;
+      font-size: 0.95rem;
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    .text-card h2 {
+      color: var(--glow);
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    @keyframes glowPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(62, 166, 255, .25);
       }
+
       50% {
-        opacity: 1;
-        filter: drop-shadow(0 12px 36px rgba(62,166,255,.35));
+        box-shadow: 0 0 35px rgba(62, 166, 255, .45);
       }
     }
-  }
-</style>
+
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      text-align: center;
+      margin: 2rem 0;
+    }
+
+    footer a {
+      text-decoration: none;
+      color: var(--glow);
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+
+    footer a:hover {
+      color: var(--ring);
+    }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .pulse {
+        animation: pulse 4s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+
+        0%,
+        100% {
+          opacity: .9;
+          filter: drop-shadow(0 6px 16px rgba(62, 166, 255, .22));
+        }
+
+        50% {
+          opacity: 1;
+          filter: drop-shadow(0 12px 36px rgba(62, 166, 255, .35));
+        }
+      }
+    }
+  </style>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    (function() {
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
       var consent = localStorage.getItem('cookieConsent');
       var status = (consent === 'accepted') ? 'granted' : 'denied';
       gtag('consent', 'default', {
@@ -167,11 +181,11 @@
       });
     })();
   </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
-    <script src="../js/cookie-consent.js" defer></script>
-    <link rel="stylesheet" href="../css/navbar.css">
-    <script src="../js/navbar.js" defer></script>
+  <script src="../js/cookie-consent.js" defer></script>
+  <link rel="stylesheet" href="../css/navbar.css">
+  <script src="../js/navbar.js" defer></script>
 </head>
+
 <body>
   <header>
     <nav class="topnav" aria-label="Main navigation">
@@ -187,52 +201,68 @@
   <section class="content">
     <!-- Left: Logo -->
     <div class="logo-container">
-      <svg class="logo pulse" viewBox="0 0 1000 1000" role="img" aria-labelledby="title desc" width="100%" height="100%">
+      <svg class="logo pulse" viewBox="0 0 1000 1000" role="img" aria-labelledby="title desc" width="100%"
+        height="100%">
         <title id="title">Relativity Logo</title>
-        <desc id="desc">Circular emblem with curved latitude and longitude lines bending inward toward a bright core.</desc>
+        <desc id="desc">Circular emblem with curved latitude and longitude lines bending inward toward a bright core.
+        </desc>
         <defs>
           <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
-            <stop offset="0%" stop-color="white" stop-opacity=".9"/>
-            <stop offset="35%" stop-color="var(--glow)" stop-opacity=".55"/>
-            <stop offset="65%" stop-color="var(--glow)" stop-opacity=".12"/>
-            <stop offset="100%" stop-color="transparent" stop-opacity="0"/>
+            <stop offset="0%" stop-color="white" stop-opacity=".9" />
+            <stop offset="35%" stop-color="var(--glow)" stop-opacity=".55" />
+            <stop offset="65%" stop-color="var(--glow)" stop-opacity=".12" />
+            <stop offset="100%" stop-color="transparent" stop-opacity="0" />
           </radialGradient>
           <linearGradient id="ringStroke" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="white"/>
-            <stop offset="30%" stop-color="var(--ring)"/>
-            <stop offset="70%" stop-color="var(--grid)"/>
-            <stop offset="100%" stop-color="white"/>
+            <stop offset="0%" stop-color="white" />
+            <stop offset="30%" stop-color="var(--ring)" />
+            <stop offset="70%" stop-color="var(--grid)" />
+            <stop offset="100%" stop-color="white" />
           </linearGradient>
           <filter id="soften" x="-5%" y="-5%" width="150%" height="150%">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="b"/>
-            <feBlend in="SourceGraphic" in2="b" mode="screen"/>
+            <feGaussianBlur in="SourceGraphic" stdDeviation="0.6" result="b" />
+            <feBlend in="SourceGraphic" in2="b" mode="screen" />
           </filter>
           <style>
-            .ring { stroke:url(#ringStroke); stroke-width:16; fill:none }
-            .grid { stroke:var(--grid); stroke-width:3; fill:none; opacity:.85; filter:url(#soften) }
-            .grid.thick { stroke-width:5 }
+            .ring {
+              stroke: url(#ringStroke);
+              stroke-width: 16;
+              fill: none
+            }
+
+            .grid {
+              stroke: var(--grid);
+              stroke-width: 3;
+              fill: none;
+              opacity: .85;
+              filter: url(#soften)
+            }
+
+            .grid.thick {
+              stroke-width: 5
+            }
           </style>
         </defs>
         <!-- Outer ring -->
-        <circle class="ring" cx="500" cy="500" r="430"/>
+        <circle class="ring" cx="500" cy="500" r="430" />
         <!-- Core glow + singularity -->
-        <circle cx="500" cy="500" r="260" fill="url(#coreGlow)" opacity=".55"/>
-        <circle cx="500" cy="500" r="26" fill="white" opacity=".9"/>
-        <circle cx="500" cy="500" r="18" fill="var(--core)"/>
+        <circle cx="500" cy="500" r="260" fill="url(#coreGlow)" opacity=".55" />
+        <circle cx="500" cy="500" r="26" fill="white" opacity=".9" />
+        <circle cx="500" cy="500" r="18" fill="var(--core)" />
         <!-- Latitude lines -->
-        <path class="grid" d="M 100,260 C 420,330 580,330 900,260"/>
-        <path class="grid" d="M 70,360  C 420,430 580,430 930,360"/>
-        <path class="grid thick" d="M 50,500 C 420,500 580,500 950,500"/>
-        <path class="grid" d="M 70,640  C 420,570 580,570 930,640"/>
-        <path class="grid" d="M 100,740 C 420,670 580,670 900,740"/>
+        <path class="grid" d="M 100,260 C 420,330 580,330 900,260" />
+        <path class="grid" d="M 70,360  C 420,430 580,430 930,360" />
+        <path class="grid thick" d="M 50,500 C 420,500 580,500 950,500" />
+        <path class="grid" d="M 70,640  C 420,570 580,570 930,640" />
+        <path class="grid" d="M 100,740 C 420,670 580,670 900,740" />
         <!-- Longitude lines -->
-        <path class="grid" d="M 260,100 C 330,420 330,580 260,900"/>
-        <path class="grid" d="M 360,70  C 430,420 430,580 360,930"/>
-        <path class="grid thick" d="M 500,50 C 500,420 500,580 500,950"/>
-        <path class="grid" d="M 640,70  C 570,420 570,580 640,930"/>
-        <path class="grid" d="M 740,100 C 670,420 670,580 740,900"/>
+        <path class="grid" d="M 260,100 C 330,420 330,580 260,900" />
+        <path class="grid" d="M 360,70  C 430,420 430,580 360,930" />
+        <path class="grid thick" d="M 500,50 C 500,420 500,580 500,950" />
+        <path class="grid" d="M 640,70  C 570,420 570,580 640,930" />
+        <path class="grid" d="M 740,100 C 670,420 670,580 740,900" />
         <!-- Inner warp ring -->
-        <circle cx="500" cy="500" r="360" fill="none" stroke="var(--grid)" stroke-opacity=".35" stroke-width="2"/>
+        <circle cx="500" cy="500" r="360" fill="none" stroke="var(--grid)" stroke-opacity=".35" stroke-width="2" />
       </svg>
     </div>
 
@@ -250,55 +280,59 @@
     <p>
       Special relativity describes how space and time are interwoven into a single continuum known as spacetime.
       It shows how measurements of them are relative to the observer’s motion.
-      General relativity is the geometric theory of gravitation, describing how matter and energy influence spacetime’s curvature,
+      General relativity is the geometric theory of gravitation, describing how matter and energy influence spacetime’s
+      curvature,
       how Earth and celestial bodies move in response, and how mass in the universe interacts through this curvature.
     </p>
 
     <p>
-      Einstein’s special theory of relativity (1905) defines the speed of light as a universal constant—the maximum speed for energy,
-      matter, and information. Nothing can travel faster than light in a vacuum: about 299,792,458 m/s (≈186,282 miles/s).
+      Einstein’s special theory of relativity (1905) defines the speed of light as a universal constant—the maximum
+      speed for energy,
+      matter, and information. Nothing can travel faster than light in a vacuum: about 299,792,458 m/s (≈186,282
+      miles/s).
     </p>
   </main>
 
-<!-- Navigation Buttons Section -->
-<div class="nav-buttons">
-  <a href="dhome4.html" class="nav-btn">Fourth Page</a>
-</div>
+  <!-- Navigation Buttons Section -->
+  <div class="nav-buttons">
+    <a href="dhome4.html" class="nav-btn">Fourth Page</a>
+  </div>
 
-<style>
-  .nav-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin: 2rem 0;
-    flex-wrap: wrap; /* makes buttons wrap on small screens */
-  }
+  <style>
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 2rem 0;
+      flex-wrap: wrap;
+      /* makes buttons wrap on small screens */
+    }
 
-  .nav-btn {
-    background: #61b5ff; /* same blue style */
-    color: #0b0f18;
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-    border-radius: 12px;
-    text-decoration: none;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    transition: all 0.3s ease;
-  }
+    .nav-btn {
+      background: #61b5ff;
+      /* same blue style */
+      color: #0b0f18;
+      font-weight: 600;
+      padding: 0.75rem 1.5rem;
+      border-radius: 12px;
+      text-decoration: none;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      transition: all 0.3s ease;
+    }
 
-  .nav-btn:hover {
-    background: #3ea6ff;
-    color: white;
-    box-shadow: 0 6px 16px rgba(62,166,255,0.4);
-    transform: translateY(-3px);
-  }
+    .nav-btn:hover {
+      background: #3ea6ff;
+      color: white;
+      box-shadow: 0 6px 16px rgba(62, 166, 255, 0.4);
+      transform: translateY(-3px);
+    }
 
-  .nav-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 3px 8px rgba(62,166,255,0.3);
-  }
-</style>
+    .nav-btn:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 8px rgba(62, 166, 255, 0.3);
+    }
+  </style>
 
 </body>
+
 </html>
-
-

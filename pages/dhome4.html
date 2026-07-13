@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>UNREALMIND</title>
@@ -11,7 +12,8 @@
       font-family: Arial, sans-serif;
       color: white;
       height: 100vh;
-      overflow: hidden; /* prevent body scroll */
+      overflow: hidden;
+      /* prevent body scroll */
     }
 
     /* Top Navigation */
@@ -23,14 +25,17 @@
       justify-content: center;
       background: #111;
     }
+
     .topnav ul li {
       margin: 0 15px;
     }
+
     .topnav ul li a {
       color: white;
       text-decoration: none;
       font-size: 18px;
     }
+
     .topnav ul li a:hover,
     .topnav ul li a.active {
       color: #2a9df4;
@@ -39,7 +44,8 @@
     /* Main Layout */
     .container {
       display: flex;
-      height: calc(100vh - 50px); /* full height minus nav */
+      height: calc(100vh - 50px);
+      /* full height minus nav */
     }
 
     /* Left column fixed */
@@ -48,7 +54,8 @@
       min-width: 300px;
       text-align: center;
       background: black;
-      overflow: auto; /* just in case logos overflow */
+      overflow: auto;
+      /* just in case logos overflow */
       padding: 20px;
       position: sticky;
       top: 0;
@@ -62,7 +69,8 @@
       padding: 20px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 10px 0 0 10px;
-      overflow-y: auto; /* scrollable content */
+      overflow-y: auto;
+      /* scrollable content */
     }
 
     .logo-text {
@@ -79,17 +87,21 @@
 
     @media (max-width: 768px) {
       body {
-        overflow: auto; /* allow scrolling on small screens */
+        overflow: auto;
+        /* allow scrolling on small screens */
       }
+
       .container {
         flex-direction: column;
         height: auto;
       }
+
       .left {
         width: 100%;
         height: auto;
         position: relative;
       }
+
       .right {
         margin-top: 20px;
         border-radius: 10px;
@@ -99,8 +111,8 @@
   </style>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    (function() {
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
       var consent = localStorage.getItem('cookieConsent');
       var status = (consent === 'accepted') ? 'granted' : 'denied';
       gtag('consent', 'default', {
@@ -111,11 +123,11 @@
       });
     })();
   </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
-    <script src="../js/cookie-consent.js" defer></script>
-    <link rel="stylesheet" href="../css/navbar.css">
-    <script src="../js/navbar.js" defer></script>
+  <script src="../js/cookie-consent.js" defer></script>
+  <link rel="stylesheet" href="../css/navbar.css">
+  <script src="../js/navbar.js" defer></script>
 </head>
+
 <body>
   <!-- Navigation -->
   <div class="topnav home">
@@ -131,17 +143,18 @@
     <div class="left">
       <!-- Planet Logo -->
       <svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="150" cy="130" r="120" fill="#2a9df4" stroke="#1d6fb8" stroke-width="5"/>
+        <circle cx="150" cy="130" r="120" fill="#2a9df4" stroke="#1d6fb8" stroke-width="5" />
         <circle cx="150" cy="130" r="60" fill="#ffd966" />
-        <ellipse cx="150" cy="130" rx="110" ry="35" fill="none" stroke="white" stroke-width="12"/>
+        <ellipse cx="150" cy="130" rx="110" ry="35" fill="none" stroke="white" stroke-width="12" />
         <path d="M230 60
                  c20 10 20 40 -5 45
                  c-25 5 -35 -25 -15 -35
-                 c15 -10 30 5 15 15"
-              stroke="white" stroke-width="6" fill="none" />
-        <polygon points="80,50 85,65 100,65 88,75 93,90 80,82 67,90 72,75 60,65 75,65" fill="black"/>
-        <polygon points="220,200 225,210 235,210 228,218 232,228 220,222 208,228 212,218 205,210 215,210" fill="black"/>
-        <polygon points="120,230 125,240 135,240 128,248 132,258 120,252 108,258 112,248 105,240 115,240" fill="black"/>
+                 c15 -10 30 5 15 15" stroke="white" stroke-width="6" fill="none" />
+        <polygon points="80,50 85,65 100,65 88,75 93,90 80,82 67,90 72,75 60,65 75,65" fill="black" />
+        <polygon points="220,200 225,210 235,210 228,218 232,228 220,222 208,228 212,218 205,210 215,210"
+          fill="black" />
+        <polygon points="120,230 125,240 135,240 128,248 132,258 120,252 108,258 112,248 105,240 115,240"
+          fill="black" />
         <text x="150" y="290" text-anchor="middle" class="logo-text">TOE</text>
       </svg>
 
@@ -174,27 +187,35 @@
       </p>
       <style>
         p.spacetime {
-    font-size: 3rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    position: relative;
-    color: white;
-    background: linear-gradient(270deg, #00f, #0ff, #f0f, #ff0, #0f0);
-    background-size: 800% 800%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: warp 8s ease infinite;
-  }
+          font-size: 3rem;
+          font-weight: bold;
+          text-transform: uppercase;
+          position: relative;
+          color: white;
+          background: linear-gradient(270deg, #00f, #0ff, #f0f, #ff0, #0f0);
+          background-size: 800% 800%;
+          -webkit-background-clip: text;
+          background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: warp 8s ease infinite;
+        }
 
-  @keyframes warp {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-</style>
-      <p class="spacetime">  </p>
-       
+        @keyframes warp {
+          0% {
+            background-position: 0% 50%;
+          }
+
+          50% {
+            background-position: 100% 50%;
+          }
+
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+      </style>
+      <p class="spacetime"> </p>
+
       </p>
     </div>
   </div>
@@ -278,4 +299,5 @@
     })();
   </script>
 </body>
+
 </html>
