@@ -70,9 +70,12 @@
         <div class="search-container"
             style="margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 10px;">
             <p style="font-size: 0.9rem; opacity: 0.8;">Need general information? Ask Gemini directly:</p>
-            <button id="askGeminiAiBtn" class="ingest-btn"
-                style="background: #9b59b6; box-shadow: 0 0 10px #9b59b6;">Ask
-                Gemini General</button>
+            <div style="display: flex; gap: 10px; justify-content: center; width: 100%;">
+                <button id="askGeminiAiBtn" class="ingest-btn"
+                    style="position: static; background: #9b59b6; box-shadow: 0 0 10px #9b59b6; opacity: 1;">Ask Gemini General</button>
+                <button id="clearChatBtn" class="ingest-btn"
+                    style="position: static; background: #e74c3c; box-shadow: 0 0 10px #e74c3c; opacity: 1; display: none;">Clear Chat</button>
+            </div>
         </div>
     </div>
 

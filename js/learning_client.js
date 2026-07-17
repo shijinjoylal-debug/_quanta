@@ -14,9 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const quantumUrlInput = document.getElementById('quantumUrlInput');
     const quantumResultsContainer = document.getElementById('quantumResultsContainer');
     const askGeminiAiBtn = document.getElementById('askGeminiAiBtn');
+    const clearChatBtn = document.getElementById('clearChatBtn');
     const quantumAnalyzeBtn = document.getElementById('quantumAnalyzeBtn');
 
     const API_BASE = window.CONFIG.API_BASE_URL + '/api/learning';
+    let geminiChatHistory = [];
 
     // Tab Switching
     function switchTab(tabName) {
@@ -83,29 +85,136 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        container.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center; color:#9b59b6;">Connecting to Gemini AI...</p>';
+        // Clear the input field immediately to give a responsive feel
+        inputElement.value = '';
+
+        // If it's the first message, create a styled messages container with max-height and scrolling
+        if (geminiChatHistory.length === 0) {
+            container.innerHTML = `
+                <div class="chat-messages-container" style="display:flex; flex-direction:column; gap:15px; text-align:left; max-height:450px; overflow-y:auto; padding:15px; background: rgba(255, 255, 255, 0.4); border-radius: 15px; border: 1px solid rgba(155, 89, 182, 0.15); margin-bottom: 20px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);">
+                </div>
+            `;
+            if (clearChatBtn) {
+                clearChatBtn.style.display = 'inline-block';
+            }
+        }
+
+        const messagesContainer = container.querySelector('.chat-messages-container') || container;
+
+        // Append User Message to UI
+        const userMsgDiv = document.createElement('div');
+        userMsgDiv.className = 'chat-message user-msg';
+        userMsgDiv.style.alignSelf = 'flex-end';
+        userMsgDiv.style.background = '#e1e5f2';
+        userMsgDiv.style.padding = '12px 18px';
+        userMsgDiv.style.borderRadius = '15px 15px 0 15px';
+        userMsgDiv.style.maxWidth = '80%';
+        userMsgDiv.style.margin = '5px 0';
+        userMsgDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+        userMsgDiv.innerHTML = `<strong>You:</strong> <p style="margin: 5px 0 0 0; white-space: pre-wrap; word-break: break-word;">${query}</p>`;
+        messagesContainer.appendChild(userMsgDiv);
+
+        // Append Loading Spinner to UI
+        const loadingDiv = document.createElement('div');
+        loadingDiv.className = 'chat-message loading-msg';
+        loadingDiv.style.alignSelf = 'flex-start';
+        loadingDiv.style.background = 'rgba(255, 255, 255, 0.8)';
+        loadingDiv.style.padding = '12px 18px';
+        loadingDiv.style.borderRadius = '15px 15px 15px 0';
+        loadingDiv.style.maxWidth = '80%';
+        loadingDiv.style.margin = '5px 0';
+        loadingDiv.style.borderLeft = '4px solid #9b59b6';
+        loadingDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.05)';
+        loadingDiv.innerHTML = `
+            <div style="display:flex; align-items:center; gap:10px; color:#9b59b6; font-size:0.95rem;">
+                <div class="loading-spinner" style="margin: 0; width: 18px; height: 18px; border-width: 2px;"></div>
+                <span>Gemini is thinking...</span>
+            </div>`;
+        messagesContainer.appendChild(loadingDiv);
+
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
 
         try {
-            // Direct the model to ignore any previous URL contexts and answer only this query
-            const systemDirectedQuery = `[SYSTEM INSTRUCTION: This is a general knowledge question. Ignore any previously loaded URL content, articles, or resources from other tabs/searches. Answer only this query.]\n\nQuery: ${query}`;
-            const result = await window.askGemini(systemDirectedQuery);
+            // Call askGemini with the new query and the history so far
+            const result = await window.askGemini(query, geminiChatHistory);
+            
+            // Remove loading spinner
+            loadingDiv.remove();
+
             if (result.success) {
-                renderGeminiResponse(result.text, container);
+                const responseText = result.text;
+                
+                // Append AI response to UI
+                const aiMsgDiv = document.createElement('div');
+                aiMsgDiv.className = 'chat-message ai-msg';
+                aiMsgDiv.style.alignSelf = 'flex-start';
+                aiMsgDiv.style.background = 'rgba(255, 255, 255, 0.95)';
+                aiMsgDiv.style.borderLeft = '4px solid #9b59b6';
+                aiMsgDiv.style.padding = '12px 18px';
+                aiMsgDiv.style.borderRadius = '15px 15px 15px 0';
+                aiMsgDiv.style.maxWidth = '80%';
+                aiMsgDiv.style.margin = '5px 0';
+                aiMsgDiv.style.boxShadow = '0 3px 10px rgba(0,0,0,0.05)';
+                
+                const formattedText = responseText
+                    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+                    .replace(/^#{1,3} (.+)$/gm, '<h4 style="margin: 12px 0 6px; color:#9b59b6;">$1</h4>')
+                    .replace(/\n/g, '<br>');
+                
+                aiMsgDiv.innerHTML = `<strong>Gemini AI:</strong> <div style="margin: 5px 0 0 0; line-height:1.6; word-break: break-word;">${formattedText}</div>`;
+                messagesContainer.appendChild(aiMsgDiv);
+
+                // Update history
+                geminiChatHistory.push({ role: 'user', parts: [{ text: query }] });
+                geminiChatHistory.push({ role: 'model', parts: [{ text: responseText }] });
             } else {
-                let errorHtml = `<p style="color:red; text-align:center; font-weight:bold;">Gemini Error: ${result.error}</p>`;
-                if (result.details) {
-                    errorHtml += `<p style="color: #e74c3c; font-size: 0.85rem; background: #fdf2f2; padding: 10px; border-radius: 5px; margin-top: 5px; border: 1px solid #fab1a0;"><strong>Details:</strong> ${result.details}</p>`;
-                }
-                container.innerHTML = errorHtml;
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'chat-message error-msg';
+                errorDiv.style.alignSelf = 'center';
+                errorDiv.style.background = '#fee2e2';
+                errorDiv.style.color = '#ef4444';
+                errorDiv.style.padding = '10px 15px';
+                errorDiv.style.borderRadius = '10px';
+                errorDiv.style.margin = '5px 0';
+                errorDiv.innerHTML = `<strong>Gemini Error:</strong> ${result.error}`;
+                messagesContainer.appendChild(errorDiv);
             }
         } catch (err) {
             console.error(err);
-            container.innerHTML = `<p style="color:red; text-align:center;">Failed to connect to Gemini.</p>`;
+            loadingDiv.remove();
+            const errorDiv = document.createElement('div');
+            errorDiv.style.alignSelf = 'center';
+            errorDiv.style.background = '#fee2e2';
+            errorDiv.style.color = '#ef4444';
+            errorDiv.style.padding = '10px 15px';
+            errorDiv.style.borderRadius = '10px';
+            errorDiv.style.margin = '5px 0';
+            errorDiv.innerHTML = `<strong>Error:</strong> Failed to connect to Gemini.`;
+            messagesContainer.appendChild(errorDiv);
         }
+
+        // Scroll to bottom again
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
     askGeminiAiBtn.addEventListener('click', () => {
         handleGeminiChat(aiInput, aiResultsContainer);
+    });
+
+    if (clearChatBtn) {
+        clearChatBtn.addEventListener('click', () => {
+            geminiChatHistory = [];
+            aiResultsContainer.innerHTML = '<p style="opacity: 0.6;">Ask anything. The AI has learned from the project files.</p>';
+            clearChatBtn.style.display = 'none';
+        });
+    }
+
+    aiInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            handleGeminiChat(aiInput, aiResultsContainer);
+        }
     });
 
     // ─── Quantum Learning: URL + Question → Gemini ────────────────────────────
