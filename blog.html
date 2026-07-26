@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Mechanics Articles & Tutorials — EmerTezora</title>
+  <meta name="description" content="Explore beginner-friendly articles on quantum mechanics. Learn about superposition, wave-particle duality, quantum entanglement, and more — explained in plain English." />
+  <meta name="keywords" content="quantum mechanics articles, quantum physics explained, superposition, wave-particle duality, entanglement, quantum computing" />
+  <meta property="og:title" content="Quantum Mechanics Articles — EmerTezora" />
+  <meta property="og:description" content="Beginner-friendly deep dives into the most fascinating topics in quantum physics." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://emertezora.xyz/blog.html" />
+  <link rel="canonical" href="https://emertezora.xyz/blog.html" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
+      var consent = localStorage.getItem('cookieConsent');
+      var status = (consent === 'accepted') ? 'granted' : 'denied';
+      gtag('consent', 'default', {
+        'ad_storage': status,
+        'analytics_storage': status,
+        'personalization_storage': status,
+        'wait_for_update': 500
+      });
+    })();
+  </script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
+  <script src="js/cookie-consent.js" defer></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      background: #0d1117;
+      color: #e6edf3;
+      line-height: 1.7;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 17, 23, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    nav .brand {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      background: linear-gradient(90deg, #00ffc8, #7f00ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-decoration: none;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 28px;
+    }
+    nav ul a {
+      color: #8b949e;
+      text-decoration: none;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    nav ul a:hover, nav ul a.active { color: #00ffc8; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 80px 20px 50px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(0, 255, 200, 0.1);
+      border: 1px solid rgba(0, 255, 200, 0.3);
+      color: #00ffc8;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 40%, #7fd1ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: #8b949e;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ── Articles Grid ── */
+    .articles-section {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px 20px 80px;
+    }
+
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #8b949e;
+      margin-bottom: 30px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 28px;
+    }
+
+    .article-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .article-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0, 255, 200, 0.04), transparent);
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+    .article-card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(0, 255, 200, 0.3);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,255,200,0.1);
+    }
+    .article-card:hover::before { opacity: 1; }
+
+    .card-topic {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #00ffc8;
+    }
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #e6edf3;
+      line-height: 1.35;
+    }
+    .card-excerpt {
+      font-size: 0.92rem;
+      color: #8b949e;
+      line-height: 1.65;
+      flex: 1;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: #6e7681;
+      margin-top: 4px;
+    }
+    .card-meta .read-time { color: #7fd1ff; }
+    .card-arrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #00ffc8;
+      margin-top: 4px;
+      transition: gap 0.2s;
+    }
+    .article-card:hover .card-arrow { gap: 10px; }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 4px;
+    }
+
+    /* ── Featured (wide) card ── */
+    .article-card.featured {
+      grid-column: 1 / -1;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 28px;
+      background: linear-gradient(135deg, rgba(0,255,200,0.05), rgba(127,0,255,0.05));
+      border-color: rgba(0,255,200,0.15);
+    }
+    .article-card.featured .card-icon { font-size: 3.5rem; flex-shrink: 0; }
+    .article-card.featured .card-body { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+    .article-card.featured .card-title { font-size: 1.5rem; }
+
+    @media (max-width: 700px) {
+      nav { padding: 14px 18px; }
+      nav ul { gap: 16px; }
+      .article-card.featured { flex-direction: column; }
+    }
+    @media (max-width: 480px) { nav ul { display: none; } }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 50px;
+      padding: 30px;
+      background-color: #0a2822;
+      color: #fff;
+      text-align: center;
+    }
+    footer .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+    footer a {
+      color: #00ffc8;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    footer p { font-size: 0.9rem; opacity: 0.8; }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a class="brand" href="index.html">EmerTezora</a>
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="pages/bhome.html">Learn</a></li>
+      <li><a href="blog.html" class="active">Articles</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="contact.html">Contact</a></li>
+    </ul>
+  </nav>
+
+  <header class="hero">
+    <div class="hero-tag">📖 Knowledge Base</div>
+    <h1>Quantum Mechanics, Explained Simply</h1>
+    <p>In-depth articles on the most fascinating and mind-bending ideas in modern physics — written for curious minds at every level.</p>
+  </header>
+
+  <main class="articles-section">
+    <div class="section-title">All Articles</div>
+
+    <div class="articles-grid">
+
+      <!-- Featured -->
+      <a class="article-card featured" href="blog/superposition-explained.html">
+        <div class="card-icon">⚛️</div>
+        <div class="card-body">
+          <div class="card-topic">Core Concepts · Featured</div>
+          <div class="card-title">What Is Quantum Superposition? The Idea That Breaks Common Sense</div>
+          <div class="card-excerpt">Quantum superposition is perhaps the strangest idea in all of physics — the notion that a particle can exist in multiple states at once until the moment you look at it. We break down what this really means, how it was discovered, and why Schrödinger's famous cat thought experiment still sparks debate today.</div>
+          <div class="card-meta">
+            <span>July 2026</span>
+            <span class="read-time">⏱ 8 min read</span>
+          </div>
+          <div class="card-arrow">Read article →</div>
+        </div>
+      </a>
+
+      <!-- Card 2 -->
+      <a class="article-card" href="blog/wave-particle-duality.html">
+        <div class="card-icon">🌊</div>
+        <div class="card-topic">Experiments · Fundamentals</div>
+        <div class="card-title">Wave-Particle Duality & The Double-Slit Experiment</div>
+        <div class="card-excerpt">Light and matter behave like waves — until you try to observe them, at which point they behave like particles. The famous double-slit experiment revealed this bizarre truth. Here's a full walkthrough of the experiment and why Feynman called it "the only mystery" in quantum mechanics.</div>
+        <div class="card-meta">
+          <span>July 2026</span>
+          <span class="read-time">⏱ 7 min read</span>
+        </div>
+        <div class="card-arrow">Read article →</div>
+      </a>
+
+      <!-- Card 3 -->
+      <a class="article-card" href="blog/quantum-entanglement.html">
+        <div class="card-icon">🔗</div>
+        <div class="card-topic">Phenomena · Advanced</div>
+        <div class="card-title">Quantum Entanglement: Einstein's "Spooky Action at a Distance"</div>
+        <div class="card-excerpt">Two particles can become so deeply connected that measuring one instantly tells you something about the other — no matter how far apart they are. Einstein hated this idea. But experiments have proven it real. We explain what entanglement is, how it works, and how it powers quantum computing.</div>
+        <div class="card-meta">
+          <span>July 2026</span>
+          <span class="read-time">⏱ 9 min read</span>
+        </div>
+        <div class="card-arrow">Read article →</div>
+      </a>
+
+      <!-- Card 4 -->
+      <a class="article-card" href="blog/heisenberg-uncertainty.html">
+        <div class="card-icon">📐</div>
+        <div class="card-topic">Principles · Core Concepts</div>
+        <div class="card-title">Heisenberg's Uncertainty Principle — What It Really Means</div>
+        <div class="card-excerpt">Most people have heard of the Uncertainty Principle — the idea that you can't know both the position and momentum of a particle at the same time. But there's a common misconception: it has nothing to do with the limitations of our instruments. We explain the real, deeper meaning.</div>
+        <div class="card-meta">
+          <span>July 2026</span>
+          <span class="read-time">⏱ 6 min read</span>
+        </div>
+        <div class="card-arrow">Read article →</div>
+      </a>
+
+      <!-- Card 5 -->
+      <a class="article-card" href="blog/quantum-computing-intro.html">
+        <div class="card-icon">💻</div>
+        <div class="card-topic">Technology · Quantum Computing</div>
+        <div class="card-title">A Beginner's Introduction to Quantum Computing</div>
+        <div class="card-excerpt">Quantum computers aren't just faster classical computers — they work on completely different principles. They use qubits instead of bits, and exploit superposition and entanglement to solve problems that would take a regular computer longer than the age of the universe. Here's how they work.</div>
+        <div class="card-meta">
+          <span>July 2026</span>
+          <span class="read-time">⏱ 10 min read</span>
+        </div>
+        <div class="card-arrow">Read article →</div>
+      </a>
+
+      <!-- Card 6 -->
+      <a class="article-card" href="blog/schrodingers-cat.html">
+        <div class="card-icon">🐱</div>
+        <div class="card-topic">Thought Experiments</div>
+        <div class="card-title">Schrödinger's Cat: A Thought Experiment That Changed Physics</div>
+        <div class="card-excerpt">Erwin Schrödinger invented his famous cat paradox not to prove superposition was real — but to show how ridiculous it seemed when applied to everyday objects. Yet today, quantum superposition is one of the best-tested theories in all of science. Here is the full story.</div>
+        <div class="card-meta">
+          <span>July 2026</span>
+          <span class="read-time">⏱ 7 min read</span>
+        </div>
+        <div class="card-arrow">Read article →</div>
+      </a>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-links">
+      <a href="about.html">About Us</a>
+      <a href="contact.html">Contact</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="blog.html">Articles</a>
+    </div>
+    <p>&copy; 2026 EmerTezora. All rights reserved.</p>
+  </footer>
+</body>
+
+</html>
