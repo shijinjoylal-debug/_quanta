@@ -40,6 +40,8 @@ document.addEventListener("DOMContentLoaded", function () {
          ? `<li><a href="${formulaspath}">Formulas</a></li>`
          : '';*/
 
+    const subPath = useParentPath ? 'subscription.html' : 'pages/subscription.html';
+
     // Create Navbar
     const header = document.createElement('header');
 
@@ -51,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <nav id="navMenu">
             <ul>
                 <li><a href="${homePath}">Home</a></li>
+                <li><a href="${subPath}" style="color: #00ffc8; font-weight: 600;">✨ Premium</a></li>
                 ${keyExpLink}
                
                 <li>

@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmerTezora — Premium Subscription</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  
+  <link rel="stylesheet" href="../css/navbar.css">
+  <script src="../js/navbar.js" defer></script>
+  <script src="../js/cookie-consent.js" defer></script>
+
+  <style>
+    :root {
+      --bg-dark: #080d1a;
+      --bg-card: rgba(15, 23, 42, 0.75);
+      --accent-cyan: #00ffc8;
+      --accent-blue: #2a9df4;
+      --accent-purple: #9d4edd;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --border-glow: rgba(0, 255, 200, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 15% 20%, rgba(42, 157, 244, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, rgba(157, 78, 221, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 50% 50%, rgba(0, 255, 200, 0.08) 0%, transparent 60%);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text-main);
+      overflow-x: hidden;
+      min-height: 100vh;
+      line-height: 1.6;
+      padding-top: 80px;
+    }
+
+    /* Floating Quantum Particles */
+    #particleCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 24px 80px;
+    }
+
+    /* User Header Bar */
+    .user-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 12px 24px;
+      margin-bottom: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #000;
+    }
+
+    .badge-status {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .status-free {
+      background: rgba(139, 148, 158, 0.2);
+      color: var(--text-muted);
+      border: 1px solid rgba(139, 148, 158, 0.3);
+    }
+
+    .status-premium {
+      background: rgba(0, 255, 200, 0.15);
+      color: var(--accent-cyan);
+      border: 1px solid var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(0, 255, 200, 0.3);
+    }
+
+    .auth-btn {
+      background: linear-gradient(135deg, var(--accent-blue), #1d6fb8);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+
+    .auth-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(42, 157, 244, 0.4);
+    }
+
+    .auth-btn.logout {
+      background: rgba(255, 77, 77, 0.2);
+      color: #ff6b6b;
+      border: 1px solid rgba(255, 77, 77, 0.3);
+    }
+
+    .auth-btn.logout:hover {
+      background: rgba(255, 77, 77, 0.3);
+      box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+    }
+
+    /* Hero Section & Animated Logo */
+    .hero-section {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .logo-container {
+      display: inline-block;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .logo-svg {
+      width: 140px;
+      height: 140px;
+      filter: drop-shadow(0 0 20px rgba(0, 255, 200, 0.4));
+    }
+
+    .atom-core {
+      transform-origin: center;
+      animation: pulseCore 3s ease-in-out infinite alternate;
+    }
+
+    .orbit-ring-1 {
+      transform-origin: center;
+      animation: spinOrbit1 8s linear infinite;
+    }
+
+    .orbit-ring-2 {
+      transform-origin: center;
+      animation: spinOrbit2 12s linear infinite;
+    }
+
+    .orbit-ring-3 {
+      transform-origin: center;
+      animation: spinOrbit3 16s linear infinite;
+    }
+
+    @keyframes pulseCore {
+      0% { r: 16; fill: var(--accent-cyan); filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+      100% { r: 20; fill: var(--accent-blue); filter: drop-shadow(0 0 25px var(--accent-blue)); }
+    }
+
+    @keyframes spinOrbit1 {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes spinOrbit2 {
+      0% { transform: rotate(60deg); }
+      100% { transform: rotate(420deg); }
+    }
+
+    @keyframes spinOrbit3 {
+      0% { transform: rotate(120deg); }
+      100% { transform: rotate(480deg); }
+    }
+
+    .brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 50%, var(--accent-blue) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      text-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
+    }
+
+    .brand-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Subscription Tiers Grid */
+    .plans-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .plans-header h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+
+    .plan-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 36px 28px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .plan-card:hover {
+      transform: translateY(-10px);
+      border-color: var(--accent-cyan);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 255, 200, 0.25);
+    }
+
+    .plan-card.featured {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(20, 35, 65, 0.95) 100%);
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 0 10px 30px rgba(0, 255, 200, 0.2);
+    }
+
+    .popular-tag {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+      color: #000;
+      font-weight: 800;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      padding: 4px 16px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      box-shadow: 0 0 15px rgba(0, 255, 200, 0.5);
+    }
+
+    .plan-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .plan-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      min-height: 40px;
+      margin-bottom: 24px;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .price-currency {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+    }
+
+    .price-amount {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3rem;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .price-period {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .features-list {
+      list-style: none;
+      margin-bottom: 30px;
+      flex-grow: 1;
+    }
+
+    .features-list li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+      color: #d1d5db;
+    }
+
+    .features-list li::before {
+      content: '✓';
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0, 255, 200, 0.15);
+      color: var(--accent-cyan);
+      font-weight: bold;
+      font-size: 0.75rem;
+    }
+
+    .subscribe-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #050b14;
+      box-shadow: 0 4px 20px rgba(0, 255, 200, 0.3);
+    }
+
+    .subscribe-btn:hover {
+      transform: scale(1.02);
+      box-shadow: 0 6px 25px rgba(0, 255, 200, 0.5);
+    }
+
+    .plan-card:not(.featured) .subscribe-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: none;
+    }
+
+    .plan-card:not(.featured) .subscribe-btn:hover {
+      background: rgba(0, 255, 200, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* Database Subscribers Feed Section */
+    .db-section {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      margin-top: 40px;
+    }
+
+    .db-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .db-header h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .db-table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--accent-cyan);
+      font-weight: 600;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+      color: var(--text-muted);
+    }
+
+    /* Unlocked Content Portal */
+    .unlocked-portal {
+      display: none;
+      background: linear-gradient(135deg, rgba(0, 255, 200, 0.1) 0%, rgba(42, 157, 244, 0.1) 100%);
+      border: 2px solid var(--accent-cyan);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 40px;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .unlocked-portal.active {
+      display: block;
+    }
+
+    /* Auth Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 100000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #0f172a;
+      border: 1px solid var(--border-glow);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 420px;
+      padding: 32px;
+      position: relative;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 200, 0.2);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .modal-close:hover {
+      color: #fff;
+    }
+
+    .auth-tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+
+    .tab-btn.active {
+      color: var(--accent-cyan);
+      border-bottom-color: var(--accent-cyan);
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 10px;
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 10px rgba(0, 255, 200, 0.2);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+      color: #000;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .toast-msg {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .toast-error {
+      background: rgba(255, 77, 77, 0.2);
+      border: 1px solid #ff4d4d;
+      color: #ff6b6b;
+      display: block;
+    }
+
+    .toast-success {
+      background: rgba(0, 255, 200, 0.2);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      display: block;
+    }
+
+    /* Button Loading Spinner */
+    .spinner-inline {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: currentColor;
+      animation: btnSpin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+
+    @keyframes btnSpin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Particle Background -->
+  <canvas id="particleCanvas"></canvas>
+
+  <div class="wrapper">
+
+    <!-- Top User Navigation Bar -->
+    <div class="user-bar">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <div>
+          <div id="userNameDisplay" style="font-weight: 600;">Guest Visitor</div>
+          <div id="userEmailDisplay" style="font-size: 0.8rem; color: var(--text-muted);">Log in to manage subscription</div>
+        </div>
+        <span class="badge-status status-free" id="userStatusBadge">FREE PLAN</span>
+      </div>
+      <div>
+        <button class="auth-btn" id="mainAuthBtn" onclick="openAuthModal('login')">Log In / Register</button>
+      </div>
+    </div>
+
+    <!-- Hero Section & Animated EmerTezora Logo -->
+    <div class="hero-section">
+      <div class="logo-container">
+        <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <!-- Orbital Ring 1 -->
+          <ellipse class="orbit-ring-1" cx="100" cy="100" rx="80" ry="28" fill="none" stroke="url(#cyanGradient)" stroke-width="3" opacity="0.8" transform="rotate(-30 100 100)" />
+          <!-- Orbital Ring 2 -->
+          <ellipse class="orbit-ring-2" cx="100" cy="100" rx="80" ry="28" fill="none" stroke="url(#blueGradient)" stroke-width="3" opacity="0.8" transform="rotate(30 100 100)" />
+          <!-- Orbital Ring 3 -->
+          <ellipse class="orbit-ring-3" cx="100" cy="100" rx="80" ry="28" fill="none" stroke="url(#purpleGradient)" stroke-width="3" opacity="0.8" transform="rotate(90 100 100)" />
+          
+          <!-- Pulsing Nucleus -->
+          <circle class="atom-core" cx="100" cy="100" r="18" />
+
+          <!-- SVG Gradients -->
+          <defs>
+            <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#00ffc8" />
+              <stop offset="100%" stop-color="#2a9df4" />
+            </linearGradient>
+            <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#2a9df4" />
+              <stop offset="100%" stop-color="#9d4edd" />
+            </linearGradient>
+            <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#9d4edd" />
+              <stop offset="100%" stop-color="#00ffc8" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      <h1 class="brand-title">EmerTezora Premium</h1>
+      <p class="brand-subtitle">Unlock unlimited access to quantum simulators, AI insights, C++ wave engines, and exclusive research content.</p>
+    </div>
+
+    <!-- Unlocked Premium Banner (Shows when subscribed) -->
+    <div class="unlocked-portal" id="unlockedPortal">
+      <h2 style="color: var(--accent-cyan); font-size: 2rem; margin-bottom: 10px;">🎉 Premium Subscription Active!</h2>
+      <p style="margin-bottom: 20px; font-size: 1.1rem;">Thank you for supporting EmerTezora. You have unlocked all exclusive quantum modules!</p>
+      <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <a href="strechedwavesim.html" class="auth-btn" style="text-decoration: none; padding: 12px 24px;">Launch Wave Simulator</a>
+        <a href="orbitals.html" class="auth-btn" style="text-decoration: none; padding: 12px 24px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));">3D Orbital Simulator</a>
+      </div>
+    </div>
+
+    <!-- Subscription Plans Grid -->
+    <div class="plans-header" id="plansSectionHeader">
+      <h2>Choose Your Quantum Plan</h2>
+    </div>
+
+    <div class="plans-grid">
+
+      <!-- Plan 1: Starter -->
+      <div class="plan-card">
+        <div>
+          <div class="plan-title">Quantum Starter</div>
+          <div class="plan-desc">Essential access for quantum enthusiasts and students.</div>
+          <div class="plan-price">
+            <span class="price-currency">₹</span>
+            <span class="price-amount">199</span>
+            <span class="price-period">/ month</span>
+          </div>
+          <ul class="features-list">
+            <li>Standard Interactive Simulations</li>
+            <li>Access to Physics Formula Guide</li>
+            <li>Community Discussion Forum</li>
+            <li>Basic AI Q&A Assistant</li>
+          </ul>
+        </div>
+        <button class="subscribe-btn" onclick="initiateCheckout('Quantum Starter Pass', 199)">Subscribe Starter</button>
+      </div>
+
+      <!-- Plan 2: Pro (Featured) -->
+      <div class="plan-card featured">
+        <div class="popular-tag">MOST POPULAR</div>
+        <div>
+          <div class="plan-title" style="color: var(--accent-cyan);">Quantum Pro</div>
+          <div class="plan-desc">Full access to advanced simulators, C++ engine & AI tutor.</div>
+          <div class="plan-price">
+            <span class="price-currency">₹</span>
+            <span class="price-amount">499</span>
+            <span class="price-period">/ month</span>
+          </div>
+          <ul class="features-list">
+            <li>Unlimited C++ Wave Simulator Engine</li>
+            <li>3D Hydrogen Atomic Orbital Visualizer</li>
+            <li>Priority AI Quantum Tutor & Article Summarizer</li>
+            <li>High-Resolution Visual Downloads</li>
+            <li>Ad-free Quantum Learning Experience</li>
+          </ul>
+        </div>
+        <button class="subscribe-btn" onclick="initiateCheckout('Quantum Pro Pass', 499)">Subscribe Pro (₹499)</button>
+      </div>
+
+      <!-- Plan 3: Elite Lifetime -->
+      <div class="plan-card">
+        <div>
+          <div class="plan-title">Quantum Elite</div>
+          <div class="plan-desc">Lifetime unlimited access & early access to new engines.</div>
+          <div class="plan-price">
+            <span class="price-currency">₹</span>
+            <span class="price-amount">4,999</span>
+            <span class="price-period">/ lifetime</span>
+          </div>
+          <ul class="features-list">
+            <li>Lifetime VIP Pass to all EmerTezora Tools</li>
+            <li>Direct Access to Gemini API Solver</li>
+            <li>Custom Numerical Simulation Export</li>
+            <li>Exclusive Research Papers & Source Code</li>
+            <li>Dedicated VIP Support</li>
+          </ul>
+        </div>
+        <button class="subscribe-btn" onclick="initiateCheckout('Quantum Elite Lifetime', 4999)">Get Lifetime Pass</button>
+      </div>
+
+    </div>
+
+    <!-- Subscriber Database Feed Table -->
+    <div class="db-section">
+      <div class="db-header">
+        <h3>⚡ Database Subscribers Log (Stored in Backend)</h3>
+        <button class="auth-btn" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);" onclick="loadSubscribers()">🔄 Refresh DB Data</button>
+      </div>
+      <div class="db-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Subscriber Email</th>
+              <th>Plan Name</th>
+              <th>Amount</th>
+              <th>Payment ID</th>
+              <th>Status</th>
+              <th>Date & Time</th>
+            </tr>
+          </thead>
+          <tbody id="subscribersTableBody">
+            <tr>
+              <td colspan="7" class="empty-state">Loading stored subscriber data...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Authentication Modal (Login / Sign Up) -->
+  <div class="modal-overlay" id="authModal">
+    <div class="modal-card">
+      <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      
+      <div class="auth-tabs">
+        <button class="tab-btn active" id="loginTabBtn" onclick="switchAuthTab('login')">Log In</button>
+        <button class="tab-btn" id="signupTabBtn" onclick="switchAuthTab('signup')">Sign Up</button>
+      </div>
+
+      <div class="toast-msg" id="authToast"></div>
+
+      <!-- Login Form -->
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <input type="email" id="loginEmail" class="form-control" placeholder="quantum.physicist@emertezora.com" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="submit-btn">Log In to Continue</button>
+      </form>
+
+      <!-- Sign Up Form -->
+      <form id="signupForm" style="display: none;" onsubmit="handleSignup(event)">
+        <div class="form-group">
+          <label for="signupName">Full Name</label>
+          <input type="text" id="signupName" class="form-control" placeholder="Schrödinger" required>
+        </div>
+        <div class="form-group">
+          <label for="signupEmail">Email Address</label>
+          <input type="email" id="signupEmail" class="form-control" placeholder="quantum.physicist@emertezora.com" required>
+        </div>
+        <div class="form-group">
+          <label for="signupPassword">Password</label>
+          <input type="password" id="signupPassword" class="form-control" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="submit-btn" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue)); color: #fff;">Create Account & Login</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // --- State Management & API Endpoint Auto-Detection ---
+    // If opened via Live Server (port 5500) or file://, target Express server at http://localhost:3000
+    const API_BASE = (window.location.port !== '3000' && (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' || window.location.protocol === 'file:'))
+      ? 'http://localhost:3000'
+      : '';
+
+    let currentUser = null;
+    let currentToken = localStorage.getItem('em_token');
+    let pendingPlan = null;
+
+    // Razorpay Key specified by user
+    const RAZORPAY_KEY = 'rzp_live_SezY5OFStlhUZS';
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initParticleCanvas();
+      checkAuthStatus();
+      loadSubscribers();
+    });
+
+    // --- Particle Animation ---
+    function initParticleCanvas() {
+      const canvas = document.getElementById('particleCanvas');
+      const ctx = canvas.getContext('2d');
+      let width = canvas.width = window.innerWidth;
+      let height = canvas.height = window.innerHeight;
+
+      window.addEventListener('resize', () => {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+      });
+
+      const particles = [];
+      const particleCount = 45;
+
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius: Math.random() * 2 + 1,
+          color: i % 3 === 0 ? '#00ffc8' : (i % 3 === 1 ? '#2a9df4' : '#9d4edd'),
+          vx: (Math.random() - 0.5) * 0.5,
+          vy: (Math.random() - 0.5) * 0.5,
+          alpha: Math.random() * 0.5 + 0.2
+        });
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.globalAlpha = p.alpha;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = p.color;
+          ctx.fill();
+        });
+
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+    }
+
+    // --- Authentication Logic ---
+    async function checkAuthStatus() {
+      if (!currentToken) {
+        updateUserUI(null, false);
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/api/me`, {
+          headers: { 'Authorization': `Bearer ${currentToken}` }
+        });
+        const data = await res.json();
+
+        if (res.ok && data.user) {
+          currentUser = data.user;
+          updateUserUI(currentUser, data.subscribed, data.subscription);
+        } else {
+          // Token expired or invalid
+          localStorage.removeItem('em_token');
+          currentToken = null;
+          updateUserUI(null, false);
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+      }
+    }
+
+    function updateUserUI(user, isSubscribed, subscription) {
+      const userAvatar = document.getElementById('userAvatar');
+      const userNameDisplay = document.getElementById('userNameDisplay');
+      const userEmailDisplay = document.getElementById('userEmailDisplay');
+      const userStatusBadge = document.getElementById('userStatusBadge');
+      const mainAuthBtn = document.getElementById('mainAuthBtn');
+      const unlockedPortal = document.getElementById('unlockedPortal');
+
+      if (user) {
+        userAvatar.textContent = user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase();
+        userNameDisplay.textContent = user.name || user.email.split('@')[0];
+        userEmailDisplay.textContent = user.email;
+        mainAuthBtn.textContent = 'Log Out';
+        mainAuthBtn.className = 'auth-btn logout';
+        mainAuthBtn.onclick = handleLogout;
+
+        if (isSubscribed) {
+          userStatusBadge.textContent = '★ PREMIUM ACTIVE';
+          userStatusBadge.className = 'badge-status status-premium';
+          unlockedPortal.classList.add('active');
+        } else {
+          userStatusBadge.textContent = 'FREE MEMBER';
+          userStatusBadge.className = 'badge-status status-free';
+          unlockedPortal.classList.remove('active');
+        }
+      } else {
+        userAvatar.textContent = '?';
+        userNameDisplay.textContent = 'Guest Visitor';
+        userEmailDisplay.textContent = 'Log in to subscribe';
+        userStatusBadge.textContent = 'FREE PLAN';
+        userStatusBadge.className = 'badge-status status-free';
+        mainAuthBtn.textContent = 'Log In / Register';
+        mainAuthBtn.className = 'auth-btn';
+        mainAuthBtn.onclick = () => openAuthModal('login');
+        unlockedPortal.classList.remove('active');
+      }
+    }
+
+    function openAuthModal(mode = 'login', promptMessage = null) {
+      const modal = document.getElementById('authModal');
+      const toast = document.getElementById('authToast');
+
+      switchAuthTab(mode);
+      modal.classList.add('open');
+
+      if (promptMessage) {
+        toast.className = 'toast-msg toast-error';
+        toast.textContent = promptMessage;
+      } else {
+        toast.className = 'toast-msg';
+        toast.style.display = 'none';
+      }
+    }
+
+    function closeAuthModal() {
+      document.getElementById('authModal').classList.remove('open');
+    }
+
+    function switchAuthTab(tab) {
+      const loginBtn = document.getElementById('loginTabBtn');
+      const signupBtn = document.getElementById('signupTabBtn');
+      const loginForm = document.getElementById('loginForm');
+      const signupForm = document.getElementById('signupForm');
+      const toast = document.getElementById('authToast');
+
+      toast.style.display = 'none';
+
+      if (tab === 'login') {
+        loginBtn.classList.add('active');
+        signupBtn.classList.remove('active');
+        loginForm.style.display = 'block';
+        signupForm.style.display = 'none';
+      } else {
+        signupBtn.classList.add('active');
+        loginBtn.classList.remove('active');
+        signupForm.style.display = 'block';
+        loginForm.style.display = 'none';
+      }
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+      const toast = document.getElementById('authToast');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+
+      // Spinner Animation on Login Button
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = `<span class="spinner-inline"></span> Logging in...`;
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          localStorage.setItem('em_token', data.token);
+          currentToken = data.token;
+          currentUser = data.user;
+          closeAuthModal();
+          await checkAuthStatus();
+
+          // Resume pending subscription if user clicked subscribe earlier
+          if (pendingPlan) {
+            const { planName, amount, buttonElement } = pendingPlan;
+            pendingPlan = null;
+            initiateCheckout(planName, amount, buttonElement);
+          }
+        } else {
+          toast.className = 'toast-msg toast-error';
+          toast.textContent = data.error || 'Login failed. Please check credentials.';
+        }
+      } catch (err) {
+        toast.className = 'toast-msg toast-error';
+        toast.textContent = 'Server connection error. Please make sure server is running.';
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    }
+
+    async function handleSignup(e) {
+      e.preventDefault();
+      const name = document.getElementById('signupName').value;
+      const email = document.getElementById('signupEmail').value;
+      const password = document.getElementById('signupPassword').value;
+      const toast = document.getElementById('authToast');
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+
+      // Spinner Animation on Signup Button
+      const originalText = submitBtn.innerHTML;
+      submitBtn.innerHTML = `<span class="spinner-inline"></span> Creating Account...`;
+      submitBtn.disabled = true;
+
+      try {
+        const res = await fetch(`${API_BASE}/api/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok && data.token) {
+          localStorage.setItem('em_token', data.token);
+          currentToken = data.token;
+          currentUser = data.user;
+          closeAuthModal();
+          await checkAuthStatus();
+
+          if (pendingPlan) {
+            const { planName, amount, buttonElement } = pendingPlan;
+            pendingPlan = null;
+            initiateCheckout(planName, amount, buttonElement);
+          }
+        } else {
+          toast.className = 'toast-msg toast-error';
+          toast.textContent = data.error || 'Registration failed.';
+        }
+      } catch (err) {
+        toast.className = 'toast-msg toast-error';
+        toast.textContent = 'Server connection error. Please make sure server is running.';
+      } finally {
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+      }
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('em_token');
+      currentToken = null;
+      currentUser = null;
+      checkAuthStatus();
+    }
+
+    // --- Subscription & Razorpay Payment Integration ---
+    async function initiateCheckout(planName, amount, buttonElement = null) {
+      let btn = buttonElement || (event ? event.currentTarget : null);
+
+      if (!currentToken || !currentUser) {
+        pendingPlan = { planName, amount, buttonElement: btn };
+        openAuthModal('login', `Please log in or create an account first to subscribe to ${planName}.`);
+        return;
+      }
+
+      let originalBtnText = '';
+      if (btn) {
+        originalBtnText = btn.innerHTML;
+        btn.innerHTML = `<span class="spinner-inline"></span> Opening Razorpay...`;
+        btn.disabled = true;
+      }
+
+      try {
+        // Step 1: Create Order on Backend
+        const res = await fetch(`${API_BASE}/api/create-order`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`
+          },
+          body: JSON.stringify({ amount, planName })
+        });
+
+        const orderData = await res.json();
+
+        if (!res.ok || !orderData.success) {
+          alert('Failed to initialize Razorpay checkout order: ' + (orderData.error || 'Unknown error'));
+          if (btn) { btn.innerHTML = originalBtnText; btn.disabled = false; }
+          return;
+        }
+
+        // Step 2: Options for Razorpay Checkout JS
+        const options = {
+          key: RAZORPAY_KEY,
+          amount: orderData.amount,
+          currency: orderData.currency,
+          name: "EmerTezora Quantum",
+          description: `${planName} Subscription`,
+          order_id: orderData.orderId,
+          image: "https://emertezora.xyz/assets/logo.png",
+          handler: async function (response) {
+            // Step 3: Verify & Save Subscription in Database
+            await saveSubscriptionToDatabase({
+              razorpay_order_id: response.razorpay_order_id || orderData.orderId,
+              razorpay_payment_id: response.razorpay_payment_id || `pay_${Date.now()}`,
+              razorpay_signature: response.razorpay_signature || `sig_${Date.now()}`,
+              planName: planName,
+              amount: amount
+            });
+            if (btn) { btn.innerHTML = originalBtnText; btn.disabled = false; }
+          },
+          modal: {
+            ondismiss: function() {
+              if (btn) { btn.innerHTML = originalBtnText; btn.disabled = false; }
+            }
+          },
+          prefill: {
+            name: currentUser.name || "",
+            email: currentUser.email
+          },
+          theme: {
+            color: "#00ffc8"
+          }
+        };
+
+        const rzp1 = new Razorpay(options);
+        
+        rzp1.on('payment.failed', function (response) {
+          alert('Payment Failed: ' + response.error.description);
+          if (btn) { btn.innerHTML = originalBtnText; btn.disabled = false; }
+        });
+
+        rzp1.open();
+
+      } catch (err) {
+        console.error('Checkout error:', err);
+        alert('Error connecting to subscription payment gateway. Make sure server is running.');
+        if (btn) { btn.innerHTML = originalBtnText; btn.disabled = false; }
+      }
+    }
+
+    async function saveSubscriptionToDatabase(paymentDetails) {
+      try {
+        const res = await fetch(`${API_BASE}/api/verify-payment`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${currentToken}`
+          },
+          body: JSON.stringify(paymentDetails)
+        });
+
+        const result = await res.json();
+
+        if (res.ok && result.success) {
+          alert(`🎉 Payment Successful!\nYour ${paymentDetails.planName} has been recorded in the database.`);
+          await checkAuthStatus();
+          await loadSubscribers();
+        } else {
+          alert('Payment completed, but database update failed: ' + (result.error || 'Error'));
+        }
+      } catch (err) {
+        console.error('Save subscription error:', err);
+      }
+    }
+
+    // --- Load Subscriber Records from Database ---
+    async function loadSubscribers() {
+      const tbody = document.getElementById('subscribersTableBody');
+
+      try {
+        const res = await fetch(`${API_BASE}/api/subscribers`);
+        const data = await res.json();
+
+        if (res.ok && data.subscribers && data.subscribers.length > 0) {
+          tbody.innerHTML = '';
+          data.subscribers.forEach(sub => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+              <td><strong>#${sub.id}</strong></td>
+              <td>${sub.user_email}</td>
+              <td><span style="color: var(--accent-cyan); font-weight: 600;">${sub.plan_name}</span></td>
+              <td>₹${sub.amount}</td>
+              <td style="font-family: monospace; font-size: 0.8rem; color: var(--text-muted);">${sub.razorpay_payment_id || 'N/A'}</td>
+              <td><span class="badge-status status-premium" style="font-size: 0.7rem; padding: 2px 8px;">${sub.status.toUpperCase()}</span></td>
+              <td style="font-size: 0.8rem; color: var(--text-muted);">${new Date(sub.created_at).toLocaleString()}</td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } else {
+          tbody.innerHTML = `<tr><td colspan="7" class="empty-state">No subscriber records found in database yet. Be the first to subscribe!</td></tr>`;
+        }
+      } catch (err) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-state" style="color: #ff6b6b;">Error loading subscriber database records. Make sure Node server is running at http://localhost:3000.</td></tr>`;
+      }
+    }
+  </script>
+</body>
+
+</html>
