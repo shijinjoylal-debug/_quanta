@@ -8,13 +8,17 @@ const bcrypt = require('bcryptjs');
 const Razorpay = require('razorpay');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 
 // Enable CORS for all cross-origin requests (e.g. VS Code Live Server on port 5500)
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname)));
+app.use('/pages', express.static(path.join(__dirname, 'pages')));
+app.use('/css', express.static(path.join(__dirname, 'css')));
+app.use('/js', express.static(path.join(__dirname, 'js')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 const JWT_SECRET = process.env.JWT_SECRET || 'emertezora_quantum_secret_key_2026';
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_live_SezY5OFStlhUZS';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'emertezora_dummy_secret';
@@ -121,11 +125,6 @@ try {
   initJsonDb();
 }
 
-// Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname)));
-
 // Auth Middleware
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -139,6 +138,39 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+
+// --- Frontend HTML Routes ---
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/about', (req, res) => {
+  res.sendFile(path.join(__dirname, 'about.html'));
+});
+
+app.get('/contact', (req, res) => {
+  res.sendFile(path.join(__dirname, 'contact.html'));
+});
+
+app.get('/blog', (req, res) => {
+  res.sendFile(path.join(__dirname, 'blog.html'));
+});
+
+app.get('/privacy', (req, res) => {
+  res.sendFile(path.join(__dirname, 'privacy.html'));
+});
+
+app.get('/terms', (req, res) => {
+  res.sendFile(path.join(__dirname, 'terms.html'));
+});
+
+app.get('/search', (req, res) => {
+  res.sendFile(path.join(__dirname, 'search.html'));
+});
 
 // --- API ENDPOINTS ---
 
