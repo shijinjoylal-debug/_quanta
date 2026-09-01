@@ -30,40 +30,65 @@ try {
   console.warn('Razorpay SDK init warning:', e.message);
 }
 
-// Database Setup (SQLite with fallback to JSON storage if sqlite3 native module has compilation issues)
-let db;
+const os = require('os');
+
+// Database Setup (SQLite with fallback to JSON/In-Memory storage in serverless environments)
+let db = null;
 let useJsonDb = false;
-const jsonDbPath = path.join(__dirname, 'quanta_db.json');
+
+// In Vercel serverless environment, the root directory (/var/task) is read-only.
+// Only /tmp is writable.
+const isServerless = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const jsonDbPath = isServerless
+  ? path.join(os.tmpdir(), 'quanta_db.json')
+  : path.join(__dirname, 'quanta_db.json');
+
+let memoryStore = { users: [], subscriptions: [] };
 
 function initJsonDb() {
   useJsonDb = true;
-  if (!fs.existsSync(jsonDbPath)) {
-    fs.writeFileSync(jsonDbPath, JSON.stringify({ users: [], subscriptions: [] }, null, 2));
+  try {
+    if (!fs.existsSync(jsonDbPath)) {
+      fs.writeFileSync(jsonDbPath, JSON.stringify(memoryStore, null, 2));
+    } else {
+      const data = fs.readFileSync(jsonDbPath, 'utf8');
+      memoryStore = JSON.parse(data);
+    }
+  } catch (e) {
+    console.warn('JSON DB file access restricted, using in-memory store:', e.message);
   }
 }
 
 function readJsonDb() {
   try {
-    const data = fs.readFileSync(jsonDbPath, 'utf8');
-    return JSON.parse(data);
+    if (fs.existsSync(jsonDbPath)) {
+      const data = fs.readFileSync(jsonDbPath, 'utf8');
+      memoryStore = JSON.parse(data);
+    }
   } catch (e) {
-    return { users: [], subscriptions: [] };
+    // fallback to memory store
   }
+  return memoryStore;
 }
 
 function writeJsonDb(data) {
-  fs.writeFileSync(jsonDbPath, JSON.stringify(data, null, 2));
+  memoryStore = data;
+  try {
+    fs.writeFileSync(jsonDbPath, JSON.stringify(data, null, 2));
+  } catch (e) {
+    console.warn('Failed to write JSON DB to disk, kept in memory:', e.message);
+  }
 }
 
 try {
   const sqlite3 = require('sqlite3').verbose();
-  const dbPath = path.join(__dirname, 'quanta.db');
+  const dbPath = isServerless ? path.join(os.tmpdir(), 'quanta.db') : path.join(__dirname, 'quanta.db');
   db = new sqlite3.Database(dbPath, (err) => {
     if (err) {
       console.warn('SQLite connect failed, falling back to JSON DB:', err.message);
       initJsonDb();
     } else {
-      console.log('Connected to SQLite database quanta.db');
+      console.log('Connected to SQLite database');
       db.run(`
         CREATE TABLE IF NOT EXISTS users (
           id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -352,10 +377,14 @@ app.get('/subpage', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'subpage.html'));
 });
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`====================================================`);
-  console.log(`🌌 EmerTezora Server running at http://localhost:${PORT}`);
-  console.log(`💳 Razorpay Key Loaded: ${RAZORPAY_KEY_ID}`);
-  console.log(`====================================================`);
-});
+// Start Server if run directly (local development)
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`====================================================`);
+    console.log(`🌌 EmerTezora Server running at http://localhost:${PORT}`);
+    console.log(`💳 Razorpay Key Loaded: ${RAZORPAY_KEY_ID}`);
+    console.log(`====================================================`);
+  });
+}
+
+module.exports = app;
