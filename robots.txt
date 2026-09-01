@@ -1,5 +1,6 @@
 User-agent: Mediapartners-Google
-Disallow: /search.html
+Allow: /
+Allow: /blog/
 Disallow: /pages/formulas.html
 Disallow: /pages/econnection.html
 Disallow: /pages/chomesample.html
@@ -8,10 +9,13 @@ Disallow: /pages/fconnection2.html
 Disallow: /pages/gcontact4.html
 
 User-agent: *
-Disallow: /search.html
+Allow: /
+Allow: /blog/
 Disallow: /pages/formulas.html
 Disallow: /pages/econnection.html
 Disallow: /pages/chomesample.html
 Disallow: /pages/dhome4.html
 Disallow: /pages/fconnection2.html
 Disallow: /pages/gcontact4.html
+
+Sitemap: https://emertezora.xyz/sitemap.xml
