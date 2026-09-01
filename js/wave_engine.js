@@ -1,8 +1,7 @@
 /**
- * wave_engine_js.js - JavaScript Port of wave_engine.cpp
- * =======================================================
+ * wave_engine.js - Pure JavaScript Stretched String Wave Physics Engine
+ * ====================================================================
  * Simulates standing wave normal modes on a stretched string with fixed endpoints.
- * This JS class mirrors the C++ WaveEngine class exactly.
  * 
  * Physics - Standing Wave Equation (Dirichlet Boundary Conditions):
  *   y(x, t) = A * sin(n * pi * x / L) * cos(omega_n * t)
@@ -87,7 +86,7 @@ class WaveEngine {
      * @param {number} t - Current simulation time
      * @param {number} n - Harmonic index
      * @param {number} numPoints - Number of sample points along the string
-     * @returns {Array<number>} Float64Array containing y values
+     * @returns {Float64Array} Float64Array containing y values
      */
     computeMode(t, n, numPoints) {
         this.validateN(n);

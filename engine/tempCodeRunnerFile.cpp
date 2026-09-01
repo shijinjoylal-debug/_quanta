@@ -1,1 +1,0 @@
-srand(time(0));
