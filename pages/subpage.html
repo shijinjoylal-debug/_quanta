@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UNREALMIND - ACCESS GRANTED</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="../js/cookie-consent.js" defer></script>
+    <script src="../js/navbar.js" defer></script>
+    <script src="../js/auth.js" defer></script>
+    <link rel="stylesheet" href="../css/navbar.css">
+    <style>
+        :root {
+            --bg-dark: #080d1a;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --accent-cyan: #00ffc8;
+            --accent-blue: #2a9df4;
+            --accent-purple: #9d4edd;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-glow: rgba(0, 255, 200, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(42, 157, 244, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(157, 78, 221, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 200, 0.08) 0%, transparent 60%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-main);
+            overflow-x: hidden;
+            min-height: 100vh;
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        /* Floating Quantum Particles */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 24px 80px;
+        }
+
+        /* User Header Bar */
+        .user-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 24px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.95rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .badge-status {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .status-free {
+            background: rgba(139, 148, 158, 0.2);
+            color: var(--text-muted);
+            border: 1px solid rgba(139, 148, 158, 0.3);
+        }
+
+        .status-premium {
+            background: rgba(0, 255, 200, 0.15);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 255, 200, 0.3);
+        }
+
+        .auth-btn {
+            background: linear-gradient(135deg, var(--accent-blue), #1d6fb8);
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(42, 157, 244, 0.4);
+        }
+
+        .auth-btn.logout {
+            background: rgba(255, 77, 77, 0.2);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 77, 77, 0.3);
+        }
+
+        .auth-btn.logout:hover {
+            background: rgba(255, 77, 77, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 77, 77, 0.3);
+        }
+
+        /* Hero Section & Animated Logo */
+        .hero-section {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .logo-container {
+            display: inline-block;
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .logo-svg {
+            width: 140px;
+            height: 140px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 200, 0.4));
+        }
+
+        .atom-core {
+            transform-origin: center;
+            animation: pulseCore 3s ease-in-out infinite alternate;
+        }
+
+        .orbit-ring-1 {
+            transform-origin: center;
+            animation: spinOrbit1 8s linear infinite;
+        }
+
+        .orbit-ring-2 {
+            transform-origin: center;
+            animation: spinOrbit2 12s linear infinite;
+        }
+
+        .orbit-ring-3 {
+            transform-origin: center;
+            animation: spinOrbit3 16s linear infinite;
+        }
+
+        @keyframes pulseCore {
+            0% {
+                r: 16;
+                fill: var(--accent-cyan);
+                filter: drop-shadow(0 0 5px var(--accent-cyan));
+            }
+
+            100% {
+                r: 20;
+                fill: var(--accent-blue);
+                filter: drop-shadow(0 0 25px var(--accent-blue));
+            }
+        }
+
+        @keyframes spinOrbit1 {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes spinOrbit2 {
+            0% {
+                transform: rotate(60deg);
+            }
+
+            100% {
+                transform: rotate(420deg);
+            }
+        }
+
+        @keyframes spinOrbit3 {
+            0% {
+                transform: rotate(120deg);
+            }
+
+            100% {
+                transform: rotate(480deg);
+            }
+        }
+
+        .brand-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 50%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(0, 255, 200, 0.2);
+        }
+
+        .brand-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Subscription Tiers Grid */
+        .plans-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .plans-header h2 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            color: #fff;
+        }
+
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .plan-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 36px 28px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 255, 200, 0.25);
+        }
+
+        .plan-card.featured {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(20, 35, 65, 0.95) 100%);
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 10px 30px rgba(0, 255, 200, 0.2);
+        }
+
+        .popular-tag {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            color: #000;
+            font-weight: 800;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 4px 16px;
+            border-radius: 20px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.5);
+        }
+
+        .plan-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .plan-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            min-height: 40px;
+            margin-bottom: 24px;
+        }
+
+        .plan-price {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            margin-bottom: 24px;
+        }
+
+        .price-currency {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+        }
+
+        .price-amount {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .price-period {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .features-list li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+            color: #d1d5db;
+        }
+
+        .features-list li::before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(0, 255, 200, 0.15);
+            color: var(--accent-cyan);
+            font-weight: bold;
+            font-size: 0.75rem;
+        }
+
+        .subscribe-btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #050b14;
+            box-shadow: 0 4px 20px rgba(0, 255, 200, 0.3);
+        }
+
+        .subscribe-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 25px rgba(0, 255, 200, 0.5);
+        }
+
+        .plan-card:not(.featured) .subscribe-btn {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: none;
+        }
+
+        .plan-card:not(.featured) .subscribe-btn:hover {
+            background: rgba(0, 255, 200, 0.15);
+            border-color: var(--accent-cyan);
+            color: var(--accent-cyan);
+        }
+
+
+
+        /* Unlocked Content Portal */
+        .unlocked-portal {
+            display: none;
+            background: linear-gradient(135deg, rgba(0, 255, 200, 0.1) 0%, rgba(42, 157, 244, 0.1) 100%);
+            border: 2px solid var(--accent-cyan);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 40px;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .unlocked-portal.active {
+            display: block;
+        }
+
+        /* Auth Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            z-index: 100000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #0f172a;
+            border: 1px solid var(--border-glow);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 420px;
+            padding: 32px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 200, 0.2);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-close:hover {
+            color: #fff;
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            border-bottom-color: var(--accent-cyan);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 255, 200, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: #000;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .toast-msg {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .toast-error {
+            background: rgba(255, 77, 77, 0.2);
+            border: 1px solid #ff4d4d;
+            color: #ff6b6b;
+            display: block;
+        }
+
+        .toast-success {
+            background: rgba(0, 255, 200, 0.2);
+            border: 1px solid var(--accent-cyan);
+            color: var(--accent-cyan);
+            display: block;
+        }
+
+        /* Button Loading Spinner */
+        .spinner-inline {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: currentColor;
+            animation: btnSpin 0.7s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+
+        @keyframes btnSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Content Module Cards */
+        .modules-section {
+            margin-top: 40px;
+        }
+
+        .modules-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 28px;
+            margin-bottom: 60px;
+        }
+
+        .module-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 32px 28px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: var(--text-main);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .module-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 255, 200, 0.25);
+        }
+
+        .module-card:hover::before {
+            opacity: 1;
+        }
+
+        .module-card.featured {
+            background: linear-gradient(160deg, rgba(15, 23, 42, 0.95) 0%, rgba(13, 33, 62, 0.95) 100%);
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 10px 30px rgba(0, 255, 200, 0.2);
+        }
+
+        .module-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            align-self: flex-start;
+        }
+
+        .badge-new {
+            background: rgba(0, 255, 200, 0.2);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+        }
+
+        .badge-core {
+            background: rgba(42, 157, 244, 0.2);
+            color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+        }
+
+        .module-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .module-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .module-card-desc {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 24px;
+            flex-grow: 1;
+        }
+
+        .module-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #050b14;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover .module-btn {
+            box-shadow: 0 4px 20px rgba(0, 255, 200, 0.4);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="particleCanvas"></canvas>
+
+    <div class="wrapper">
+        <!-- Top User Navigation Bar -->
+        <div class="user-bar">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">?</div>
+                <div>
+                    <div id="userNameDisplay" style="font-weight: 600;">Subscriber</div>
+                    <div id="userEmailDisplay" style="font-size: 0.8rem; color: var(--text-muted);">Active Membership</div>
+                </div>
+                <span class="badge-status status-premium" id="userStatusBadge">★ PREMIUM ACTIVE</span>
+            </div>
+            <div>
+                <button class="auth-btn logout" id="mainAuthBtn" onclick="EmerAuth.logout()">Log Out</button>
+            </div>
+        </div>
+
+        <!-- Hero Section & Animated EmerTezora Logo -->
+        <div class="hero-section">
+            <div class="logo-container">
+                <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Orbital Ring 1 -->
+                    <ellipse class="orbit-ring-1" cx="100" cy="100" rx="80" ry="28" fill="none"
+                        stroke="url(#cyanGradient)" stroke-width="3" opacity="0.8" transform="rotate(-30 100 100)" />
+                    <!-- Orbital Ring 2 -->
+                    <ellipse class="orbit-ring-2" cx="100" cy="100" rx="80" ry="28" fill="none"
+                        stroke="url(#blueGradient)" stroke-width="3" opacity="0.8" transform="rotate(30 100 100)" />
+                    <!-- Orbital Ring 3 -->
+                    <ellipse class="orbit-ring-3" cx="100" cy="100" rx="80" ry="28" fill="none"
+                        stroke="url(#purpleGradient)" stroke-width="3" opacity="0.8" transform="rotate(90 100 100)" />
+
+                    <!-- Pulsing Nucleus -->
+                    <circle class="atom-core" cx="100" cy="100" r="18" />
+
+                    <!-- SVG Gradients -->
+                    <defs>
+                        <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#00ffc8" />
+                            <stop offset="100%" stop-color="#2a9df4" />
+                        </linearGradient>
+                        <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#2a9df4" />
+                            <stop offset="100%" stop-color="#9d4edd" />
+                        </linearGradient>
+                        <linearGradient id="purpleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#9d4edd" />
+                            <stop offset="100%" stop-color="#00ffc8" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <h1 class="brand-title">Welcome to Premium Research Hub</h1>
+            <p class="brand-subtitle">Here are our premium contents. Navigate through whatever you like and be part of
+                the community.</p>
+        </div>
+
+        <!-- Research Modules Section -->
+        <div class="modules-section">
+            <h2 class="modules-title">Available Research Modules</h2>
+            <div class="modules-grid">
+
+                <!-- MOSC Module Card (Featured Card navigating to mosc.html) -->
+                <a href="mosc.html" class="module-card featured" id="card-mosc">
+                    <span class="module-badge badge-new">New Module</span>
+                    <div class="module-icon">⚛️</div>
+                    <div class="module-card-content">
+                        <h3 class="module-card-title">Moscovium</h3>
+                        <p class="module-card-desc">
+                            Explore about Moscovium the element 115 and the hoax about it.
+                        </p>
+                    </div>
+                    <button class="module-btn">Launch Project MOSCOVIUM (Module) &rarr;</button>
+                </a>
+
+                <!-- Quantum Orbitals Card -->
+                <!-- <a href="orbitals.html" class="module-card" id="card-orbitals">
+                    <span class="module-badge badge-core">Simulation</span>
+                    <div class="module-icon">🌌</div>
+                    <div class="module-card-content">
+                        <h3 class="module-card-title">Quantum Orbitals</h3>
+                        <p class="module-card-desc">
+                            3D interactive quantum orbital visualizer for s, p, d, and f electron probability
+                            distributions.
+                        </p>
+                    </div>
+                    <button class="module-btn">Explore Orbitals &rarr;</button>
+                </a>
+
+                Schrödinger's Cat Card
+                <a href="schrocat.html" class="module-card" id="card-schrocat">
+                    <span class="module-badge badge-core">Paradox</span>
+                    <div class="module-icon">🐱</div>
+                    <div class="module-card-content">
+                        <h3 class="module-card-title">Schrödinger's Cat</h3>
+                        <p class="module-card-desc">
+                            Simulate state superposition, quantum measurement, and decoherence in the famous thought
+                            experiment.
+                        </p>
+                    </div>
+                    <button class="module-btn">Launch Experiment &rarr;</button>
+                </a>
+
+                Superposition Card 
+              <a href="superposition.html" class="module-card" id="card-superposition">
+                    <span class="module-badge badge-core">Interactive</span>
+                    <div class="module-icon">⚡</div>
+                    <div class="module-card-content">
+                        <h3 class="module-card-title">Quantum Superposition</h3>
+                        <p class="module-card-desc">
+                            Interactive wave interference and superposition simulator with real-time phase controls.
+                        </p>
+                    </div>
+                    <button class="module-btn">Open Simulator &rarr;</button>
+                </a>
+
+                 Wave-Particle Duality Card                <a href="waveparticleduality.html" class="module-card" id="card-duality">
+                    <span class="module-badge badge-core">Lab</span>
+                    <div class="module-icon">🌊</div>
+                    <div class="module-card-content">
+                        <h3 class="module-card-title">Wave-Particle Duality</h3>
+                        <p class="module-card-desc">
+                            Double-slit experiment simulator demonstrating photon interference and quantum observer
+                            collapse.
+                        </p>
+                    </div>
+                    <button class="module-btn">Enter Lab &rarr;</button>
+                </a>
+
+            </div>-->
+            </div>
+        </div>
+
+        <script>
+            // Quantum Particle Canvas Background Animation
+            const canvas = document.getElementById('particleCanvas');
+            if (canvas) {
+                const ctx = canvas.getContext('2d');
+                let particles = [];
+
+                function resizeCanvas() {
+                    canvas.width = window.innerWidth;
+                    canvas.height = window.innerHeight;
+                }
+                window.addEventListener('resize', resizeCanvas);
+                resizeCanvas();
+
+                for (let i = 0; i < 45; i++) {
+                    particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 2 + 1,
+                        vx: (Math.random() - 0.5) * 0.4,
+                        vy: (Math.random() - 0.5) * 0.4,
+                        alpha: Math.random() * 0.5 + 0.2
+                    });
+                }
+
+                function animate() {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        if (p.x < 0) p.x = canvas.width;
+                        if (p.x > canvas.width) p.x = 0;
+                        if (p.y < 0) p.y = canvas.height;
+                        if (p.y > canvas.height) p.y = 0;
+
+                        ctx.beginPath();
+                        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                        ctx.fillStyle = `rgba(0, 255, 200, ${p.alpha})`;
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = '#00ffc8';
+                        ctx.fill();
+                    });
+                    requestAnimationFrame(animate);
+                }
+                animate();
+            }
+        </script>
+</body>
+
+</html>

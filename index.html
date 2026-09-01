@@ -169,6 +169,7 @@
       transition: 0.3s ease;
       box-shadow: 0 0 10px #00ffc8, inset 0 0 10px #00ffc8;
       text-decoration: none;
+      font-family: inherit;
     }
 
     .btn:hover {
@@ -318,7 +319,8 @@
   <div class="logo-container">
     <div class="logo">EmerTezora</div>
     <div class="slogan">Where Knowledge Meets Infinity</div>
-    <a class="btn" href="pages/bhome.html">Enter Site</a>
+    <button class="btn" id="loginBtn">Login</button>
+    <a class="btn" href="pages/bhome.html" style="margin-left: 15px;">Enter Site</a>
     <a class="btn" href="search.html" style="margin-left: 15px;">Search</a>
     <a class="btn" id="homeSubscribeBtn" href="pages/subscription.html" onclick="this.innerHTML='<span style=\'display:inline-block;width:14px;height:14px;border:2px solid rgba(0,0,0,0.3);border-radius:50%;border-top-color:#000;animation:spin 0.6s linear infinite;vertical-align:middle;margin-right:6px;\'></span>Loading...';" style="margin-left: 15px; background: linear-gradient(135deg, #00ffc8, #2a9df4); color: #000; font-weight: bold;">✨ Subscribe</a>
   </div>
@@ -421,33 +423,35 @@
     async function checkSession() {
       const cachedUser = localStorage.getItem('user');
       if (cachedUser) {
-        currentUser = JSON.parse(cachedUser);
-        updateUI(currentUser);
+        try {
+          currentUser = JSON.parse(cachedUser);
+          updateUI(currentUser);
+        } catch (e) {}
       }
 
-      try {
-        const res = await fetch(`${API_BASE_URL}/api/auth/me`, {
-          credentials: 'include' // Important for sessions
-        });
-        if (res.ok) {
-          const user = await res.json();
-          currentUser = user;
-          localStorage.setItem('user', JSON.stringify(user));
-          updateUI(user);
-        } else {
-          localStorage.removeItem('user');
-          if (currentUser) {
-            currentUser = null;
-            updateUI(null);
+      const token = localStorage.getItem('em_token');
+      if (token) {
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/me`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.user) {
+              currentUser = data.user;
+              localStorage.setItem('user', JSON.stringify(currentUser));
+              updateUI(currentUser);
+            }
+          } else {
+            localStorage.removeItem('user');
+            localStorage.removeItem('em_token');
+            if (currentUser) {
+              currentUser = null;
+              updateUI(null);
+            }
           }
-          console.log('Session check returned:', res.status, res.statusText);
-        }
-      } catch (err) {
-        console.log('Not logged in or API error', err);
-        localStorage.removeItem('user');
-        if (currentUser) {
-          currentUser = null;
-          updateUI(null);
+        } catch (err) {
+          console.log('Not logged in or API error', err);
         }
       }
     }
@@ -455,21 +459,20 @@
     // Update UI based on auth state
     function updateUI(user) {
       const currentLoginBtn = document.getElementById('loginBtn');
+      if (!currentLoginBtn) return;
       if (user) {
-        currentLoginBtn.textContent = `Hello, ${user.username} (Logout)`;
+        const displayName = user.name || user.username || (user.email ? user.email.split('@')[0] : 'User');
+        currentLoginBtn.textContent = `Hello, ${displayName} (Logout)`;
         // Remove old event listener and add logout logic
         const newBtn = currentLoginBtn.cloneNode(true);
         newBtn.id = 'loginBtn';
         currentLoginBtn.parentNode.replaceChild(newBtn, currentLoginBtn);
 
-        newBtn.addEventListener('click', async () => {
-          try {
-            await fetch(`${API_BASE_URL}/api/auth/logout`, { method: 'POST', credentials: 'include' });
-            localStorage.removeItem('user');
-            window.location.reload();
-          } catch (err) {
-            console.error('Logout failed', err);
-          }
+        newBtn.addEventListener('click', () => {
+          localStorage.removeItem('user');
+          localStorage.removeItem('em_token');
+          currentUser = null;
+          window.location.reload();
         });
 
         // Check for notifications
@@ -477,7 +480,6 @@
           user.notifications.forEach(note => {
             if (!note.read) {
               alert(`Notification: ${note.message}`);
-              // In a real app, you'd mark this as read via another API call
             }
           });
         }
@@ -498,18 +500,14 @@
     checkSession();
 
     // Open Modal (only if not logged in)
-    // Note: We need to re-select loginBtn if it was replaced, but simpler to just attach to the initial one if not logged in.
-    // However, since we replace the button in updateUI, the original event listener is gone.
-    // If NOT logged in, we want the modal. If LOGGED in, we want logout.
-    // Logic handled in updateUI. If not logged in, original listener works.
-
-    // The initial listener is correctly handled in updateUI(null) normally, 
-    // but to tie the original load up correctly:
-    document.getElementById('loginBtn').addEventListener('click', () => {
-      if (!currentUser) {
-        authModal.style.display = 'flex';
-      }
-    });
+    const initLoginBtn = document.getElementById('loginBtn');
+    if (initLoginBtn) {
+      initLoginBtn.addEventListener('click', () => {
+        if (!currentUser) {
+          authModal.style.display = 'flex';
+        }
+      });
+    }
 
     // Close Modal
     closeModalBtn.addEventListener('click', () => {
@@ -537,34 +535,30 @@
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+      const endpoint = isLogin ? '/api/login' : '/api/register';
       const url = `${API_BASE_URL}${endpoint}`;
 
       try {
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, password }),
-          credentials: 'include' // Important for sessions
+          body: JSON.stringify({ email: username, username: username, password: password })
         });
         const data = await res.json();
 
-        if (res.ok) {
-          alert(data.message);
-          if (isLogin) {
+        if (res.ok && (data.token || data.user)) {
+          alert(data.message || (isLogin ? 'Login successful!' : 'Registration successful!'));
+          if (data.token) {
+            localStorage.setItem('em_token', data.token);
+          }
+          if (data.user) {
             currentUser = data.user;
             localStorage.setItem('user', JSON.stringify(currentUser));
-            authModal.style.display = 'none';
-            updateUI(currentUser);
-          } else {
-            // Switch to login after registration
-            isLogin = true;
-            modalTitle.innerText = 'Login';
-            toggleText.innerText = "Don't have an account?";
-            toggleAuth.innerText = 'Register';
           }
+          authModal.style.display = 'none';
+          updateUI(currentUser);
         } else {
-          alert(data.message);
+          alert(data.error || data.message || 'Authentication failed.');
         }
       } catch (err) {
         console.error('Error:', err);

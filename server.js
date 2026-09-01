@@ -120,23 +120,24 @@ function authenticateToken(req, res, next) {
 // Register User
 app.post('/api/register', async (req, res) => {
   try {
-    const { email, password, name } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    const { email, username, password, name } = req.body;
+    const userEmail = (email || username || '').toLowerCase();
+    if (!userEmail || !password) {
+      return res.status(400).json({ error: 'Email/Username and password are required' });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
-    const userName = name || email.split('@')[0];
+    const userName = name || username || (userEmail.includes('@') ? userEmail.split('@')[0] : userEmail);
 
     if (useJsonDb) {
       const data = readJsonDb();
-      const existing = data.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      const existing = data.users.find(u => (u.email && u.email.toLowerCase() === userEmail) || (u.name && u.name.toLowerCase() === userName.toLowerCase()));
       if (existing) {
-        return res.status(400).json({ error: 'User with this email already exists' });
+        return res.status(400).json({ error: 'User with this email or username already exists' });
       }
       const newUser = {
         id: data.users.length + 1,
-        email: email.toLowerCase(),
+        email: userEmail,
         password_hash: passwordHash,
         name: userName,
         created_at: new Date().toISOString()
@@ -144,21 +145,23 @@ app.post('/api/register', async (req, res) => {
       data.users.push(newUser);
       writeJsonDb(data);
 
-      const token = jwt.sign({ id: newUser.id, email: newUser.email, name: newUser.name }, JWT_SECRET, { expiresIn: '7d' });
-      return res.json({ success: true, token, user: { id: newUser.id, email: newUser.email, name: newUser.name } });
+      const userObj = { id: newUser.id, email: newUser.email, name: newUser.name, username: newUser.name };
+      const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
+      return res.json({ success: true, message: 'Registration successful!', token, user: userObj });
     } else {
-      db.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase()], async (err, row) => {
+      db.get('SELECT * FROM users WHERE LOWER(email) = ? OR LOWER(name) = ?', [userEmail, userName.toLowerCase()], async (err, row) => {
         if (err) return res.status(500).json({ error: 'Database error' });
-        if (row) return res.status(400).json({ error: 'User with this email already exists' });
+        if (row) return res.status(400).json({ error: 'User with this email or username already exists' });
 
         db.run(
           'INSERT INTO users (email, password_hash, name) VALUES (?, ?, ?)',
-          [email.toLowerCase(), passwordHash, userName],
+          [userEmail, passwordHash, userName],
           function (insertErr) {
             if (insertErr) return res.status(500).json({ error: 'Failed to create user' });
             const userId = this.lastID;
-            const token = jwt.sign({ id: userId, email: email.toLowerCase(), name: userName }, JWT_SECRET, { expiresIn: '7d' });
-            res.json({ success: true, token, user: { id: userId, email: email.toLowerCase(), name: userName } });
+            const userObj = { id: userId, email: userEmail, name: userName, username: userName };
+            const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
+            res.json({ success: true, message: 'Registration successful!', token, user: userObj });
           }
         );
       });
@@ -171,33 +174,36 @@ app.post('/api/register', async (req, res) => {
 // Login User
 app.post('/api/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required' });
+    const { email, username, password } = req.body;
+    const identifier = (email || username || '').toLowerCase();
+    if (!identifier || !password) {
+      return res.status(400).json({ error: 'Email/Username and password are required' });
     }
 
     if (useJsonDb) {
       const data = readJsonDb();
-      const user = data.users.find(u => u.email.toLowerCase() === email.toLowerCase());
+      const user = data.users.find(u => (u.email && u.email.toLowerCase() === identifier) || (u.name && u.name.toLowerCase() === identifier));
       if (!user) {
-        return res.status(400).json({ error: 'Invalid email or password' });
+        return res.status(400).json({ error: 'Invalid email/username or password' });
       }
       const valid = await bcrypt.compare(password, user.password_hash);
       if (!valid) {
-        return res.status(400).json({ error: 'Invalid email or password' });
+        return res.status(400).json({ error: 'Invalid email/username or password' });
       }
-      const token = jwt.sign({ id: user.id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
-      return res.json({ success: true, token, user: { id: user.id, email: user.email, name: user.name } });
+      const userObj = { id: user.id, email: user.email, name: user.name, username: user.name };
+      const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
+      return res.json({ success: true, message: 'Login successful!', token, user: userObj });
     } else {
-      db.get('SELECT * FROM users WHERE email = ?', [email.toLowerCase()], async (err, user) => {
+      db.get('SELECT * FROM users WHERE LOWER(email) = ? OR LOWER(name) = ?', [identifier, identifier], async (err, user) => {
         if (err) return res.status(500).json({ error: 'Database error' });
-        if (!user) return res.status(400).json({ error: 'Invalid email or password' });
+        if (!user) return res.status(400).json({ error: 'Invalid email/username or password' });
 
         const valid = await bcrypt.compare(password, user.password_hash);
-        if (!valid) return res.status(400).json({ error: 'Invalid email or password' });
+        if (!valid) return res.status(400).json({ error: 'Invalid email/username or password' });
 
-        const token = jwt.sign({ id: user.id, email: user.email, name: user.name }, JWT_SECRET, { expiresIn: '7d' });
-        res.json({ success: true, token, user: { id: user.id, email: user.email, name: user.name } });
+        const userObj = { id: user.id, email: user.email, name: user.name, username: user.name };
+        const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
+        res.json({ success: true, message: 'Login successful!', token, user: userObj });
       });
     }
   } catch (err) {
@@ -209,12 +215,18 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/me', authenticateToken, (req, res) => {
   const userId = req.user.id;
   const userEmail = req.user.email;
+  const userObj = {
+    id: req.user.id,
+    email: req.user.email,
+    name: req.user.name,
+    username: req.user.name || (req.user.email ? req.user.email.split('@')[0] : 'User')
+  };
 
   if (useJsonDb) {
     const data = readJsonDb();
     const sub = data.subscriptions.find(s => s.user_id === userId || s.user_email === userEmail);
     res.json({
-      user: req.user,
+      user: userObj,
       subscribed: !!sub,
       subscription: sub || null
     });
@@ -222,7 +234,7 @@ app.get('/api/me', authenticateToken, (req, res) => {
     db.get('SELECT * FROM subscriptions WHERE user_id = ? OR user_email = ? ORDER BY id DESC LIMIT 1', [userId, userEmail], (err, sub) => {
       if (err) return res.status(500).json({ error: 'Database error' });
       res.json({
-        user: req.user,
+        user: userObj,
         subscribed: !!sub,
         subscription: sub || null
       });
@@ -333,6 +345,11 @@ app.get('/api/subscribers', (req, res) => {
 // Serve subscription page directly
 app.get('/subscription', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'subscription.html'));
+});
+
+// Serve subpage directly
+app.get('/subpage', (req, res) => {
+  res.sendFile(path.join(__dirname, 'pages', 'subpage.html'));
 });
 
 // Start Server

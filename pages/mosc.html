@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moscovium - The element 115</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="../js/cookie-consent.js" defer></script>
+    <script src="../js/navbar.js" defer></script>
+    <link rel="stylesheet" href="../css/navbar.css">
+    <style>
+        :root {
+            --bg-dark: #080d1a;
+            --bg-card: rgba(15, 23, 42, 0.75);
+            --accent-cyan: #00ffc8;
+            --accent-blue: #2a9df4;
+            --accent-purple: #9d4edd;
+            --text-main: #f0f6fc;
+            --text-muted: #8b949e;
+            --border-glow: rgba(0, 255, 200, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(42, 157, 244, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(157, 78, 221, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 200, 0.08) 0%, transparent 60%);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding-top: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .back-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 24px;
+            padding: 8px 16px;
+            background: rgba(0, 255, 200, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .back-nav:hover {
+            background: rgba(0, 255, 200, 0.25);
+            transform: translateX(-4px);
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff, var(--accent-cyan), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .mo-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 28px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .mo-dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .visualizer-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        #moCanvas {
+            width: 100%;
+            height: 400px;
+            background: rgba(5, 10, 20, 0.8);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 200, 0.2);
+        }
+
+        .controls-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 28px;
+        }
+
+        .controls-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 10px;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .control-group select,
+        .control-group input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            color: #fff;
+            outline: none;
+        }
+
+        .control-group select option {
+            background: #080d1a;
+            color: #fff;
+        }
+
+        .btn-toggle {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+            color: #000;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-toggle:hover {
+            box-shadow: 0 0 15px rgba(0, 255, 200, 0.4);
+            transform: scale(1.02);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .info-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .info-card h3 {
+            font-family: 'Outfit', sans-serif;
+            color: var(--accent-cyan);
+            margin-bottom: 10px;
+        }
+
+        .formula {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            color: var(--accent-cyan);
+            margin: 12px 0;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 200, 0.2);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <a href="subpage.html" class="back-nav">&larr; Back to Premium Research Hub</a>
+
+        <div class="header">
+            <h1>Moscovium - The element 115</h1>
+            <p>Simulate linear combinations of atomic orbitals (LCAO), bonding vs antibonding states, and 3D electronic
+                wavefunction interference patterns.</p>
+        </div>
+        <p>When a proton plugs in to an nucleus of an atom of 115 it increases it's atomic number and become an atom of
+            element 116 which remember decays instantly as it decays or what it radiates is <mark>antimatter</mark></p>
+        <h1>Introduction</h1>
+        <p>
+            Moscovium is named after Moscow the capital of Russia. Only about 30 atoms of element 115 have been made.
+        </p>
+        <p>Moscivium Myths_____<br>
+            People who belives in UFOs they like have claimed that there are stable isotopes of element 115 and that
+            they power antigravity drives used in certain models of UFOs.` Two main problems with this are that there
+            quite plainly aren't any stable isotopes of moscovium. But This was only applicable for along a few years
+            back noe the pentagon itself releases may UFOs files or UAPs We know that UFOs are real but we don't know
+            anything about it and we can't judge wihtout any prrof UFO stand for unidentified flying object and they are
+            not classified as extraterestrial intelligence or a aircrafts. But we can't neglige the possibilities of a
+            stbale isotope of element 115 and the fact that the next atomic number of element 115 the element 116 which
+            radiates antimatter which is so crucial.
+        </p>
+
+        <!--<div class="mo-dashboard">
+            <div class="visualizer-card">
+                <canvas id="moCanvas"></canvas>
+            </div>
+
+            <div class="controls-card">
+                <h2 class="controls-title">MO Parameters</h2>
+
+                <div class="control-group">
+                    <label for="moType">Orbital Symmetry Type</label>
+                    <select id="moType">
+                        <option value="sigma_bonding">&sigma; Bonding (In-phase s + s)</option>
+                        <option value="sigma_antibonding">&sigma;* Antibonding (Out-of-phase s - s)</option>
+                        <option value="pi_bonding">&pi; Bonding (Parallel p + p)</option>
+                        <option value="pi_antibonding">&pi;* Antibonding (Parallel p - p)</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="internuclearDistance">Internuclear Distance (R): <span id="distVal">2.0 Å</span></label>
+                    <input type="range" id="internuclearDistance" min="1.0" max="4.0" step="0.1" value="2.0">
+                </div>
+
+                <div class="control-group">
+                    <label for="animationSpeed">Electron Density Motion</label>
+                    <input type="range" id="animationSpeed" min="0" max="2" step="0.1" value="1">
+                </div>
+
+                <button class="btn-toggle" id="resetBtn">Reset Parameters</button>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>Linear Combination of Atomic Orbitals (LCAO)</h3>
+                <p>Molecular orbitals are formed by the constructive and destructive interference of atomic
+                    wavefunctions &psi;<sub>A</sub> and &psi;<sub>B</sub>.</p>
+                <div class="formula">&psi;<sub>MO</sub> = c<sub>A</sub>&psi;<sub>A</sub> &plusmn;
+                    c<sub>B</sub>&psi;<sub>B</sub></div>
+            </div>
+
+            <div class="info-card">
+                <h3>Bonding vs Antibonding States</h3>
+                <p>Constructive interference increases electron probability density between nuclei, lowering total
+                    energy (&sigma; state). Destructive interference creates a nodal plane (&sigma;* state).</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Quantum Energy Levels</h3>
+                <p>The energy difference between bonding and antibonding levels dictates chemical stability, bond order,
+                    and spectroscopic absorption properties.</p>
+            </div>
+        </div>
+    </div>
+-->
+        <script>
+            const canvas = document.getElementById('moCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const moTypeSelect = document.getElementById('moType');
+            const distanceSlider = document.getElementById('internuclearDistance');
+            const distValLabel = document.getElementById('distVal');
+            const speedSlider = document.getElementById('animationSpeed');
+            const resetBtn = document.getElementById('resetBtn');
+
+            let time = 0;
+
+            function resizeCanvas() {
+                canvas.width = canvas.parentElement.clientWidth - 48;
+                canvas.height = 400;
+            }
+
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            distanceSlider.addEventListener('input', () => {
+                distValLabel.textContent = parseFloat(distanceSlider.value).toFixed(1) + ' Å';
+            });
+
+            resetBtn.addEventListener('click', () => {
+                moTypeSelect.value = 'sigma_bonding';
+                distanceSlider.value = 2.0;
+                distValLabel.textContent = '2.0 Å';
+                speedSlider.value = 1.0;
+            });
+
+            function drawMOSimulation() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const type = moTypeSelect.value;
+                const dist = parseFloat(distanceSlider.value) * 60;
+                const speed = parseFloat(speedSlider.value);
+                time += 0.03 * speed;
+
+                const cx = canvas.width / 2;
+                const cy = canvas.height / 2;
+
+                const x1 = cx - dist / 2;
+                const x2 = cx + dist / 2;
+
+                // Draw nuclei
+                ctx.beginPath();
+                ctx.arc(x1, cy, 8, 0, Math.PI * 2);
+                ctx.arc(x2, cy, 8, 0, Math.PI * 2);
+                ctx.fillStyle = '#2a9df4';
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = '#2a9df4';
+                ctx.fill();
+
+                // Draw Wavefunction density contours
+                const gridWidth = canvas.width;
+                const gridHeight = canvas.height;
+
+                ctx.shadowBlur = 0;
+                for (let px = 20; px < gridWidth - 20; px += 8) {
+                    for (let py = 20; py < gridHeight - 20; py += 8) {
+                        const r1 = Math.hypot(px - x1, py - cy);
+                        const r2 = Math.hypot(px - x2, py - cy);
+
+                        let psi1 = Math.exp(-r1 / 40) * Math.cos(time);
+                        let psi2 = Math.exp(-r2 / 40) * Math.cos(time);
+
+                        if (type.includes('antibonding')) {
+                            psi2 = -psi2;
+                        }
+
+                        if (type.startsWith('pi')) {
+                            const dy1 = (py - cy) / 30;
+                            psi1 *= dy1;
+                            psi2 *= dy1;
+                        }
+
+                        const psiTotal = psi1 + psi2;
+                        const density = psiTotal * psiTotal;
+
+                        if (density > 0.02) {
+                            ctx.beginPath();
+                            ctx.arc(px, py, density * 4, 0, Math.PI * 2);
+                            if (psiTotal > 0) {
+                                ctx.fillStyle = `rgba(0, 255, 200, ${Math.min(density * 1.5, 0.8)})`;
+                            } else {
+                                ctx.fillStyle = `rgba(157, 78, 221, ${Math.min(density * 1.5, 0.8)})`;
+                            }
+                            ctx.fill();
+                        }
+                    }
+                }
+
+                // Draw Nodal line for antibonding
+                if (type.includes('antibonding')) {
+                    ctx.beginPath();
+                    ctx.setLineDash([5, 5]);
+                    ctx.moveTo(cx, 40);
+                    ctx.lineTo(cx, canvas.height - 40);
+                    ctx.strokeStyle = 'rgba(255, 100, 100, 0.6)';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                requestAnimationFrame(drawMOSimulation);
+            }
+
+            drawMOSimulation();
+        </script>
+</body>
+
+</html>

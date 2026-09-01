@@ -41,6 +41,12 @@ document.addEventListener("DOMContentLoaded", function () {
          : '';*/
 
     const subPath = useParentPath ? 'subscription.html' : 'pages/subscription.html';
+    const subPagePath = useParentPath ? 'subpage.html' : 'pages/subpage.html';
+
+    const isSubscribed = localStorage.getItem('em_subscribed') === 'true';
+    const hubLink = isSubscribed
+        ? `<li><a href="${subPagePath}" style="color: #00ffc8; font-weight: 700;">🚀 Premium Hub</a></li>`
+        : `<li><a href="${subPath}" style="color: #00ffc8; font-weight: 600;">✨ Premium</a></li>`;
 
     // Create Navbar
     const header = document.createElement('header');
@@ -53,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <nav id="navMenu">
             <ul>
                 <li><a href="${homePath}">Home</a></li>
-                <li><a href="${subPath}" style="color: #00ffc8; font-weight: 600;">✨ Premium</a></li>
+                ${hubLink}
                 ${keyExpLink}
                
                 <li>
