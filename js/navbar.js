@@ -40,6 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
          ? `<li><a href="${formulaspath}">Formulas</a></li>`
          : '';*/
 
+    /*
     const subPath = useParentPath ? 'subscription.html' : 'pages/subscription.html';
     const subPagePath = useParentPath ? 'subpage.html' : 'pages/subpage.html';
 
@@ -47,6 +48,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const hubLink = isSubscribed
         ? `<li><a href="${subPagePath}" style="color: #00ffc8; font-weight: 700;">🚀 Premium Hub</a></li>`
         : `<li><a href="${subPath}" style="color: #00ffc8; font-weight: 600;">✨ Premium</a></li>`;
+    */
+    const hubLink = '';
 
     // Create Navbar
     const header = document.createElement('header');
