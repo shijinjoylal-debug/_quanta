@@ -1,12 +1,20 @@
-const CONFIG = {
-    // Hosted Backend URL (Production)
-    API_BASE_URL: 'https://quanta-backend-raeq.onrender.com',
+// Environment Auto-Detection for API Base URL
+// - When running locally via Live Server or file://, routes to local Express server on port 5000.
+// - When running on Vercel (or production domains like quanta-amber.vercel.app), uses relative path ''
+//   so requests hit /api/* on the same domain, handled by server.js via vercel.json.
+(function () {
+    const isLocal = window.location.hostname === 'localhost' || 
+                    window.location.hostname === '127.0.0.1' || 
+                    window.location.protocol === 'file:';
     
-    // Local Backend URL (for development)
-    // API_BASE_URL: 'http://localhost:5000',
-};
+    // If accessing from another local port (e.g. Live Server on 5500), point to Express backend on 5000
+    const isDifferentLocalPort = isLocal && window.location.port !== '5000';
 
-// Log the current API configuration for debugging
-console.log('🚀 API Base URL configured:', CONFIG.API_BASE_URL);
+    const CONFIG = {
+        API_BASE_URL: isDifferentLocalPort ? 'http://localhost:5000' : ''
+    };
 
-window.CONFIG = CONFIG;
+    console.log('🚀 API Base URL configured:', CONFIG.API_BASE_URL || window.location.origin);
+    window.CONFIG = CONFIG;
+})();
+

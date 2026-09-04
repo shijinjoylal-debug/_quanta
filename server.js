@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -139,7 +140,7 @@ app.get('/subpage', (req, res) => {
 // --- API ENDPOINTS ---
 
 // Register User
-app.post('/api/register', async (req, res) => {
+app.post(['/api/register', '/api/auth/register'], async (req, res) => {
   try {
     const { email, username, password, name } = req.body;
     const userEmail = (email || username || '').toLowerCase();
@@ -177,7 +178,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // Login User
-app.post('/api/login', async (req, res) => {
+app.post(['/api/login', '/api/auth/login'], async (req, res) => {
   try {
     const { email, username, password } = req.body;
     const identifier = (email || username || '').toLowerCase();
@@ -207,7 +208,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Get Current User Profile & Subscription Status
-app.get('/api/me', authenticateToken, (req, res) => {
+app.get(['/api/me', '/api/auth/me'], authenticateToken, (req, res) => {
   const userId = req.user.id;
   const userEmail = req.user.email;
   const userObj = {

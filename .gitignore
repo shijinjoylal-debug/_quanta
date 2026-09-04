@@ -1,1 +1,4 @@
 .env
+node_modules/
+quanta_db.json
+out.log

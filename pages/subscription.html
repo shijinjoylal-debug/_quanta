@@ -11,6 +11,7 @@
     rel="stylesheet">
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+  <script src="../js/config.js"></script>
   <link rel="stylesheet" href="../css/navbar.css">
   <script src="../js/navbar.js" defer></script>
   <script src="../js/cookie-consent.js" defer></script>
@@ -788,10 +789,11 @@
 
   <script>
     // --- State Management & API Endpoint Auto-Detection ---
-    // If opened via Live Server (port 5500) or file://, target Express server at http://localhost:3000
-    const API_BASE = (window.location.port !== '3000' && (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' || window.location.protocol === 'file:'))
-      ? 'http://localhost:3000'
-      : '';
+    const API_BASE = (window.CONFIG && typeof window.CONFIG.API_BASE_URL === 'string')
+      ? window.CONFIG.API_BASE_URL
+      : ((window.location.port !== '5000' && (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost' || window.location.protocol === 'file:'))
+        ? 'http://localhost:5000'
+        : '');
 
     let currentUser = null;
     let currentToken = localStorage.getItem('em_token');
