@@ -6,6 +6,46 @@
             "destination": "/server.js"
         },
         {
+            "source": "/sw (1).js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw%20(1).js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw%20\\(1\\).js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw%20%281%29.js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw (2).js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw%20(2).js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw%20\\(2\\).js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw%20%282%29.js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw(.*)\\.js",
+            "destination": "/server.js"
+        },
+        {
+            "source": "/sw(.*)",
+            "destination": "/server.js"
+        },
+        {
             "source": "/api/(.*)",
             "destination": "/server.js"
         },

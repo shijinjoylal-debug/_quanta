@@ -16,6 +16,47 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// --- Service Worker Routes (must be before express.static to set proper headers) ---
+function serveServiceWorker(res, filename, fallbackZoneId) {
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  const swPath = path.resolve(__dirname, filename);
+  if (fs.existsSync(swPath)) {
+    return res.sendFile(swPath);
+  }
+  return res.send(`self.options = {\n    "domain": "3nbf4.com",\n    "zoneId": ${fallbackZoneId}\n};\nself.lary = "";\nimportScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw');\n`);
+}
+
+// sw.js
+app.get('/sw.js', (req, res) => serveServiceWorker(res, 'sw.js', 11726247));
+
+// sw (1).js — regex route because Express 5 / path-to-regexp v8 rejects parentheses in string paths
+// Matches: /sw%20(1).js  /sw%20%281%29.js  /sw (1).js
+app.get(/^\/sw(?:%20|\s)+(?:\(|%28)1(?:\)|%29)\.js$/i, (req, res) => serveServiceWorker(res, 'sw (1).js', 11726636));
+
+// sw (2).js
+app.get(/^\/sw(?:%20|\s)+(?:\(|%28)2(?:\)|%29)\.js$/i, (req, res) => serveServiceWorker(res, 'sw (2).js', 11727346));
+
+// Generic catch-all for any other sw*.js files (future-proof)
+app.get(/^\/sw.*\.js$/, (req, res, next) => {
+  try {
+    const decodedPath = decodeURIComponent(req.path);
+    const filename = path.basename(decodedPath);
+    const swPath = path.resolve(__dirname, filename);
+    if (fs.existsSync(swPath)) {
+      res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+      res.setHeader('Service-Worker-Allowed', '/');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      return res.sendFile(swPath);
+    }
+  } catch (e) {
+    console.warn('Dynamic sw file serve error:', e.message);
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname)));
 app.use('/pages', express.static(path.join(__dirname, 'pages')));
 app.use('/css', express.static(path.join(__dirname, 'css')));
@@ -137,23 +178,7 @@ app.get('/subpage', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'subpage.html'));
 });
 
-// Service Worker Route
-app.get('/sw.js', (req, res) => {
-  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
-  res.setHeader('Service-Worker-Allowed', '/');
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
-  const swPath = path.join(__dirname, 'sw.js');
-  if (fs.existsSync(swPath)) {
-    return res.sendFile(swPath);
-  }
-  res.send(`self.options = {
-    "domain": "3nbf4.com",
-    "zoneId": 11726247
-};
-self.lary = "";
-importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw');
-`);
-});
+// Service Worker routes are registered above (before express.static) — see serveServiceWorker()
 
 // --- API ENDPOINTS ---
 
