@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+  <!--In-Page Push(banner)ads-->
+  <script>(function (s) { s.dataset.zone = '11727458', s.src = 'https://nap5k.com/tag.min.js' })([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>EmerTezora — Stretched String Wave Simulator</title>
-  
+
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    (function() {
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
       var consent = localStorage.getItem('cookieConsent');
       var status = (consent === 'accepted') ? 'granted' : 'denied';
       gtag('consent', 'default', {
@@ -19,11 +22,12 @@
       });
     })();
   </script>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579"
+    crossorigin="anonymous"></script>
   <script src="../js/cookie-consent.js" defer></script>
   <link rel="stylesheet" href="../css/navbar.css">
   <script src="../js/navbar.js" defer></script>
-  
+
   <!-- Physics Engine JavaScript -->
   <script src="../js/wave_engine.js"></script>
 
@@ -34,7 +38,7 @@
       --bg-gradient: radial-gradient(circle at 50% 50%, #0c1b33 0%, #050d1a 100%);
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
-      
+
       /* Mode specific accent colors */
       --mode1-color: #00f0ff;
       --mode1-glow: rgba(0, 240, 255, 0.4);
@@ -59,7 +63,8 @@
 
     body {
       margin: 0;
-      padding-top: 80px; /* Leave space for navbar */
+      padding-top: 80px;
+      /* Leave space for navbar */
       background: var(--bg-gradient);
       color: var(--text-main);
       font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -299,12 +304,12 @@
       transition: left 0.3s, background 0.3s;
     }
 
-    .sound-toggle input:checked + .sound-box {
+    .sound-toggle input:checked+.sound-box {
       background: var(--accent-active);
       box-shadow: 0 0 10px var(--accent-glow);
     }
 
-    .sound-toggle input:checked + .sound-box::after {
+    .sound-toggle input:checked+.sound-box::after {
       left: 22px;
     }
 
@@ -369,25 +374,37 @@
       border-color: var(--mode1-color);
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
     }
-    .mode-card.active[data-mode="1"]::before { background: var(--mode1-color); }
+
+    .mode-card.active[data-mode="1"]::before {
+      background: var(--mode1-color);
+    }
 
     .mode-card.active[data-mode="2"] {
       border-color: var(--mode2-color);
       box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
     }
-    .mode-card.active[data-mode="2"]::before { background: var(--mode2-color); }
+
+    .mode-card.active[data-mode="2"]::before {
+      background: var(--mode2-color);
+    }
 
     .mode-card.active[data-mode="3"] {
       border-color: var(--mode3-color);
       box-shadow: 0 0 20px rgba(255, 204, 0, 0.15);
     }
-    .mode-card.active[data-mode="3"]::before { background: var(--mode3-color); }
+
+    .mode-card.active[data-mode="3"]::before {
+      background: var(--mode3-color);
+    }
 
     .mode-card.active[data-mode="4"] {
       border-color: var(--mode4-color);
       box-shadow: 0 0 20px rgba(255, 0, 127, 0.15);
     }
-    .mode-card.active[data-mode="4"]::before { background: var(--mode4-color); }
+
+    .mode-card.active[data-mode="4"]::before {
+      background: var(--mode4-color);
+    }
 
     .card-header {
       display: flex;
@@ -411,10 +428,25 @@
     }
 
     /* Colored Badges */
-    .mode-card[data-mode="1"] .card-badge { background: rgba(0, 240, 255, 0.15); color: var(--mode1-color); }
-    .mode-card[data-mode="2"] .card-badge { background: rgba(0, 255, 136, 0.15); color: var(--mode2-color); }
-    .mode-card[data-mode="3"] .card-badge { background: rgba(255, 204, 0, 0.15); color: var(--mode3-color); }
-    .mode-card[data-mode="4"] .card-badge { background: rgba(255, 0, 127, 0.15); color: var(--mode4-color); }
+    .mode-card[data-mode="1"] .card-badge {
+      background: rgba(0, 240, 255, 0.15);
+      color: var(--mode1-color);
+    }
+
+    .mode-card[data-mode="2"] .card-badge {
+      background: rgba(0, 255, 136, 0.15);
+      color: var(--mode2-color);
+    }
+
+    .mode-card[data-mode="3"] .card-badge {
+      background: rgba(255, 204, 0, 0.15);
+      color: var(--mode3-color);
+    }
+
+    .mode-card[data-mode="4"] .card-badge {
+      background: rgba(255, 0, 127, 0.15);
+      color: var(--mode4-color);
+    }
 
     .card-canvas-container {
       width: 100%;
@@ -543,7 +575,8 @@
       margin-top: 8px;
     }
 
-    .harmonic-table th, .harmonic-table td {
+    .harmonic-table th,
+    .harmonic-table td {
       padding: 10px 12px;
       text-align: left;
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
@@ -640,27 +673,30 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="wrapper">
-    
+
     <!-- Page Header -->
     <header class="page-header">
       <h1>Resonant Standing Waves</h1>
-      <p>Explore the spatial confinement and quantization of harmonics on a clamped stretched string, modeling the 1D quantum potential analogy.</p>
+      <p>Explore the spatial confinement and quantization of harmonics on a clamped stretched string, modeling the 1D
+        quantum potential analogy.</p>
     </header>
 
     <!-- Main Section (Left) -->
     <main class="main-content">
-      
+
       <!-- Simulator -->
       <section class="sim-panel">
-        
+
         <!-- Auto Cycle Status Banner -->
         <div id="cycleBanner" class="banner-cycle" style="display: none;">
           <span>
             <svg style="width:16px; height:16px; fill:currentColor" viewBox="0 0 24 24">
-              <path d="M12,4V1L8,5L12,9V6A8,8 0 0,1 20,14A8,8 0 0,1 12,22A8,8 0 0,1 4,14H2A10,10 0 0,0 12,24A10,10 0 0,0 22,14A10,10 0 0,0 12,4Z" />
+              <path
+                d="M12,4V1L8,5L12,9V6A8,8 0 0,1 20,14A8,8 0 0,1 12,22A8,8 0 0,1 4,14H2A10,10 0 0,0 12,24A10,10 0 0,0 22,14A10,10 0 0,0 12,4Z" />
             </svg>
             Auto-cycling standing wave states (n = 1 to 4)
           </span>
@@ -673,7 +709,8 @@
         <div class="canvas-container">
           <!-- Text Stats Overlay -->
           <div class="canvas-overlay-nodes">
-            <div>Harmonic State: <span id="overlayModeText" style="color:var(--accent-active); font-weight:bold;">1st (Fundamental)</span></div>
+            <div>Harmonic State: <span id="overlayModeText" style="color:var(--accent-active); font-weight:bold;">1st
+                (Fundamental)</span></div>
             <div>Wavelength (λ): <span id="overlayLambdaText" style="color:#fff;">-- px</span></div>
             <div>Frequency (f): <span id="overlayFreqText" style="color:#fff;">-- Hz</span></div>
             <div>Internal Nodes: <span id="overlayNodesText" style="color:#fff;">0</span></div>
@@ -684,7 +721,7 @@
 
         <!-- Controls -->
         <div class="controls">
-          
+
           <div class="control-group">
             <div class="control-label">
               <span>String Tension (T)</span>
@@ -727,10 +764,11 @@
             </svg>
             <span id="playText">Pause Simulation</span>
           </button>
-          
+
           <button id="cycleBtn" class="btn-control">
             <svg style="width:20px; height:20px; fill:currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+              <path
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z" />
             </svg>
             <span>Start Auto-Cycle</span>
           </button>
@@ -748,10 +786,11 @@
 
     <!-- Sidebar Section (Right) -->
     <aside class="sidebar">
-      
+
       <div class="sidebar-title">
         <svg style="width:20px; height:20px; fill:currentColor; color:var(--text-muted);" viewBox="0 0 24 24">
-          <path d="M19,15H15A3,3 0 0,1 12,18A3,3 0 0,1 9,15H5V5H19M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
+          <path
+            d="M19,15H15A3,3 0 0,1 12,18A3,3 0 0,1 9,15H5V5H19M19,3H5C3.89,3 3,3.89 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5C21,3.89 20.1,3 19,3Z" />
         </svg>
         Discrete Harmonic States
       </div>
@@ -821,17 +860,22 @@
     <!-- Theory & Quantum Confinement Analogy -->
     <section class="theory-section">
       <h2>Standing Wave Physics & Quantum Confinement</h2>
-      
+
       <div class="theory-grid">
-        
+
         <div class="theory-col">
           <p class="theory-p">
-            A standing wave on a string fixed at both ends (length <strong>L</strong>) is a classic mechanical example of <strong>confinement</strong>. Clamping the endpoints forces the wave displacement to be zero at <strong>x = 0</strong> and <strong>x = L</strong>. These boundary conditions mathematically restrict the wave to specific, discrete resonant frequencies (eigenmodes).
+            A standing wave on a string fixed at both ends (length <strong>L</strong>) is a classic mechanical example
+            of <strong>confinement</strong>. Clamping the endpoints forces the wave displacement to be zero at <strong>x
+              = 0</strong> and <strong>x = L</strong>. These boundary conditions mathematically restrict the wave to
+            specific, discrete resonant frequencies (eigenmodes).
           </p>
           <p class="theory-p">
-            In <strong>Quantum Mechanics</strong>, this confinement mirrors a particle (like an electron) trapped inside an infinite 1D potential well (a "particle in a box"). Just like the string, the electron's probability amplitude wave function <strong>&psi;(x)</strong> must collapse to zero at the walls of the box. 
+            In <strong>Quantum Mechanics</strong>, this confinement mirrors a particle (like an electron) trapped inside
+            an infinite 1D potential well (a "particle in a box"). Just like the string, the electron's probability
+            amplitude wave function <strong>&psi;(x)</strong> must collapse to zero at the walls of the box.
           </p>
-          
+
           <div class="physics-alert">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="10" />
@@ -839,8 +883,12 @@
               <line x1="12" y1="8" x2="12.01" y2="8" />
             </svg>
             <div>
-              <strong>Discrete Energy Quantization:</strong> Since the wavelengths are quantized as &lambda; = 2L/n, and the momentum is related via de Broglie's relation (p = h/&lambda;), the energy of the electron can only take specific quantized values: 
-              <span style="font-family:'Fira Code', monospace; color:#fff; display:block; margin-top:5px; font-weight:600;">E<sub>n</sub> = n<sup>2</sup>h<sup>2</sup> / (8mL<sup>2</sup>)</span>
+              <strong>Discrete Energy Quantization:</strong> Since the wavelengths are quantized as &lambda; = 2L/n, and
+              the momentum is related via de Broglie's relation (p = h/&lambda;), the energy of the electron can only
+              take specific quantized values:
+              <span
+                style="font-family:'Fira Code', monospace; color:#fff; display:block; margin-top:5px; font-weight:600;">E<sub>n</sub>
+                = n<sup>2</sup>h<sup>2</sup> / (8mL<sup>2</sup>)</span>
               This demonstrates why atomic orbitals and quantum states are discrete rather than continuous!
             </div>
           </div>
@@ -885,10 +933,11 @@
 
         <div class="theory-col">
           <div class="math-card">
-            
+
             <div class="equation-row">
               <div class="eq-label">Wave Equation:</div>
-              <div class="eq-expr">&part;<sup>2</sup>y/&part;t<sup>2</sup> = v<sup>2</sup> &bull; &part;<sup>2</sup>y/&part;x<sup>2</sup></div>
+              <div class="eq-expr">&part;<sup>2</sup>y/&part;t<sup>2</sup> = v<sup>2</sup> &bull;
+                &part;<sup>2</sup>y/&part;x<sup>2</sup></div>
             </div>
 
             <div class="equation-row">
@@ -1013,7 +1062,7 @@
       oscillator.type = 'sine';
       // Map mode frequency dynamically to audible range
       oscillator.frequency.value = getAudibleFrequency(currentMode);
-      
+
       gainNode.gain.setValueAtTime(0, audioCtx.currentTime); // start silent
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
@@ -1083,7 +1132,7 @@
 
     function setMode(mode) {
       currentMode = mode;
-      
+
       // Update active classes on cards
       modeCards.forEach(c => {
         c.classList.remove('active');
@@ -1216,7 +1265,7 @@
       // Compute displacement points along the string
       const numPoints = 300;
       const displacements = engine.computeMode(time, currentMode, numPoints);
-      
+
       const px = new Float64Array(numPoints);
       const py = new Float64Array(numPoints);
       const dx = length / (numPoints - 1);
@@ -1245,7 +1294,7 @@
       for (let offset = 1; offset <= 3; offset++) {
         const offsetTime = time - (offset * 0.05); // time delay
         const oldDisplacements = engine.computeMode(offsetTime, currentMode, numPoints);
-        
+
         mainCtx.beginPath();
         mainCtx.moveTo(startX, centerY);
         for (let i = 0; i < numPoints; i++) {
@@ -1278,7 +1327,7 @@
 
       // Highlight nodes & antinodes
       const nodeCount = engine.getNodeCount(currentMode);
-      
+
       // Draw intermediate nodes (excluding endpoints)
       mainCtx.fillStyle = '#ff3b30';
       mainCtx.shadowBlur = 8;
@@ -1302,8 +1351,8 @@
       for (let j = 0; j < currentMode; j++) {
         const antinodeX = startX + (j + 0.5) * (length / currentMode);
         // Peak displacement at this specific antinode location
-        const peakY = centerY + engine.compute( (j + 0.5) * (length / currentMode), time, currentMode );
-        
+        const peakY = centerY + engine.compute((j + 0.5) * (length / currentMode), time, currentMode);
+
         mainCtx.beginPath();
         mainCtx.arc(antinodeX, peakY, 4, 0, Math.PI * 2);
         mainCtx.fill();
@@ -1341,7 +1390,7 @@
       for (let i = 0; i < numPoints; i++) {
         ctx.lineTo(pad + i * dx, centerY + displacements[i]);
       }
-      
+
       const root = document.documentElement;
       ctx.strokeStyle = getComputedStyle(root).getPropertyValue(`--mode${mode}-color`).trim();
       ctx.lineWidth = 1.8;
@@ -1357,10 +1406,11 @@
 
     // Run render loops
     requestAnimationFrame(render);
-    
+
     // Set initial mode text values
     setMode(1);
 
   </script>
 </body>
+
 </html>
