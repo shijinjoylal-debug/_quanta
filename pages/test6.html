@@ -1,6 +1,8 @@
 <!doctype html>
 <html lang="en">
+
 <head>
+  <script src="https://quge5.com/88/tag.min.js" data-zone="276462" async data-cfasync="false"></script>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>EmerTezora — Quantum Entanglement — Interactive Course</title>
@@ -9,85 +11,273 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
     @media (max-width: 768px) {
-  .tab-content {
-    flex-direction: column;
-    padding: 1rem;
-  }
-  canvas {
-    width: 100% !important;
-    height: auto !important;
-  }
-  .tab-buttons {
-    flex-wrap: wrap;
-    font-size: 0.9rem;
-  }
-}
+      .tab-content {
+        flex-direction: column;
+        padding: 1rem;
+      }
 
-    :root{
-      --bg:#071224;--panel:#071827;--card:#0b1220;--muted:#9aa4b2;--accent:#7dd3fc;--accent-2:#60a5fa;--glass: rgba(255,255,255,0.03);
-      --glass-2: rgba(125,211,252,0.04);--radius:12px;--gap:18px;font-family:Inter,system-ui,Segoe UI,Roboto,Arial;
+      canvas {
+        width: 100% !important;
+        height: auto !important;
+      }
+
+      .tab-buttons {
+        flex-wrap: wrap;
+        font-size: 0.9rem;
+      }
     }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#04111a 0%, #071224 70%);color:#e6eef6}
-    .container{max-width:1200px;margin:28px auto;padding:20px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));box-shadow:0 8px 40px rgba(2,6,23,0.7)}
 
-    header{display:flex;align-items:center;gap:14px}
-    header .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#012}
-    header h1{font-size:1.4rem;margin:0}
-    header p{margin:0;color:var(--muted);font-size:0.92rem}
+    :root {
+      --bg: #071224;
+      --panel: #071827;
+      --card: #0b1220;
+      --muted: #9aa4b2;
+      --accent: #7dd3fc;
+      --accent-2: #60a5fa;
+      --glass: rgba(255, 255, 255, 0.03);
+      --glass-2: rgba(125, 211, 252, 0.04);
+      --radius: 12px;
+      --gap: 18px;
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+    }
+
+    * {
+      box-sizing: border-box
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      background: linear-gradient(180deg, #04111a 0%, #071224 70%);
+      color: #e6eef6
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 28px auto;
+      padding: 20px;
+      border-radius: 16px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.012), rgba(255, 255, 255, 0.006));
+      box-shadow: 0 8px 40px rgba(2, 6, 23, 0.7)
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 14px
+    }
+
+    header .logo {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #012
+    }
+
+    header h1 {
+      font-size: 1.4rem;
+      margin: 0
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem
+    }
 
     /* Tabs */
-    .tabs{display:flex;gap:12px;margin-top:18px}
-    .tab{background:transparent;border:1px solid rgba(255,255,255,0.03);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer}
-    .tab[aria-selected="true"]{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#012;border:none}
+    .tabs {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px
+    }
 
-    .layout{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-top:18px}
-    @media(max-width:980px){.layout{grid-template-columns:1fr}.tabs{overflow:auto}}
+    .tab {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      padding: 8px 12px;
+      border-radius: 10px;
+      color: var(--muted);
+      cursor: pointer
+    }
+
+    .tab[aria-selected="true"] {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      color: #012;
+      border: none
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+      margin-top: 18px
+    }
+
+    @media(max-width:980px) {
+      .layout {
+        grid-template-columns: 1fr
+      }
+
+      .tabs {
+        overflow: auto
+      }
+    }
 
     /* Main content */
-    .card{background:var(--card);padding:18px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.03)}
-    .muted{color:var(--muted)}
-    h2{margin:0 0 8px 0}
+    .card {
+      background: var(--card);
+      padding: 18px;
+      border-radius: var(--radius);
+      border: 1px solid rgba(255, 255, 255, 0.03)
+    }
+
+    .muted {
+      color: var(--muted)
+    }
+
+    h2 {
+      margin: 0 0 8px 0
+    }
 
     /* Simulator canvas */
-    #vis{width:100%;height:260px;border-radius:10px;background:linear-gradient(180deg,#041425,#062033);display:block}
-    .controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
-    .row{display:flex;align-items:center;gap:8px}
-    label{font-size:0.9rem;color:var(--muted)}
-    input[type=range]{width:100%}
+    #vis {
+      width: 100%;
+      height: 260px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #041425, #062033);
+      display: block
+    }
 
-    button{background:linear-gradient(90deg,var(--accent),var(--accent-2));border:none;padding:10px 12px;border-radius:10px;color:#012;cursor:pointer;font-weight:600}
-    .ghost{background:transparent;border:1px dashed rgba(255,255,255,0.05);padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
-    .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .stat{flex:1 1 120px;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px;text-align:center}
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 8px
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: var(--muted)
+    }
+
+    input[type=range] {
+      width: 100%
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      border: none;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: #012;
+      cursor: pointer;
+      font-weight: 600
+    }
+
+    .ghost {
+      background: transparent;
+      border: 1px dashed rgba(255, 255, 255, 0.05);
+      padding: 8px;
+      border-radius: 8px;
+      color: var(--muted);
+      cursor: pointer
+    }
+
+    .stats {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 12px
+    }
+
+    .stat {
+      flex: 1 1 120px;
+      background: rgba(255, 255, 255, 0.02);
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center
+    }
 
     /* Aside content */
-    aside{position:relative}
-    .sticky{position:sticky;top:24px}
+    aside {
+      position: relative
+    }
+
+    .sticky {
+      position: sticky;
+      top: 24px
+    }
 
     /* Bell UI */
-    .bell-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+    .bell-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 10px
+    }
 
     /* Quiz */
-    .quiz button{display:block;width:100%;text-align:left;margin-top:8px}
+    .quiz button {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin-top: 8px
+    }
 
     /* small helpers */
-    .small{font-size:0.88rem;color:var(--muted)}
-    .tooltip{border-bottom:1px dashed rgba(255,255,255,0.06);cursor:help}
+    .small {
+      font-size: 0.88rem;
+      color: var(--muted)
+    }
 
-    footer{margin-top:18px;color:var(--muted);font-size:0.86rem}
+    .tooltip {
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.06);
+      cursor: help
+    }
+
+    footer {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 0.86rem
+    }
 
     /* subtle transitions */
-    .fade-enter{opacity:0;transform:translateY(6px)}
-    .fade-enter-active{transition:all 220ms ease;opacity:1;transform:none}
+    .fade-enter {
+      opacity: 0;
+      transform: translateY(6px)
+    }
+
+    .fade-enter-active {
+      transition: all 220ms ease;
+      opacity: 1;
+      transform: none
+    }
 
     /* accessible focus */
-    .tab:focus, button:focus, input:focus{outline:2px solid rgba(125,211,252,0.2);outline-offset:2px}
+    .tab:focus,
+    button:focus,
+    input:focus {
+      outline: 2px solid rgba(125, 211, 252, 0.2);
+      outline-offset: 2px
+    }
   </style>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    (function() {
+    function gtag() { dataLayer.push(arguments); }
+    (function () {
       var consent = localStorage.getItem('cookieConsent');
       var status = (consent === 'accepted') ? 'granted' : 'denied';
       gtag('consent', 'default', {
@@ -98,24 +288,28 @@
       });
     })();
   </script>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579" crossorigin="anonymous"></script>
-    <script src="../js/cookie-consent.js" defer></script>
-    <link rel="stylesheet" href="../css/navbar.css">
-    <script src="../js/navbar.js" defer></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5520143708573579"
+    crossorigin="anonymous"></script>
+  <script src="../js/cookie-consent.js" defer></script>
+  <link rel="stylesheet" href="../css/navbar.css">
+  <script src="../js/navbar.js" defer></script>
 </head>
+
 <body>
   <main class="container" role="main">
     <header>
       <div class="logo">ψ</div>
       <div>
         <h1>Quantum Entanglement — Interactive Course</h1>
-        <p class="muted">A short, modular learning experience: <strong>Overview</strong> → <strong>Simulator</strong> → <strong>Bell test</strong> → <strong>Quiz</strong>.</p>
+        <p class="muted">A short, modular learning experience: <strong>Overview</strong> → <strong>Simulator</strong> →
+          <strong>Bell test</strong> → <strong>Quiz</strong>.</p>
       </div>
     </header>
 
     <!-- Tabs -->
     <nav class="tabs" role="tablist" aria-label="Course sections">
-      <button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview" aria-selected="true">Overview</button>
+      <button class="tab" role="tab" id="tab-overview" aria-controls="panel-overview"
+        aria-selected="true">Overview</button>
       <button class="tab" role="tab" id="tab-sim" aria-controls="panel-sim">Simulator</button>
       <button class="tab" role="tab" id="tab-bell" aria-controls="panel-bell">Bell's Inequality</button>
       <button class="tab" role="tab" id="tab-quiz" aria-controls="panel-quiz">Quiz & Activities</button>
@@ -137,7 +331,11 @@
           </ul>
 
           <h3 style="margin-top:14px">Quick intuition</h3>
-          <p class="small">Entangled particles share correlations that cannot be explained by assigning independent properties to each particle. The <span class="tooltip" title="The singlet (|01⟩ − |10⟩)/√2 is a two-qubit state with perfect anti-correlation when measured in the same basis.">singlet state</span> is a common example: if Alice measures one qubit along an axis and obtains a result, Bob's measurement along the same axis will give the opposite result.</p>
+          <p class="small">Entangled particles share correlations that cannot be explained by assigning independent
+            properties to each particle. The <span class="tooltip"
+              title="The singlet (|01⟩ − |10⟩)/√2 is a two-qubit state with perfect anti-correlation when measured in the same basis.">singlet
+              state</span> is a common example: if Alice measures one qubit along an axis and obtains a result, Bob's
+            measurement along the same axis will give the opposite result.</p>
 
           <div style="display:flex;gap:10px;margin-top:12px;align-items:center">
             <button id="startSim">Start Simulator</button>
@@ -150,7 +348,8 @@
         <!-- Simulator -->
         <article id="panel-sim" class="card" style="display:none" role="tabpanel" aria-labelledby="tab-sim">
           <h2>Interactive Simulator</h2>
-          <p class="small muted">Visualize an entangled pair and measure them in chosen bases. Outcomes are shown as 0/1; underlying ±1 values are used for statistics.</p>
+          <p class="small muted">Visualize an entangled pair and measure them in chosen bases. Outcomes are shown as
+            0/1; underlying ±1 values are used for statistics.</p>
 
           <canvas id="vis" width="900" height="300" aria-label="Visualization of entangled qubits"></canvas>
 
@@ -171,19 +370,33 @@
             <button id="measureBtn">Measure a pair</button>
             <button id="pairBtn" class="ghost">Create new entangled pair</button>
             <button id="resetBtn" class="ghost">Reset stats</button>
-            <div style="margin-left:auto;color:var(--muted);font-size:0.92rem">State: <strong id="stateLabel">Singlet (|01⟩ − |10⟩)/√2</strong></div>
+            <div style="margin-left:auto;color:var(--muted);font-size:0.92rem">State: <strong id="stateLabel">Singlet
+                (|01⟩ − |10⟩)/√2</strong></div>
           </div>
 
           <div class="stats">
-            <div class="stat"><div class="small muted">Trials</div><div id="trials">0</div></div>
-            <div class="stat"><div class="small muted">Correlated (%)</div><div id="corr">—</div></div>
-            <div class="stat"><div class="small muted">Alice outcome</div><div id="aOutcome">—</div></div>
-            <div class="stat"><div class="small muted">Bob outcome</div><div id="bOutcome">—</div></div>
+            <div class="stat">
+              <div class="small muted">Trials</div>
+              <div id="trials">0</div>
+            </div>
+            <div class="stat">
+              <div class="small muted">Correlated (%)</div>
+              <div id="corr">—</div>
+            </div>
+            <div class="stat">
+              <div class="small muted">Alice outcome</div>
+              <div id="aOutcome">—</div>
+            </div>
+            <div class="stat">
+              <div class="small muted">Bob outcome</div>
+              <div id="bOutcome">—</div>
+            </div>
           </div>
 
           <div style="margin-top:12px">
             <h3 style="margin:6px 0">Bell-CHSH quick runner</h3>
-            <p class="small muted">Enter two settings for Alice (A, A') and Bob (B, B'), then run many trials to estimate S (CHSH). Typical quantum settings can produce S &gt; 2 (violation of local realism).</p>
+            <p class="small muted">Enter two settings for Alice (A, A') and Bob (B, B'), then run many trials to
+              estimate S (CHSH). Typical quantum settings can produce S &gt; 2 (violation of local realism).</p>
 
             <div class="bell-grid">
               <div>
@@ -217,81 +430,94 @@
         <!-- Bell theory -->
         <article id="panel-bell" class="card" style="display:none" role="tabpanel" aria-labelledby="tab-bell">
           <h2>Bell's Inequality — CHSH</h2>
-          <p class="small">Bell-CHSH compares correlations between four measurement pairs: (A,B), (A,B'), (A',B), (A',B'). Compute expectation values E for each pair and combine as:</p>
-          <pre class="small" style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">S = |E(A,B) − E(A,B')| + |E(A',B) + E(A',B')|</pre>
-          <p class="small muted">Classical local hidden variable theories satisfy S ≤ 2. Quantum mechanics predicts S up to 2√2 ≈ 2.828 for optimal choices.</p>
+          <p class="small">Bell-CHSH compares correlations between four measurement pairs: (A,B), (A,B'), (A',B),
+            (A',B'). Compute expectation values E for each pair and combine as:</p>
+          <pre class="small"
+            style="background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">S = |E(A,B) − E(A,B')| + |E(A',B) + E(A',B')|</pre>
+          <p class="small muted">Classical local hidden variable theories satisfy S ≤ 2. Quantum mechanics predicts S up
+            to 2√2 ≈ 2.828 for optimal choices.</p>
 
           <h3 style="margin-top:10px">Interpretation</h3>
-          <p class="small">When S &gt; 2, the observed correlations cannot be explained by any local model where measurement outcomes are pre-assigned based only on local information. Experiments with photons and spins have repeatedly observed violations consistent with quantum predictions.</p>
+          <p class="small">When S &gt; 2, the observed correlations cannot be explained by any local model where
+            measurement outcomes are pre-assigned based only on local information. Experiments with photons and spins
+            have repeatedly observed violations consistent with quantum predictions.</p>
 
           <div style="margin-top:12px">
             <h4>Practical notes</h4>
             <ul class="small muted">
-              <li>Real experiments must account for detector inefficiencies, timing (locality) loopholes, and noise.</li>
-              <li>The simulator here uses idealized sampling based on the singlet correlation model — it is educational, not experimental.</li>
+              <li>Real experiments must account for detector inefficiencies, timing (locality) loopholes, and noise.
+              </li>
+              <li>The simulator here uses idealized sampling based on the singlet correlation model — it is educational,
+                not experimental.</li>
             </ul>
           </div>
         </article>
 
         <!-- Quiz -->
         <!-- Quiz -->
-<article id="panel-quiz" class="card" style="display:none" role="tabpanel" aria-labelledby="tab-quiz">
-  <h2>Quiz & Activities</h2>
+        <article id="panel-quiz" class="card" style="display:none" role="tabpanel" aria-labelledby="tab-quiz">
+          <h2>Quiz & Activities</h2>
 
-  <div class="quiz">
-    <p class="small"><strong>Q1.</strong> If Alice and Bob measure the singlet along the same axis, what is the correlation of their outcomes?</p>
-    <button class="ghost" data-answer="A">A) Always same</button>
-    <button class="ghost" data-answer="B">B) Always opposite</button>
-    <button class="ghost" data-answer="C">C) Random, uncorrelated</button>
-    <div id="quizRes" style="margin-top:8px;color:var(--muted)"></div>
+          <div class="quiz">
+            <p class="small"><strong>Q1.</strong> If Alice and Bob measure the singlet along the same axis, what is the
+              correlation of their outcomes?</p>
+            <button class="ghost" data-answer="A">A) Always same</button>
+            <button class="ghost" data-answer="B">B) Always opposite</button>
+            <button class="ghost" data-answer="C">C) Random, uncorrelated</button>
+            <div id="quizRes" style="margin-top:8px;color:var(--muted)"></div>
 
-    <hr style="margin:12px 0;opacity:0.1">
+            <hr style="margin:12px 0;opacity:0.1">
 
-    <p class="small"><strong>Q2.</strong> What does a violation of Bell’s inequality (S &gt; 2) imply?</p>
-    <button class="ghost" data-answer="A2">A) Quantum mechanics is wrong</button>
-    <button class="ghost" data-answer="B2">B) Local hidden variables cannot explain the results</button>
-    <button class="ghost" data-answer="C2">C) Measurement errors are too high</button>
-    <div id="quizRes2" style="margin-top:8px;color:var(--muted)"></div>
+            <p class="small"><strong>Q2.</strong> What does a violation of Bell’s inequality (S &gt; 2) imply?</p>
+            <button class="ghost" data-answer="A2">A) Quantum mechanics is wrong</button>
+            <button class="ghost" data-answer="B2">B) Local hidden variables cannot explain the results</button>
+            <button class="ghost" data-answer="C2">C) Measurement errors are too high</button>
+            <div id="quizRes2" style="margin-top:8px;color:var(--muted)"></div>
 
-    <hr style="margin:12px 0;opacity:0.1">
+            <hr style="margin:12px 0;opacity:0.1">
 
-    <p class="small"><strong>Q3.</strong> In the singlet state, if Alice measures her qubit and finds it in |0⟩, what will Bob find when measuring in the same basis?</p>
-    <button class="ghost" data-answer="A3">A) |0⟩</button>
-    <button class="ghost" data-answer="B3">B) |1⟩</button>
-    <button class="ghost" data-answer="C3">C) Randomly either |0⟩ or |1⟩</button>
-    <div id="quizRes3" style="margin-top:8px;color:var(--muted)"></div>
+            <p class="small"><strong>Q3.</strong> In the singlet state, if Alice measures her qubit and finds it in |0⟩,
+              what will Bob find when measuring in the same basis?</p>
+            <button class="ghost" data-answer="A3">A) |0⟩</button>
+            <button class="ghost" data-answer="B3">B) |1⟩</button>
+            <button class="ghost" data-answer="C3">C) Randomly either |0⟩ or |1⟩</button>
+            <div id="quizRes3" style="margin-top:8px;color:var(--muted)"></div>
 
-    <hr style="margin:12px 0;opacity:0.1">
+            <hr style="margin:12px 0;opacity:0.1">
 
-    <p class="small"><strong>Q4.</strong> What physical property determines the correlation strength between two measurement directions?</p>
-    <button class="ghost" data-answer="A4">A) The angle between the measurement axes</button>
-    <button class="ghost" data-answer="B4">B) The distance between detectors</button>
-    <button class="ghost" data-answer="C4">C) The wavelength of the photons</button>
-    <div id="quizRes4" style="margin-top:8px;color:var(--muted)"></div>
+            <p class="small"><strong>Q4.</strong> What physical property determines the correlation strength between two
+              measurement directions?</p>
+            <button class="ghost" data-answer="A4">A) The angle between the measurement axes</button>
+            <button class="ghost" data-answer="B4">B) The distance between detectors</button>
+            <button class="ghost" data-answer="C4">C) The wavelength of the photons</button>
+            <div id="quizRes4" style="margin-top:8px;color:var(--muted)"></div>
 
-    <hr style="margin:12px 0;opacity:0.1">
+            <hr style="margin:12px 0;opacity:0.1">
 
-    <p class="small"><strong>Q5.</strong> Which expression correctly represents the quantum mechanical correlation in the polarization version of the Bell test?</p>
-    <button class="ghost" data-answer="A5">A) E(a,b) = −cos(2Δ)</button>
-    <button class="ghost" data-answer="B5">B) E(a,b) = sin(Δ)</button>
-    <button class="ghost" data-answer="C5">C) E(a,b) = −tan(Δ)</button>
-    <div id="quizRes5" style="margin-top:8px;color:var(--muted)"></div>
-  </div>
+            <p class="small"><strong>Q5.</strong> Which expression correctly represents the quantum mechanical
+              correlation in the polarization version of the Bell test?</p>
+            <button class="ghost" data-answer="A5">A) E(a,b) = −cos(2Δ)</button>
+            <button class="ghost" data-answer="B5">B) E(a,b) = sin(Δ)</button>
+            <button class="ghost" data-answer="C5">C) E(a,b) = −tan(Δ)</button>
+            <div id="quizRes5" style="margin-top:8px;color:var(--muted)"></div>
+          </div>
 
-  <h3 style="margin-top:14px">Suggested activities</h3>
-  <ol class="small muted">
-    <li>Set both angles equal — measure several pairs to see near 100% anti-correlation.</li>
-    <li>Change Bob's angle by 45° — plot the correlation vs angle difference and compare with the predicted curve.</li>
-    <li>Run the Bell test with canonical angles (0°,45°,22.5°,67.5°) and observe S &gt; 2.</li>
-  </ol>
-</article>
+          <h3 style="margin-top:14px">Suggested activities</h3>
+          <ol class="small muted">
+            <li>Set both angles equal — measure several pairs to see near 100% anti-correlation.</li>
+            <li>Change Bob's angle by 45° — plot the correlation vs angle difference and compare with the predicted
+              curve.</li>
+            <li>Run the Bell test with canonical angles (0°,45°,22.5°,67.5°) and observe S &gt; 2.</li>
+          </ol>
+        </article>
 
 
         <!-- References -->
         <article id="panel-refs" class="card" style="display:none" role="tabpanel" aria-labelledby="tab-refs">
           <h2>References & Further Reading</h2>
           <ul class="small muted">
-            <li>Einstein, Podolsky, Rosen — "Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?" (1935).</li>
+            <li>Einstein, Podolsky, Rosen — "Can Quantum-Mechanical Description of Physical Reality Be Considered
+              Complete?" (1935).</li>
             <li>Bell, J. S. — "On the Einstein Podolsky Rosen paradox" (1964).</li>
             <li>Aspect et al. — Experimental tests of Bell's inequalities (1980s onward).</li>
             <li>Intro texts: Nielsen & Chuang, "Quantum Computation and Quantum Information" (for deeper reading).</li>
@@ -304,12 +530,17 @@
       <aside>
         <div class="card sticky">
           <h3>Quick theory</h3>
-          <p class="small muted">For linear-polarization photons in a singlet-like correlation, the predicted expectation of the product of outcomes (±1) is <em>E(a,b) = −cos(2Δ)</em>, where Δ = a − b. This is the model used by the simulator. For spin-½ particles measured on the Bloch sphere, the form is <em>E(a,b) = −cos(Δ)</em>.</p>
+          <p class="small muted">For linear-polarization photons in a singlet-like correlation, the predicted
+            expectation of the product of outcomes (±1) is <em>E(a,b) = −cos(2Δ)</em>, where Δ = a − b. This is the
+            model used by the simulator. For spin-½ particles measured on the Bloch sphere, the form is <em>E(a,b) =
+              −cos(Δ)</em>.</p>
 
           <h4 style="margin-top:10px">FAQ</h4>
-          <p class="small muted"><strong>Is this a real experiment?</strong> No — it is a simplified, idealized simulator for learning. Real experiments require specialized optics and careful error analysis.</p>
+          <p class="small muted"><strong>Is this a real experiment?</strong> No — it is a simplified, idealized
+            simulator for learning. Real experiments require specialized optics and careful error analysis.</p>
 
-          <p class="small muted"><strong>What do 0 and 1 represent?</strong> The page shows outcomes as bits (0/1) for clarity. Internally the model uses ±1 to compute expectations.</p>
+          <p class="small muted"><strong>What do 0 and 1 represent?</strong> The page shows outcomes as bits (0/1) for
+            clarity. Internally the model uses ±1 to compute expectations.</p>
 
           <div style="margin-top:10px;display:flex;gap:8px">
             <button id="downloadCSV" class="ghost">Export stats</button>
@@ -329,7 +560,8 @@
       </aside>
     </div>
 
-    <footer class="small muted">Built for learning — interactive, modular, and accessible. This simulation is for educational purposes only.</footer>
+    <footer class="small muted">Built for learning — interactive, modular, and accessible. This simulation is for
+      educational purposes only.</footer>
   </main>
 
   <script>
@@ -362,43 +594,43 @@
       const dpr = devicePixelRatio || 1;
       const w = canvas.width = canvas.clientWidth * dpr;
       const h = canvas.height = 300 * dpr;
-      ctx.clearRect(0,0,w,h);
-      ctx.save(); ctx.scale(dpr,dpr);
+      ctx.clearRect(0, 0, w, h);
+      ctx.save(); ctx.scale(dpr, dpr);
 
       // background
-      const gx = ctx.createLinearGradient(0,0,canvas.clientWidth,0);
-      gx.addColorStop(0,'rgba(125,211,252,0.035)'); gx.addColorStop(1,'rgba(96,165,250,0.02)');
-      ctx.fillStyle = gx; ctx.fillRect(0,0,canvas.clientWidth,220);
+      const gx = ctx.createLinearGradient(0, 0, canvas.clientWidth, 0);
+      gx.addColorStop(0, 'rgba(125,211,252,0.035)'); gx.addColorStop(1, 'rgba(96,165,250,0.02)');
+      ctx.fillStyle = gx; ctx.fillRect(0, 0, canvas.clientWidth, 220);
 
       const cy = 110;
       const cxA = 120; const cxB = canvas.clientWidth - 120;
 
       // qubits
-      function drawQubit(cx,label){
-        ctx.beginPath(); ctx.arc(cx,cy,44,0,Math.PI*2); ctx.fillStyle='rgba(255,255,255,0.03)'; ctx.fill(); ctx.strokeStyle='rgba(255,255,255,0.06)'; ctx.lineWidth=1; ctx.stroke();
-        ctx.fillStyle='rgba(255,255,255,0.9)'; ctx.font='14px Inter, sans-serif'; ctx.fillText(label, cx-6, cy+6);
+      function drawQubit(cx, label) {
+        ctx.beginPath(); ctx.arc(cx, cy, 44, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.03)'; ctx.fill(); ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.font = '14px Inter, sans-serif'; ctx.fillText(label, cx - 6, cy + 6);
       }
-      drawQubit(cxA,'A'); drawQubit(cxB,'B');
+      drawQubit(cxA, 'A'); drawQubit(cxB, 'B');
 
       // entanglement curve
-      ctx.beginPath(); ctx.moveTo(cxA+40,cy); ctx.quadraticCurveTo(canvas.clientWidth/2, cy-60, cxB-40, cy); ctx.strokeStyle='rgba(125,211,252,0.45)'; ctx.lineWidth=3; ctx.stroke();
-      ctx.beginPath(); ctx.arc(canvas.clientWidth/2, cy-6, 6, 0, Math.PI*2); ctx.fillStyle='rgba(125,211,252,0.95)'; ctx.fill();
+      ctx.beginPath(); ctx.moveTo(cxA + 40, cy); ctx.quadraticCurveTo(canvas.clientWidth / 2, cy - 60, cxB - 40, cy); ctx.strokeStyle = 'rgba(125,211,252,0.45)'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.beginPath(); ctx.arc(canvas.clientWidth / 2, cy - 6, 6, 0, Math.PI * 2); ctx.fillStyle = 'rgba(125,211,252,0.95)'; ctx.fill();
 
       // axes
-      function drawAxis(cx,angle,label){
-        const len = 72; const a = -angle*Math.PI/180;
-        const x1 = cx - Math.cos(a)*len, y1 = cy - Math.sin(a)*len;
-        const x2 = cx + Math.cos(a)*len, y2 = cy + Math.sin(a)*len;
-        ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.strokeStyle='rgba(255,255,255,0.95)'; ctx.lineWidth=2; ctx.stroke();
-        ctx.fillStyle='rgba(255,255,255,0.95)'; ctx.font='12px Inter'; ctx.fillText(label + ' ('+angle.toFixed(0)+'°)', cx-36, cy+96);
-        ctx.save(); ctx.translate(x2,y2); ctx.rotate(-a); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-8,-6); ctx.lineTo(-8,6); ctx.closePath(); ctx.fill(); ctx.restore();
+      function drawAxis(cx, angle, label) {
+        const len = 72; const a = -angle * Math.PI / 180;
+        const x1 = cx - Math.cos(a) * len, y1 = cy - Math.sin(a) * len;
+        const x2 = cx + Math.cos(a) * len, y2 = cy + Math.sin(a) * len;
+        ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.strokeStyle = 'rgba(255,255,255,0.95)'; ctx.lineWidth = 2; ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.font = '12px Inter'; ctx.fillText(label + ' (' + angle.toFixed(0) + '°)', cx - 36, cy + 96);
+        ctx.save(); ctx.translate(x2, y2); ctx.rotate(-a); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-8, -6); ctx.lineTo(-8, 6); ctx.closePath(); ctx.fill(); ctx.restore();
       }
-      drawAxis(cxA,thetaA,'Alice'); drawAxis(cxB,thetaB,'Bob');
+      drawAxis(cxA, thetaA, 'Alice'); drawAxis(cxB, thetaB, 'Bob');
 
-      if(lastResult){
-        ctx.fillStyle='rgba(255,255,255,0.92)'; ctx.font='13px Inter';
-        ctx.fillText('Alice outcome: ' + lastResult.a, cxA-44, cy+46);
-        ctx.fillText('Bob outcome: ' + lastResult.b, cxB-44, cy+46);
+      if (lastResult) {
+        ctx.fillStyle = 'rgba(255,255,255,0.92)'; ctx.font = '13px Inter';
+        ctx.fillText('Alice outcome: ' + lastResult.a, cxA - 44, cy + 46);
+        ctx.fillText('Bob outcome: ' + lastResult.b, cxB - 44, cy + 46);
       }
 
       ctx.restore();
@@ -417,68 +649,68 @@
     const aOut = document.getElementById('aOutcome');
     const bOut = document.getElementById('bOutcome');
 
-    let stats = {trials:0, same:0};
-    function updateStatsDisplay(){
+    let stats = { trials: 0, same: 0 };
+    function updateStatsDisplay() {
       trialsEl.textContent = stats.trials;
-      corrEl.textContent = stats.trials ? Math.round((stats.same/stats.trials)*100) + '%' : '—';
+      corrEl.textContent = stats.trials ? Math.round((stats.same / stats.trials) * 100) + '%' : '—';
     }
 
-    angleA.addEventListener('input', ()=>{aVal.textContent = angleA.value; drawScene(Number(angleA.value), Number(angleB.value));});
-    angleB.addEventListener('input', ()=>{bVal.textContent = angleB.value; drawScene(Number(angleA.value), Number(angleB.value));});
+    angleA.addEventListener('input', () => { aVal.textContent = angleA.value; drawScene(Number(angleA.value), Number(angleB.value)); });
+    angleB.addEventListener('input', () => { bVal.textContent = angleB.value; drawScene(Number(angleA.value), Number(angleB.value)); });
 
-    measureBtn.addEventListener('click', ()=>{
+    measureBtn.addEventListener('click', () => {
       const a = Number(angleA.value), b = Number(angleB.value);
-      const res = samplePair(a,b);
-      stats.trials += 1; if(res.a === res.b) stats.same += 1;
-      aOut.textContent = res.a; bOut.textContent = res.b; updateStatsDisplay(); drawScene(a,b,res);
+      const res = samplePair(a, b);
+      stats.trials += 1; if (res.a === res.b) stats.same += 1;
+      aOut.textContent = res.a; bOut.textContent = res.b; updateStatsDisplay(); drawScene(a, b, res);
     });
 
-    pairBtn.addEventListener('click', ()=>{
-      const old = canvas.style.transform; canvas.style.transform = 'translateY(-4px)'; setTimeout(()=> canvas.style.transform = old, 180);
+    pairBtn.addEventListener('click', () => {
+      const old = canvas.style.transform; canvas.style.transform = 'translateY(-4px)'; setTimeout(() => canvas.style.transform = old, 180);
     });
 
-    resetBtn.addEventListener('click', ()=>{stats = {trials:0,same:0}; updateStatsDisplay(); aOut.textContent='—'; bOut.textContent='—'; drawScene(Number(angleA.value), Number(angleB.value));});
+    resetBtn.addEventListener('click', () => { stats = { trials: 0, same: 0 }; updateStatsDisplay(); aOut.textContent = '—'; bOut.textContent = '—'; drawScene(Number(angleA.value), Number(angleB.value)); });
 
     /* ---------------------- Quiz logic ---------------------- */
-document.querySelectorAll('#panel-quiz .ghost').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const key = btn.getAttribute('data-answer');
+    document.querySelectorAll('#panel-quiz .ghost').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const key = btn.getAttribute('data-answer');
 
-    const feedbacks = {
-      // Q1
-      'A':  ['quizRes', false, 'Not correct — for the singlet state outcomes along the same axis are opposite.'],
-      'B':  ['quizRes', true,  'Correct — singlet measurements along the same axis are always opposite (perfect anti-correlation).'],
-      'C':  ['quizRes', false, 'Not correct — they are not uncorrelated in the singlet.'],
+        const feedbacks = {
+          // Q1
+          'A': ['quizRes', false, 'Not correct — for the singlet state outcomes along the same axis are opposite.'],
+          'B': ['quizRes', true, 'Correct — singlet measurements along the same axis are always opposite (perfect anti-correlation).'],
+          'C': ['quizRes', false, 'Not correct — they are not uncorrelated in the singlet.'],
 
-      // Q2
-      'A2': ['quizRes2', false, 'No — Bell violations do not show QM is wrong.'],
-      'B2': ['quizRes2', true,  'Correct — they show local hidden-variable models cannot account for the correlations.'],
-      'C2': ['quizRes2', false, 'No — experimental error is not the defining implication.'],
+          // Q2
+          'A2': ['quizRes2', false, 'No — Bell violations do not show QM is wrong.'],
+          'B2': ['quizRes2', true, 'Correct — they show local hidden-variable models cannot account for the correlations.'],
+          'C2': ['quizRes2', false, 'No — experimental error is not the defining implication.'],
 
-      // Q3
-      'A3': ['quizRes3', false, 'No — Bob will not find the same state in the singlet case.'],
-      'B3': ['quizRes3', true,  'Correct — Bob will find the opposite result in the same basis.'],
-      'C3': ['quizRes3', false, 'No — outcomes are correlated (opposite), not random.'],
+          // Q3
+          'A3': ['quizRes3', false, 'No — Bob will not find the same state in the singlet case.'],
+          'B3': ['quizRes3', true, 'Correct — Bob will find the opposite result in the same basis.'],
+          'C3': ['quizRes3', false, 'No — outcomes are correlated (opposite), not random.'],
 
-      // Q4
-      'A4': ['quizRes4', true,  'Correct — the angle between axes controls correlation strength.'],
-      'B4': ['quizRes4', false, 'No — ideal correlations are independent of detector distance.'],
-      'C4': ['quizRes4', false, 'No — wavelength is not the controlling factor in this simple model.'],
+          // Q4
+          'A4': ['quizRes4', true, 'Correct — the angle between axes controls correlation strength.'],
+          'B4': ['quizRes4', false, 'No — ideal correlations are independent of detector distance.'],
+          'C4': ['quizRes4', false, 'No — wavelength is not the controlling factor in this simple model.'],
 
-      // Q5
-      'A5': ['quizRes5', true,  'Correct — for polarization correlations E(a,b) = −cos(2Δ).'],
-      'B5': ['quizRes5', false, 'No — sine is not the correct functional form here.'],
-      'C5': ['quizRes5', false, 'No — tangent is not correct for this correlation.']
-    };
+          // Q5
+          'A5': ['quizRes5', true, 'Correct — for polarization correlations E(a,b) = −cos(2Δ).'],
+          'B5': ['quizRes5', false, 'No — sine is not the correct functional form here.'],
+          'C5': ['quizRes5', false, 'No — tangent is not correct for this correlation.']
+        };
 
-    const fb = feedbacks[key];
-    if (!fb) return;
-    const [resId, correct, text] = fb;
-    const el = document.getElementById(resId);
-    el.style.color = correct ? 'var(--accent)' : 'var(--muted)';
-    el.textContent = text;
-  });
-});
+        const fb = feedbacks[key];
+        if (!fb) return;
+        const [resId, correct, text] = fb;
+        const el = document.getElementById(resId);
+        el.style.color = correct ? 'var(--accent)' : 'var(--muted)';
+        el.textContent = text;
+      });
+    });
     /* ---------------------- Bell runner (non-blocking-ish) ---------------------- */
     const A1 = document.getElementById('A1');
     const A2 = document.getElementById('A2');
@@ -488,23 +720,23 @@ document.querySelectorAll('#panel-quiz .ghost').forEach(btn => {
     const Sval = document.getElementById('Sval');
     const bellInsight = document.getElementById('bellInsight');
 
-    function estimateE(a,b,trials){
+    function estimateE(a, b, trials) {
       let sum = 0;
-      for(let i=0;i<trials;i++){
-        const r = samplePair(a,b); const ar = r.aRaw; const br = r.bRaw; sum += ar * br;
+      for (let i = 0; i < trials; i++) {
+        const r = samplePair(a, b); const ar = r.aRaw; const br = r.bRaw; sum += ar * br;
       }
       return sum / trials;
     }
 
-    runBell.addEventListener('click', async ()=>{
+    runBell.addEventListener('click', async () => {
       runBell.disabled = true; runBell.textContent = 'Running...'; bellInsight.textContent = '';
-      await new Promise(r=>setTimeout(r,10));
+      await new Promise(r => setTimeout(r, 10));
       const trials = 10000;
       const a1 = Number(A1.value), a2 = Number(A2.value), b1 = Number(B1.value), b2 = Number(B2.value);
-      const Eab = estimateE(a1,b1,trials);
-      const Eab2 = estimateE(a1,b2,trials);
-      const Ea2b = estimateE(a2,b1,trials);
-      const Ea2b2 = estimateE(a2,b2,trials);
+      const Eab = estimateE(a1, b1, trials);
+      const Eab2 = estimateE(a1, b2, trials);
+      const Ea2b = estimateE(a2, b1, trials);
+      const Ea2b2 = estimateE(a2, b2, trials);
       const S = Math.abs(Eab - Eab2) + Math.abs(Ea2b + Ea2b2);
       Sval.textContent = S.toFixed(3);
       bellInsight.textContent = 'Notes: values fluctuate statistically; increase trials for tighter estimates.';
@@ -521,54 +753,55 @@ document.querySelectorAll('#panel-quiz .ghost').forEach(btn => {
       'tab-refs': document.getElementById('panel-refs')
     };
 
-    function switchTo(id){
-      tabs.forEach(t=> t.setAttribute('aria-selected','false'));
-      document.getElementById(id).setAttribute('aria-selected','true');
-      Object.values(panels).forEach(p=> p.style.display = 'none');
+    function switchTo(id) {
+      tabs.forEach(t => t.setAttribute('aria-selected', 'false'));
+      document.getElementById(id).setAttribute('aria-selected', 'true');
+      Object.values(panels).forEach(p => p.style.display = 'none');
       panels[id].style.display = 'block';
       // redraw canvas when showing simulator
-      if(id === 'tab-sim') drawScene(Number(angleA.value), Number(angleB.value));
+      if (id === 'tab-sim') drawScene(Number(angleA.value), Number(angleB.value));
     }
 
-    tabs.forEach(t=> t.addEventListener('click', ()=> switchTo(t.id)));
+    tabs.forEach(t => t.addEventListener('click', () => switchTo(t.id)));
 
     // quick nav buttons
-    document.getElementById('startSim').addEventListener('click', ()=> switchTo('tab-sim'));
-    document.getElementById('goBell').addEventListener('click', ()=> switchTo('tab-bell'));
+    document.getElementById('startSim').addEventListener('click', () => switchTo('tab-sim'));
+    document.getElementById('goBell').addEventListener('click', () => switchTo('tab-bell'));
 
     /* ---------------------- Aside actions ---------------------- */
-    document.getElementById('resetAll').addEventListener('click', ()=>{
-      stats = {trials:0,same:0}; updateStatsDisplay(); aOut.textContent='—'; bOut.textContent='—'; aVal.textContent = angleA.value = 0; bVal.textContent = angleB.value = 0; drawScene(0,0);
+    document.getElementById('resetAll').addEventListener('click', () => {
+      stats = { trials: 0, same: 0 }; updateStatsDisplay(); aOut.textContent = '—'; bOut.textContent = '—'; aVal.textContent = angleA.value = 0; bVal.textContent = angleB.value = 0; drawScene(0, 0);
     });
 
-    document.getElementById('downloadCSV').addEventListener('click', ()=>{
+    document.getElementById('downloadCSV').addEventListener('click', () => {
       // create a tiny CSV of current stats
-      const csv = 'trials,correlatedPercent\n' + stats.trials + ',' + (stats.trials? Math.round((stats.same/stats.trials)*100):0) + '\n';
-      const blob = new Blob([csv], {type:'text/csv'});
+      const csv = 'trials,correlatedPercent\n' + stats.trials + ',' + (stats.trials ? Math.round((stats.same / stats.trials) * 100) : 0) + '\n';
+      const blob = new Blob([csv], { type: 'text/csv' });
       const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'entanglement-stats.csv'; a.click(); URL.revokeObjectURL(url);
     });
 
     /* ---------------------- Init ---------------------- */
-    aVal.textContent = angleA.value; bVal.textContent = angleB.value; drawScene(0,0); updateStatsDisplay();
-    window.addEventListener('resize', ()=> drawScene(Number(angleA.value), Number(angleB.value)));
+    aVal.textContent = angleA.value; bVal.textContent = angleB.value; drawScene(0, 0); updateStatsDisplay();
+    window.addEventListener('resize', () => drawScene(Number(angleA.value), Number(angleB.value)));
     document.getElementById('downloadCSV').addEventListener('click', () => {
-  const csvContent = [
-    ['Trials', 'Same (%)', 'Alice Outcome', 'Bob Outcome'],
-    [stats.trials, stats.trials ? Math.round((stats.same / stats.trials) * 100) : '—', aOut.textContent, bOut.textContent]
-  ]
-    .map(e => e.join(','))
-    .join('\n');
+      const csvContent = [
+        ['Trials', 'Same (%)', 'Alice Outcome', 'Bob Outcome'],
+        [stats.trials, stats.trials ? Math.round((stats.same / stats.trials) * 100) : '—', aOut.textContent, bOut.textContent]
+      ]
+        .map(e => e.join(','))
+        .join('\n');
 
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.setAttribute('href', url);
-  link.setAttribute('download', 'entanglement_stats.csv');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-});
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'entanglement_stats.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
 
   </script>
 </body>
+
 </html>
