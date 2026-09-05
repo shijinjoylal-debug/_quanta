@@ -1,8 +1,13 @@
 // EmerTezora Authentication & Subscription Manager
 (function () {
-  const API_BASE = (window.location.origin.includes('5500') || window.location.protocol === 'file:')
-    ? 'http://localhost:3000'
-    : '';
+  // Use the same config as the rest of the app (config.js must be loaded first)
+  // On Vercel: '' (relative), on local (different port): 'http://localhost:5000'
+  const API_BASE = (window.CONFIG && typeof window.CONFIG.API_BASE_URL === 'string')
+    ? window.CONFIG.API_BASE_URL
+    : ((window.location.origin.includes('5500') || window.location.protocol === 'file:')
+        ? 'http://localhost:5000'
+        : '');
+
 
   window.EmerAuth = {
     API_BASE: API_BASE,

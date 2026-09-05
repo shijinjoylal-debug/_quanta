@@ -8,13 +8,27 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Razorpay = require('razorpay');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Enable CORS for all cross-origin requests
-app.use(cors());
-app.use(express.json());
+// Initialize Gemini AI client
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
+let genAI = null;
+if (GEMINI_API_KEY) {
+  genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
+  console.log('✅ Gemini AI client initialized.');
+} else {
+  console.warn('⚠️  GEMINI_API_KEY not set — AI routes will return error responses.');
+}
+
+// Enable CORS for all cross-origin requests (including Vercel deployments)
+app.use(cors({
+  origin: true,
+  credentials: true
+}));
+app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // --- Service Worker Routes (must be before express.static to set proper headers) ---
@@ -348,12 +362,119 @@ app.get('/api/subscribers', (req, res) => {
   res.json({ subscribers: data.subscriptions });
 });
 
+// ─── Gemini AI Chat Route ─────────────────────────────────────────────────────
+// POST /api/gemini/chat
+// Body: { prompt: string, history: Array<{role, parts}> }
+app.post('/api/gemini/chat', async (req, res) => {
+  if (!genAI) {
+    return res.status(503).json({
+      error: 'AI service is not configured. Please set GEMINI_API_KEY in Vercel environment variables.',
+      details: 'Missing GEMINI_API_KEY'
+    });
+  }
+
+  try {
+    const { prompt, history = [] } = req.body;
+    if (!prompt || typeof prompt !== 'string' || !prompt.trim()) {
+      return res.status(400).json({ error: 'A non-empty prompt is required.' });
+    }
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+
+    // Build conversation history in Gemini format
+    const formattedHistory = Array.isArray(history)
+      ? history.filter(h => h && h.role && Array.isArray(h.parts))
+      : [];
+
+    const chat = model.startChat({ history: formattedHistory });
+    const result = await chat.sendMessage(prompt.trim());
+    const text = result.response.text();
+
+    return res.json({ success: true, text });
+  } catch (err) {
+    console.error('Gemini API Error:', err);
+    return res.status(500).json({
+      error: 'Gemini AI request failed.',
+      details: err.message
+    });
+  }
+});
+
+// ─── Learning / RAG Ask Route ─────────────────────────────────────────────────
+// POST /api/learning/ask
+// Body: { query: string, category?: string }
+// This uses Gemini to answer educational questions about the Quanta platform.
+app.post('/api/learning/ask', async (req, res) => {
+  if (!genAI) {
+    return res.status(503).json({
+      error: 'AI service is not configured. Please set GEMINI_API_KEY in Vercel environment variables.',
+      details: 'Missing GEMINI_API_KEY'
+    });
+  }
+
+  try {
+    const { query, category } = req.body;
+    if (!query || typeof query !== 'string' || !query.trim()) {
+      return res.status(400).json({ error: 'A non-empty query is required.' });
+    }
+
+    const categoryContext = category ? ` The topic category is: ${category}.` : '';
+    const systemPrompt = `You are Quanta AI, an expert tutor specializing in quantum physics, quantum mechanics, wave-particle duality, orbital mechanics, and related science topics.${categoryContext} Provide clear, concise, and accurate answers. Use markdown formatting where helpful (bold, headers, bullet points).`;
+
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const result = await model.generateContent(`${systemPrompt}\n\nStudent question: ${query.trim()}`);
+    const answer = result.response.text();
+
+    return res.json({
+      success: true,
+      answer,
+      context: [] // No vector context in this implementation — placeholder for future RAG
+    });
+  } catch (err) {
+    console.error('Learning API Error:', err);
+    return res.status(500).json({
+      error: 'Learning AI request failed.',
+      details: err.message
+    });
+  }
+});
+
+// ─── Posts (econnection) stub ─────────────────────────────────────────────────
+// Returns empty posts array if no posts DB is implemented yet
+app.get('/api/posts', (req, res) => {
+  const data = readJsonDb();
+  res.json({ posts: data.posts || [] });
+});
+
+app.post('/api/posts', authenticateToken, (req, res) => {
+  try {
+    const { content, imageUrl } = req.body;
+    const data = readJsonDb();
+    if (!data.posts) data.posts = [];
+    const post = {
+      id: data.posts.length + 1,
+      user_id: req.user.id,
+      user_name: req.user.name,
+      user_email: req.user.email,
+      content: content || '',
+      imageUrl: imageUrl || null,
+      created_at: new Date().toISOString()
+    };
+    data.posts.push(post);
+    writeJsonDb(data);
+    res.json({ success: true, post });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Start Server if run directly (local development)
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(`🌌 EmerTezora Server running at http://localhost:${PORT}`);
     console.log(`💳 Razorpay Key Loaded: ${RAZORPAY_KEY_ID}`);
+    console.log(`🤖 Gemini AI: ${genAI ? 'ENABLED' : 'DISABLED (no API key)'}`);
     console.log(`====================================================`);
   });
 }
