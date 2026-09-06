@@ -3,11 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
-const os = require('os');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Razorpay = require('razorpay');
+const mongoose = require('mongoose');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 const app = express();
@@ -47,7 +47,6 @@ function serveServiceWorker(res, filename, fallbackZoneId) {
 app.get('/sw.js', (req, res) => serveServiceWorker(res, 'sw.js', 11726247));
 
 // sw (1).js — regex route because Express 5 / path-to-regexp v8 rejects parentheses in string paths
-// Matches: /sw%20(1).js  /sw%20%281%29.js  /sw (1).js
 app.get(/^\/sw(?:%20|\s)+(?:\(|%28)1(?:\)|%29)\.js$/i, (req, res) => serveServiceWorker(res, 'sw (1).js', 11726636));
 
 // sw (2).js
@@ -80,6 +79,7 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 const JWT_SECRET = process.env.JWT_SECRET || 'emertezora_quantum_secret_key_2026';
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_live_SezY5OFStlhUZS';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'emertezora_dummy_secret';
+const MONGODB_URI = process.env.MONGODB_URI || '';
 
 // Initialize Razorpay
 let razorpay;
@@ -92,52 +92,98 @@ try {
   console.warn('Razorpay SDK init warning:', e.message);
 }
 
-// Database Setup: Pure JSON & In-Memory Store (Zero Native Dependencies)
-const isServerless = !!(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
-const jsonDbPath = isServerless
-  ? path.join(os.tmpdir(), 'quanta_db.json')
-  : path.join(__dirname, 'quanta_db.json');
+// ─── MongoDB Connection (cached for Vercel serverless) ───────────────────────
+let cached = global.mongoose;
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
 
-let memoryStore = { users: [], subscriptions: [] };
-
-function initJsonDb() {
+async function connectDB() {
+  if (!MONGODB_URI) {
+    console.warn('⚠️  MONGODB_URI not set — database routes will fail until it is configured.');
+    return null;
+  }
+  if (cached.conn) {
+    return cached.conn;
+  }
+  if (!cached.promise) {
+    const opts = {
+      bufferCommands: false,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 10000,
+    };
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+      console.log('✅ MongoDB Connected');
+      return mongooseInstance;
+    });
+  }
   try {
-    if (!fs.existsSync(jsonDbPath)) {
-      fs.writeFileSync(jsonDbPath, JSON.stringify(memoryStore, null, 2));
-    } else {
-      const data = fs.readFileSync(jsonDbPath, 'utf8');
-      memoryStore = JSON.parse(data);
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    console.error('❌ MongoDB Connection Error:', e.message);
+    throw e;
+  }
+  return cached.conn;
+}
+
+// Connect early (non-blocking for local; serverless will connect on first request)
+connectDB().catch(() => { });
+
+// ─── Mongoose Models ─────────────────────────────────────────────────────────
+const userSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+  password_hash: { type: String, required: true },
+  name: { type: String, required: true, trim: true },
+  created_at: { type: Date, default: Date.now }
+}, { collection: 'users' });
+
+const subscriptionSchema = new mongoose.Schema({
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  user_email: { type: String, required: true, lowercase: true },
+  plan_name: { type: String, default: 'EmerTezora Premium Subscription' },
+  amount: { type: Number, default: 499 },
+  currency: { type: String, default: 'INR' },
+  razorpay_order_id: String,
+  razorpay_payment_id: String,
+  razorpay_signature: String,
+  status: { type: String, default: 'active' },
+  created_at: { type: Date, default: Date.now }
+}, { collection: 'subscriptions' });
+
+const postSchema = new mongoose.Schema({
+  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  user_name: String,
+  user_email: String,
+  content: { type: String, default: '' },
+  imageUrl: String,
+  created_at: { type: Date, default: Date.now }
+}, { collection: 'posts' });
+
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+const Subscription = mongoose.models.Subscription || mongoose.model('Subscription', subscriptionSchema);
+const Post = mongoose.models.Post || mongoose.model('Post', postSchema);
+
+// Middleware: ensure DB is connected before API routes that need it
+async function requireDB(req, res, next) {
+  try {
+    if (!MONGODB_URI) {
+      return res.status(503).json({
+        error: 'Database is not configured. Please set MONGODB_URI in environment variables.',
+        details: 'Missing MONGODB_URI'
+      });
     }
-  } catch (e) {
-    console.warn('JSON DB storage initialized in memory:', e.message);
+    await connectDB();
+    next();
+  } catch (err) {
+    return res.status(503).json({
+      error: 'Database connection failed. Please try again shortly.',
+      details: err.message
+    });
   }
 }
 
-function readJsonDb() {
-  try {
-    if (fs.existsSync(jsonDbPath)) {
-      const data = fs.readFileSync(jsonDbPath, 'utf8');
-      memoryStore = JSON.parse(data);
-    }
-  } catch (e) {
-    // fallback to memoryStore
-  }
-  return memoryStore;
-}
-
-function writeJsonDb(data) {
-  memoryStore = data;
-  try {
-    fs.writeFileSync(jsonDbPath, JSON.stringify(data, null, 2));
-  } catch (e) {
-    console.warn('Failed to write JSON DB to disk, kept in memory:', e.message);
-  }
-}
-
-// Initialize database
-initJsonDb();
-
-// Auth Middleware
+// Auth Middleware (JWT)
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -192,61 +238,87 @@ app.get('/subpage', (req, res) => {
   res.sendFile(path.join(__dirname, 'pages', 'subpage.html'));
 });
 
-// Service Worker routes are registered above (before express.static) — see serveServiceWorker()
+// ─── API ENDPOINTS ───────────────────────────────────────────────────────────
 
-// --- API ENDPOINTS ---
+// Health / root API check
+app.get('/api/health', async (req, res) => {
+  let dbStatus = 'not_configured';
+  if (MONGODB_URI) {
+    try {
+      await connectDB();
+      dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'connecting';
+    } catch (e) {
+      dbStatus = 'error: ' + e.message;
+    }
+  }
+  res.json({
+    ok: true,
+    service: 'Quanta / EmerTezora API',
+    mongodb: dbStatus,
+    gemini: genAI ? 'enabled' : 'disabled'
+  });
+});
 
 // Register User
-app.post(['/api/register', '/api/auth/register'], async (req, res) => {
+app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) => {
   try {
     const { email, username, password, name } = req.body;
-    const userEmail = (email || username || '').toLowerCase();
+    const userEmail = (email || username || '').toLowerCase().trim();
     if (!userEmail || !password) {
       return res.status(400).json({ error: 'Email/Username and password are required' });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const userName = name || username || (userEmail.includes('@') ? userEmail.split('@')[0] : userEmail);
-
-    const data = readJsonDb();
-    const existing = data.users.find(
-      u => (u.email && u.email.toLowerCase() === userEmail) || (u.name && u.name.toLowerCase() === userName.toLowerCase())
-    );
+    const existing = await User.findOne({
+      $or: [
+        { email: userEmail },
+        { name: (name || username || userEmail.split('@')[0] || '').trim() }
+      ]
+    });
     if (existing) {
       return res.status(400).json({ error: 'User with this email or username already exists' });
     }
 
-    const newUser = {
-      id: data.users.length + 1,
+    const passwordHash = await bcrypt.hash(password, 10);
+    const userName = (name || username || (userEmail.includes('@') ? userEmail.split('@')[0] : userEmail)).trim();
+
+    const newUser = await User.create({
       email: userEmail,
       password_hash: passwordHash,
-      name: userName,
-      created_at: new Date().toISOString()
-    };
-    data.users.push(newUser);
-    writeJsonDb(data);
+      name: userName
+    });
 
-    const userObj = { id: newUser.id, email: newUser.email, name: newUser.name, username: newUser.name };
+    const userObj = {
+      id: newUser._id.toString(),
+      email: newUser.email,
+      name: newUser.name,
+      username: newUser.name
+    };
     const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
     return res.json({ success: true, message: 'Registration successful!', token, user: userObj });
   } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ error: 'User with this email already exists' });
+    }
+    console.error('Register error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
 // Login User
-app.post(['/api/login', '/api/auth/login'], async (req, res) => {
+app.post(['/api/login', '/api/auth/login'], requireDB, async (req, res) => {
   try {
     const { email, username, password } = req.body;
-    const identifier = (email || username || '').toLowerCase();
+    const identifier = (email || username || '').toLowerCase().trim();
     if (!identifier || !password) {
       return res.status(400).json({ error: 'Email/Username and password are required' });
     }
 
-    const data = readJsonDb();
-    const user = data.users.find(
-      u => (u.email && u.email.toLowerCase() === identifier) || (u.name && u.name.toLowerCase() === identifier)
-    );
+    const user = await User.findOne({
+      $or: [
+        { email: identifier },
+        { name: identifier }
+      ]
+    });
     if (!user) {
       return res.status(400).json({ error: 'Invalid email/username or password' });
     }
@@ -256,32 +328,56 @@ app.post(['/api/login', '/api/auth/login'], async (req, res) => {
       return res.status(400).json({ error: 'Invalid email/username or password' });
     }
 
-    const userObj = { id: user.id, email: user.email, name: user.name, username: user.name };
+    const userObj = {
+      id: user._id.toString(),
+      email: user.email,
+      name: user.name,
+      username: user.name
+    };
     const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
     return res.json({ success: true, message: 'Login successful!', token, user: userObj });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
 // Get Current User Profile & Subscription Status
-app.get(['/api/me', '/api/auth/me'], authenticateToken, (req, res) => {
-  const userId = req.user.id;
-  const userEmail = req.user.email;
-  const userObj = {
-    id: req.user.id,
-    email: req.user.email,
-    name: req.user.name,
-    username: req.user.name || (req.user.email ? req.user.email.split('@')[0] : 'User')
-  };
+app.get(['/api/me', '/api/auth/me'], requireDB, authenticateToken, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const userEmail = (req.user.email || '').toLowerCase();
 
-  const data = readJsonDb();
-  const sub = data.subscriptions.find(s => s.user_id === userId || s.user_email === userEmail);
-  res.json({
-    user: userObj,
-    subscribed: !!sub,
-    subscription: sub || null
-  });
+    const userObj = {
+      id: req.user.id,
+      email: req.user.email,
+      name: req.user.name,
+      username: req.user.name || (req.user.email ? req.user.email.split('@')[0] : 'User')
+    };
+
+    let sub = null;
+    if (mongoose.Types.ObjectId.isValid(userId)) {
+      sub = await Subscription.findOne({
+        $or: [
+          { user_id: userId },
+          { user_email: userEmail }
+        ],
+        status: 'active'
+      }).sort({ created_at: -1 }).lean();
+    } else {
+      sub = await Subscription.findOne({ user_email: userEmail, status: 'active' })
+        .sort({ created_at: -1 }).lean();
+    }
+
+    res.json({
+      user: userObj,
+      subscribed: !!sub,
+      subscription: sub || null
+    });
+  } catch (err) {
+    console.error('/api/me error:', err);
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Create Razorpay Order
@@ -325,15 +421,15 @@ app.post('/api/create-order', authenticateToken, async (req, res) => {
   }
 });
 
-// Verify Payment & Store Subscription Data in Database
-app.post('/api/verify-payment', authenticateToken, (req, res) => {
+// Verify Payment & Store Subscription Data in MongoDB
+app.post('/api/verify-payment', requireDB, authenticateToken, async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, planName, amount } = req.body;
     const userId = req.user.id;
-    const userEmail = req.user.email;
+    const userEmail = (req.user.email || '').toLowerCase();
 
-    const record = {
-      user_id: userId,
+    const record = await Subscription.create({
+      user_id: mongoose.Types.ObjectId.isValid(userId) ? userId : undefined,
       user_email: userEmail,
       plan_name: planName || 'EmerTezora Premium Subscription',
       amount: amount || 499,
@@ -341,30 +437,31 @@ app.post('/api/verify-payment', authenticateToken, (req, res) => {
       razorpay_order_id: razorpay_order_id || `order_dummy_${Date.now()}`,
       razorpay_payment_id: razorpay_payment_id || `pay_${Date.now()}`,
       razorpay_signature: razorpay_signature || `sig_${Date.now()}`,
-      status: 'active',
-      created_at: new Date().toISOString()
-    };
+      status: 'active'
+    });
 
-    const data = readJsonDb();
-    record.id = data.subscriptions.length + 1;
-    data.subscriptions.push(record);
-    writeJsonDb(data);
+    res.json({
+      success: true,
+      message: 'Subscription successfully activated and stored in database!',
+      subscription: record
+    });
+  } catch (err) {
+    console.error('Verify payment error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
-    res.json({ success: true, message: 'Subscription successfully activated and stored in database!', subscription: record });
+// List Subscribers
+app.get('/api/subscribers', requireDB, async (req, res) => {
+  try {
+    const subscribers = await Subscription.find({}).sort({ created_at: -1 }).lean();
+    res.json({ subscribers });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// List Subscribers Database Records
-app.get('/api/subscribers', (req, res) => {
-  const data = readJsonDb();
-  res.json({ subscribers: data.subscriptions });
-});
-
 // ─── Gemini AI Chat Route ─────────────────────────────────────────────────────
-// POST /api/gemini/chat
-// Body: { prompt: string, history: Array<{role, parts}> }
 app.post('/api/gemini/chat', async (req, res) => {
   if (!genAI) {
     return res.status(503).json({
@@ -381,7 +478,6 @@ app.post('/api/gemini/chat', async (req, res) => {
 
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    // Build conversation history in Gemini format
     const formattedHistory = Array.isArray(history)
       ? history.filter(h => h && h.role && Array.isArray(h.parts))
       : [];
@@ -401,9 +497,6 @@ app.post('/api/gemini/chat', async (req, res) => {
 });
 
 // ─── Learning / RAG Ask Route ─────────────────────────────────────────────────
-// POST /api/learning/ask
-// Body: { query: string, category?: string }
-// This uses Gemini to answer educational questions about the Quanta platform.
 app.post('/api/learning/ask', async (req, res) => {
   if (!genAI) {
     return res.status(503).json({
@@ -428,7 +521,7 @@ app.post('/api/learning/ask', async (req, res) => {
     return res.json({
       success: true,
       answer,
-      context: [] // No vector context in this implementation — placeholder for future RAG
+      context: []
     });
   } catch (err) {
     console.error('Learning API Error:', err);
@@ -439,29 +532,26 @@ app.post('/api/learning/ask', async (req, res) => {
   }
 });
 
-// ─── Posts (econnection) stub ─────────────────────────────────────────────────
-// Returns empty posts array if no posts DB is implemented yet
-app.get('/api/posts', (req, res) => {
-  const data = readJsonDb();
-  res.json({ posts: data.posts || [] });
+// ─── Posts ───────────────────────────────────────────────────────────────────
+app.get('/api/posts', requireDB, async (req, res) => {
+  try {
+    const posts = await Post.find({}).sort({ created_at: -1 }).lean();
+    res.json({ posts });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
-app.post('/api/posts', authenticateToken, (req, res) => {
+app.post('/api/posts', requireDB, authenticateToken, async (req, res) => {
   try {
     const { content, imageUrl } = req.body;
-    const data = readJsonDb();
-    if (!data.posts) data.posts = [];
-    const post = {
-      id: data.posts.length + 1,
-      user_id: req.user.id,
+    const post = await Post.create({
+      user_id: mongoose.Types.ObjectId.isValid(req.user.id) ? req.user.id : undefined,
       user_name: req.user.name,
       user_email: req.user.email,
       content: content || '',
-      imageUrl: imageUrl || null,
-      created_at: new Date().toISOString()
-    };
-    data.posts.push(post);
-    writeJsonDb(data);
+      imageUrl: imageUrl || null
+    });
     res.json({ success: true, post });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -475,6 +565,7 @@ if (!process.env.VERCEL) {
     console.log(`🌌 EmerTezora Server running at http://localhost:${PORT}`);
     console.log(`💳 Razorpay Key Loaded: ${RAZORPAY_KEY_ID}`);
     console.log(`🤖 Gemini AI: ${genAI ? 'ENABLED' : 'DISABLED (no API key)'}`);
+    console.log(`🗄️  MongoDB: ${MONGODB_URI ? 'URI set (connecting...)' : 'NOT SET'}`);
     console.log(`====================================================`);
   });
 }
