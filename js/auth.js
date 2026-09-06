@@ -5,8 +5,8 @@
   const API_BASE = (window.CONFIG && typeof window.CONFIG.API_BASE_URL === 'string')
     ? window.CONFIG.API_BASE_URL
     : ((window.location.origin.includes('5500') || window.location.protocol === 'file:')
-        ? 'http://localhost:5000'
-        : '');
+      ? 'http://localhost:5000'
+      : '');
 
 
   window.EmerAuth = {

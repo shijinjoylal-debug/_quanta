@@ -7,8 +7,15 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Razorpay = require('razorpay');
-const mongoose = require('mongoose');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// Soft-load mongoose so a missing install does not crash the entire serverless function
+let mongoose = null;
+try {
+  mongoose = require('mongoose');
+} catch (e) {
+  console.error('⚠️  mongoose package not installed. Run: npm install mongoose');
+}
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -93,12 +100,55 @@ try {
 }
 
 // ─── MongoDB Connection (cached for Vercel serverless) ───────────────────────
-let cached = global.mongoose;
+let cached = global.__quanta_mongoose_cache;
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = global.__quanta_mongoose_cache = { conn: null, promise: null };
+}
+
+let User = null;
+let Subscription = null;
+let Post = null;
+
+function initModels() {
+  if (!mongoose || User) return;
+  const userSchema = new mongoose.Schema({
+    email: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    password_hash: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
+    created_at: { type: Date, default: Date.now }
+  }, { collection: 'users' });
+
+  const subscriptionSchema = new mongoose.Schema({
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    user_email: { type: String, required: true, lowercase: true },
+    plan_name: { type: String, default: 'EmerTezora Premium Subscription' },
+    amount: { type: Number, default: 499 },
+    currency: { type: String, default: 'INR' },
+    razorpay_order_id: String,
+    razorpay_payment_id: String,
+    razorpay_signature: String,
+    status: { type: String, default: 'active' },
+    created_at: { type: Date, default: Date.now }
+  }, { collection: 'subscriptions' });
+
+  const postSchema = new mongoose.Schema({
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    user_name: String,
+    user_email: String,
+    content: { type: String, default: '' },
+    imageUrl: String,
+    created_at: { type: Date, default: Date.now }
+  }, { collection: 'posts' });
+
+  User = mongoose.models.User || mongoose.model('User', userSchema);
+  Subscription = mongoose.models.Subscription || mongoose.model('Subscription', subscriptionSchema);
+  Post = mongoose.models.Post || mongoose.model('Post', postSchema);
 }
 
 async function connectDB() {
+  if (!mongoose) {
+    throw new Error('mongoose package is not installed. Run npm install mongoose and redeploy.');
+  }
   if (!MONGODB_URI) {
     console.warn('⚠️  MONGODB_URI not set — database routes will fail until it is configured.');
     return null;
@@ -109,16 +159,18 @@ async function connectDB() {
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
-      maxPoolSize: 10,
-      serverSelectionTimeoutMS: 10000,
+      maxPoolSize: 5,
+      serverSelectionTimeoutMS: 8000,
     };
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
       console.log('✅ MongoDB Connected');
+      initModels();
       return mongooseInstance;
     });
   }
   try {
     cached.conn = await cached.promise;
+    initModels();
   } catch (e) {
     cached.promise = null;
     console.error('❌ MongoDB Connection Error:', e.message);
@@ -127,49 +179,21 @@ async function connectDB() {
   return cached.conn;
 }
 
-// Connect early (non-blocking for local; serverless will connect on first request)
-connectDB().catch(() => { });
-
-// ─── Mongoose Models ─────────────────────────────────────────────────────────
-const userSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true },
-  password_hash: { type: String, required: true },
-  name: { type: String, required: true, trim: true },
-  created_at: { type: Date, default: Date.now }
-}, { collection: 'users' });
-
-const subscriptionSchema = new mongoose.Schema({
-  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  user_email: { type: String, required: true, lowercase: true },
-  plan_name: { type: String, default: 'EmerTezora Premium Subscription' },
-  amount: { type: Number, default: 499 },
-  currency: { type: String, default: 'INR' },
-  razorpay_order_id: String,
-  razorpay_payment_id: String,
-  razorpay_signature: String,
-  status: { type: String, default: 'active' },
-  created_at: { type: Date, default: Date.now }
-}, { collection: 'subscriptions' });
-
-const postSchema = new mongoose.Schema({
-  user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  user_name: String,
-  user_email: String,
-  content: { type: String, default: '' },
-  imageUrl: String,
-  created_at: { type: Date, default: Date.now }
-}, { collection: 'posts' });
-
-const User = mongoose.models.User || mongoose.model('User', userSchema);
-const Subscription = mongoose.models.Subscription || mongoose.model('Subscription', subscriptionSchema);
-const Post = mongoose.models.Post || mongoose.model('Post', postSchema);
+// Do NOT connect at module load time on Vercel — that hangs cold starts.
+// Connection happens on-demand via requireDB() / connectDB().
 
 // Middleware: ensure DB is connected before API routes that need it
 async function requireDB(req, res, next) {
   try {
+    if (!mongoose) {
+      return res.status(503).json({
+        error: 'Server misconfigured: mongoose is not installed. Add it to package.json and redeploy.',
+        details: 'MODULE_NOT_FOUND: mongoose'
+      });
+    }
     if (!MONGODB_URI) {
       return res.status(503).json({
-        error: 'Database is not configured. Please set MONGODB_URI in environment variables.',
+        error: 'Database is not configured. Please set MONGODB_URI in Vercel environment variables.',
         details: 'Missing MONGODB_URI'
       });
     }
@@ -243,7 +267,9 @@ app.get('/subpage', (req, res) => {
 // Health / root API check
 app.get('/api/health', async (req, res) => {
   let dbStatus = 'not_configured';
-  if (MONGODB_URI) {
+  if (!mongoose) {
+    dbStatus = 'mongoose_not_installed';
+  } else if (MONGODB_URI) {
     try {
       await connectDB();
       dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'connecting';
@@ -255,7 +281,8 @@ app.get('/api/health', async (req, res) => {
     ok: true,
     service: 'Quanta / EmerTezora API',
     mongodb: dbStatus,
-    gemini: genAI ? 'enabled' : 'disabled'
+    gemini: genAI ? 'enabled' : 'disabled',
+    mongoose: !!mongoose
   });
 });
 

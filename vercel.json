@@ -1,57 +1,83 @@
 {
     "version": 2,
+    "functions": {
+        "api/index.js": {
+            "maxDuration": 30,
+            "memory": 1024
+        },
+        "server.js": {
+            "maxDuration": 30,
+            "memory": 1024
+        }
+    },
     "rewrites": [
         {
             "source": "/sw.js",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/sw (1).js",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/sw%20(1).js",
-            "destination": "/server.js"
-        },
-        {
-            "source": "/sw%20\\(1\\).js",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/sw%20%281%29.js",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/sw (2).js",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/sw%20(2).js",
-            "destination": "/server.js"
-        },
-        {
-            "source": "/sw%20\\(2\\).js",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/sw%20%282%29.js",
-            "destination": "/server.js"
-        },
-        {
-            "source": "/sw(.*)\\.js",
-            "destination": "/server.js"
-        },
-        {
-            "source": "/sw(.*)",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/api/(.*)",
-            "destination": "/server.js"
+            "destination": "/api"
         },
         {
             "source": "/uploads/(.*)",
-            "destination": "/server.js"
+            "destination": "/api"
+        },
+        {
+            "source": "/subscription",
+            "destination": "/api"
+        },
+        {
+            "source": "/subpage",
+            "destination": "/api"
+        },
+        {
+            "source": "/about",
+            "destination": "/api"
+        },
+        {
+            "source": "/contact",
+            "destination": "/api"
+        },
+        {
+            "source": "/blog",
+            "destination": "/api"
+        },
+        {
+            "source": "/privacy",
+            "destination": "/api"
+        },
+        {
+            "source": "/terms",
+            "destination": "/api"
+        },
+        {
+            "source": "/search",
+            "destination": "/api"
         }
     ]
 }
