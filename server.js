@@ -18,7 +18,7 @@ try {
 }
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5050;
 
 // Initialize Gemini AI client
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || '';
@@ -86,7 +86,24 @@ app.use('/assets', express.static(path.join(__dirname, 'assets')));
 const JWT_SECRET = process.env.JWT_SECRET || 'emertezora_quantum_secret_key_2026';
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_live_SezY5OFStlhUZS';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'emertezora_dummy_secret';
-const MONGODB_URI = process.env.MONGODB_URI || '';
+const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGODB_URL || '';
+const LOCAL_DB_PATH = path.join(__dirname, 'quanta_db.json');
+
+function isLocalFileDb() {
+  return !process.env.VERCEL && process.env.NODE_ENV !== 'production';
+}
+
+function readLocalDb() {
+  try {
+    return JSON.parse(fs.readFileSync(LOCAL_DB_PATH, 'utf8'));
+  } catch (err) {
+    return { users: [], subscriptions: [] };
+  }
+}
+
+function writeLocalDb(database) {
+  fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(database, null, 2));
+}
 
 // Initialize Razorpay
 let razorpay;
@@ -191,12 +208,13 @@ async function requireDB(req, res, next) {
         details: 'MODULE_NOT_FOUND: mongoose'
       });
     }
-    if (!MONGODB_URI) {
+    if (!MONGODB_URI && !isLocalFileDb()) {
       return res.status(503).json({
         error: 'Database is not configured. Please set MONGODB_URI in Vercel environment variables.',
         details: 'Missing MONGODB_URI'
       });
     }
+    if (isLocalFileDb()) return next();
     await connectDB();
     next();
   } catch (err) {
@@ -295,6 +313,26 @@ app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) =>
       return res.status(400).json({ error: 'Email/Username and password are required' });
     }
 
+    if (isLocalFileDb()) {
+      const database = readLocalDb();
+      const userName = (name || username || userEmail.split('@')[0]).trim();
+      if (database.users.some((user) => user.email === userEmail || user.name === userName)) {
+        return res.status(400).json({ error: 'User with this email or username already exists' });
+      }
+      const user = {
+        id: String(Date.now()),
+        email: userEmail,
+        password_hash: await bcrypt.hash(password, 10),
+        name: userName,
+        created_at: new Date().toISOString()
+      };
+      database.users.push(user);
+      writeLocalDb(database);
+      const userObj = { id: user.id, email: user.email, name: user.name, username: user.name };
+      const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
+      return res.json({ success: true, message: 'Registration successful!', token, user: userObj });
+    }
+
     const existing = await User.findOne({
       $or: [
         { email: userEmail },
@@ -340,6 +378,18 @@ app.post(['/api/login', '/api/auth/login'], requireDB, async (req, res) => {
       return res.status(400).json({ error: 'Email/Username and password are required' });
     }
 
+    if (isLocalFileDb()) {
+      const user = readLocalDb().users.find((candidate) =>
+        candidate.email === identifier || candidate.name === identifier
+      );
+      if (!user || !(await bcrypt.compare(password, user.password_hash))) {
+        return res.status(400).json({ error: 'Invalid email/username or password' });
+      }
+      const userObj = { id: String(user.id), email: user.email, name: user.name, username: user.name };
+      const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
+      return res.json({ success: true, message: 'Login successful!', token, user: userObj });
+    }
+
     const user = await User.findOne({
       $or: [
         { email: identifier },
@@ -381,6 +431,10 @@ app.get(['/api/me', '/api/auth/me'], requireDB, authenticateToken, async (req, r
       name: req.user.name,
       username: req.user.name || (req.user.email ? req.user.email.split('@')[0] : 'User')
     };
+
+    if (isLocalFileDb()) {
+      return res.json({ user: userObj, subscribed: false, subscription: null });
+    }
 
     let sub = null;
     if (mongoose.Types.ObjectId.isValid(userId)) {
