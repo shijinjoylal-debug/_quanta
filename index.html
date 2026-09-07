@@ -428,6 +428,23 @@
   </div>
   <script src="js/config.js"></script>
   <script src="js/voice-assistant.js" defer></script>
+  <style>
+    .auth-spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      margin-right: 7px;
+      vertical-align: -2px;
+      border: 2px solid rgba(0, 0, 0, 0.25);
+      border-top-color: currentColor;
+      border-radius: 50%;
+      animation: auth-spin 0.7s linear infinite;
+    }
+
+    @keyframes auth-spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
   <!-- Login/Register Modal -->
   <div id="authModal" class="popup">
     <div class="popup-content" style="max-width: 350px;">
@@ -463,6 +480,7 @@
 
     let isLogin = true;
     let currentUser = null;
+    let authSubmitting = false;
 
     // Check if user is already logged in
     async function checkSession() {
@@ -577,6 +595,12 @@
     // Handle Form Submission
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+      if (authSubmitting) return;
+      authSubmitting = true;
+      const submitBtn = authForm.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="auth-spinner" aria-hidden="true"></span> Processing...';
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
 
@@ -608,6 +632,10 @@
       } catch (err) {
         console.error('Error:', err);
         alert('Something went wrong. Check console for details.');
+      } finally {
+        authSubmitting = false;
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
       }
     });
     function handleAutoLogin() {

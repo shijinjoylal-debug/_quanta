@@ -798,6 +798,7 @@
     let currentUser = null;
     let currentToken = localStorage.getItem('em_token');
     let pendingPlan = null;
+    let authSubmitting = false;
 
     // Razorpay Key specified by user
     const RAZORPAY_KEY = 'rzp_live_SezY5OFStlhUZS';
@@ -1000,6 +1001,8 @@
 
     async function handleLogin(e) {
       e.preventDefault();
+      if (authSubmitting) return;
+      authSubmitting = true;
       const email = document.getElementById('loginEmail').value;
       const password = document.getElementById('loginPassword').value;
       const toast = document.getElementById('authToast');
@@ -1046,11 +1049,14 @@
       } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
+        authSubmitting = false;
       }
     }
 
     async function handleSignup(e) {
       e.preventDefault();
+      if (authSubmitting) return;
+      authSubmitting = true;
       const name = document.getElementById('signupName').value;
       const email = document.getElementById('signupEmail').value;
       const password = document.getElementById('signupPassword').value;
@@ -1097,6 +1103,7 @@
       } finally {
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
+        authSubmitting = false;
       }
     }
 

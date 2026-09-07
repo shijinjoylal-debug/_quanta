@@ -316,8 +316,8 @@ app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) =>
     if (isLocalFileDb()) {
       const database = readLocalDb();
       const userName = (name || username || userEmail.split('@')[0]).trim();
-      if (database.users.some((user) => user.email === userEmail || user.name === userName)) {
-        return res.status(400).json({ error: 'User with this email or username already exists' });
+      if (database.users.some((user) => user.email.toLowerCase() === userEmail)) {
+        return res.status(409).json({ error: 'An account with this email already exists. Please log in.' });
       }
       const user = {
         id: String(Date.now()),
@@ -333,14 +333,9 @@ app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) =>
       return res.json({ success: true, message: 'Registration successful!', token, user: userObj });
     }
 
-    const existing = await User.findOne({
-      $or: [
-        { email: userEmail },
-        { name: (name || username || userEmail.split('@')[0] || '').trim() }
-      ]
-    });
+    const existing = await User.findOne({ email: userEmail });
     if (existing) {
-      return res.status(400).json({ error: 'User with this email or username already exists' });
+      return res.status(409).json({ error: 'An account with this email already exists. Please log in.' });
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -362,7 +357,11 @@ app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) =>
     return res.json({ success: true, message: 'Registration successful!', token, user: userObj });
   } catch (err) {
     if (err.code === 11000) {
-      return res.status(400).json({ error: 'User with this email already exists' });
+      const duplicateField = Object.keys(err.keyPattern || {})[0];
+      const message = duplicateField === 'email'
+        ? 'An account with this email already exists. Please log in.'
+        : 'An account with these details already exists. Please check your information.';
+      return res.status(409).json({ error: message });
     }
     console.error('Register error:', err);
     res.status(500).json({ error: err.message });
