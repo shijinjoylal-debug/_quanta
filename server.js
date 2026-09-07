@@ -308,16 +308,24 @@ app.get('/api/health', async (req, res) => {
 app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) => {
   try {
     const { email, username, password, name } = req.body;
-    const userEmail = (email || username || '').toLowerCase().trim();
+    const userEmail = (email || '').toLowerCase().trim();
     if (!userEmail || !password) {
-      return res.status(400).json({ error: 'Email/Username and password are required' });
+      return res.status(400).json({ error: 'Email and password are required for registration' });
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+      return res.status(400).json({ error: 'Please enter a valid email address' });
     }
 
     if (isLocalFileDb()) {
       const database = readLocalDb();
       const userName = (name || username || userEmail.split('@')[0]).trim();
-      if (database.users.some((user) => user.email.toLowerCase() === userEmail)) {
+      if (database.users.some((user) => String(user.email).toLowerCase() === userEmail)) {
         return res.status(409).json({ error: 'An account with this email already exists. Please log in.' });
+      }
+      for (const user of database.users) {
+        if (await bcrypt.compare(password, user.password_hash)) {
+          return res.status(409).json({ error: 'This password is already in use. Please choose a different password.' });
+        }
       }
       const user = {
         id: String(Date.now()),
@@ -336,6 +344,13 @@ app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) =>
     const existing = await User.findOne({ email: userEmail });
     if (existing) {
       return res.status(409).json({ error: 'An account with this email already exists. Please log in.' });
+    }
+
+    const usersWithPasswords = await User.find({}, { password_hash: 1 }).lean();
+    for (const user of usersWithPasswords) {
+      if (await bcrypt.compare(password, user.password_hash)) {
+        return res.status(409).json({ error: 'This password is already in use. Please choose a different password.' });
+      }
     }
 
     const passwordHash = await bcrypt.hash(password, 10);

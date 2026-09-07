@@ -452,6 +452,8 @@
       <form id="authForm">
         <input type="text" id="username" placeholder="Username" required
           style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
+        <input type="email" id="email" placeholder="Email address"
+          style="display: none; width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
         <input type="password" id="password" placeholder="Password" required
           style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px;">
         <button type="submit" class="btn"
@@ -474,6 +476,7 @@
     const modalTitle = document.getElementById('modalTitle');
     const authForm = document.getElementById('authForm');
     const toggleText = document.getElementById('toggleText');
+    const emailInput = document.getElementById('email');
 
     // Use centralized API Base URL
     const API_BASE_URL = window.CONFIG.API_BASE_URL;
@@ -585,10 +588,14 @@
         modalTitle.innerText = 'Login';
         toggleText.innerText = "Don't have an account?";
         toggleAuth.innerText = 'Register';
+        emailInput.style.display = 'none';
+        emailInput.required = false;
       } else {
         modalTitle.innerText = 'Register';
         toggleText.innerText = "Already have an account?";
         toggleAuth.innerText = 'Login';
+        emailInput.style.display = 'block';
+        emailInput.required = true;
       }
     });
 
@@ -602,6 +609,7 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<span class="auth-spinner" aria-hidden="true"></span> Processing...';
       const username = document.getElementById('username').value;
+      const email = emailInput.value;
       const password = document.getElementById('password').value;
 
       const endpoint = isLogin ? '/api/login' : '/api/register';
@@ -611,7 +619,7 @@
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: username, username: username, password: password })
+          body: JSON.stringify({ email: isLogin ? undefined : email, username, password })
         });
         const data = await res.json();
 
