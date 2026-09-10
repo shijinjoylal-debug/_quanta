@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -30,9 +31,23 @@ if (GEMINI_API_KEY) {
   console.warn('⚠️  GEMINI_API_KEY not set — AI routes will return error responses.');
 }
 
-// Enable CORS for all cross-origin requests (including Vercel deployments)
+const allowedOrigins = new Set([
+  process.env.FRONTEND_URL,
+  'http://localhost:5050',
+  'http://localhost:5501',
+  'http://localhost:5502',
+  'http://127.0.0.1:5050',
+  'http://127.0.0.1:5501',
+  'http://127.0.0.1:5502'
+].filter(Boolean).map((origin) => origin.replace(/\/$/, '')));
+
 app.use(cors({
-  origin: true,
+  origin(origin, callback) {
+    if (!origin || allowedOrigins.has(origin.replace(/\/$/, ''))) {
+      return callback(null, true);
+    }
+    return callback(new Error('Origin is not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json({ limit: '2mb' }));
@@ -83,27 +98,32 @@ app.use('/css', express.static(path.join(__dirname, 'css')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-const JWT_SECRET = process.env.JWT_SECRET || 'emertezora_quantum_secret_key_2026';
+const JWT_SECRET = process.env.JWT_SECRET || process.env.SESSION_SECRET;
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET must be set and contain at least 32 characters.');
+}
 const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || 'rzp_live_SezY5OFStlhUZS';
 const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || 'emertezora_dummy_secret';
 const MONGODB_URI = process.env.MONGODB_URI || process.env.MONGO_URI || process.env.MONGODB_URL || '';
-const LOCAL_DB_PATH = path.join(__dirname, 'quanta_db.json');
-
-function isLocalFileDb() {
-  return !process.env.VERCEL && process.env.NODE_ENV !== 'production';
+if (!MONGODB_URI) {
+  throw new Error('MONGODB_URI must be configured.');
 }
 
-function readLocalDb() {
-  try {
-    return JSON.parse(fs.readFileSync(LOCAL_DB_PATH, 'utf8'));
-  } catch (err) {
-    return { users: [], subscriptions: [] };
-  }
-}
+const authRateLimit = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 10,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { error: 'Too many authentication attempts. Please try again later.' }
+});
 
-function writeLocalDb(database) {
-  fs.writeFileSync(LOCAL_DB_PATH, JSON.stringify(database, null, 2));
-}
+const aiRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 30,
+  standardHeaders: 'draft-8',
+  legacyHeaders: false,
+  message: { error: 'Too many AI requests. Please try again later.' }
+});
 
 // Initialize Razorpay
 let razorpay;
@@ -208,13 +228,6 @@ async function requireDB(req, res, next) {
         details: 'MODULE_NOT_FOUND: mongoose'
       });
     }
-    if (!MONGODB_URI && !isLocalFileDb()) {
-      return res.status(503).json({
-        error: 'Database is not configured. Please set MONGODB_URI in Vercel environment variables.',
-        details: 'Missing MONGODB_URI'
-      });
-    }
-    if (isLocalFileDb()) return next();
     await connectDB();
     next();
   } catch (err) {
@@ -305,7 +318,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Register User
-app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) => {
+app.post(['/api/register', '/api/auth/register'], authRateLimit, requireDB, async (req, res) => {
   try {
     const { email, username, password, name } = req.body;
     const userEmail = (email || '').toLowerCase().trim();
@@ -316,41 +329,9 @@ app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) =>
       return res.status(400).json({ error: 'Please enter a valid email address' });
     }
 
-    if (isLocalFileDb()) {
-      const database = readLocalDb();
-      const userName = (name || username || userEmail.split('@')[0]).trim();
-      if (database.users.some((user) => String(user.email).toLowerCase() === userEmail)) {
-        return res.status(409).json({ error: 'An account with this email already exists. Please log in.' });
-      }
-      for (const user of database.users) {
-        if (await bcrypt.compare(password, user.password_hash)) {
-          return res.status(409).json({ error: 'This password is already in use. Please choose a different password.' });
-        }
-      }
-      const user = {
-        id: String(Date.now()),
-        email: userEmail,
-        password_hash: await bcrypt.hash(password, 10),
-        name: userName,
-        created_at: new Date().toISOString()
-      };
-      database.users.push(user);
-      writeLocalDb(database);
-      const userObj = { id: user.id, email: user.email, name: user.name, username: user.name };
-      const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
-      return res.json({ success: true, message: 'Registration successful!', token, user: userObj });
-    }
-
     const existing = await User.findOne({ email: userEmail });
     if (existing) {
       return res.status(409).json({ error: 'An account with this email already exists. Please log in.' });
-    }
-
-    const usersWithPasswords = await User.find({}, { password_hash: 1 }).lean();
-    for (const user of usersWithPasswords) {
-      if (await bcrypt.compare(password, user.password_hash)) {
-        return res.status(409).json({ error: 'This password is already in use. Please choose a different password.' });
-      }
     }
 
     const passwordHash = await bcrypt.hash(password, 10);
@@ -384,24 +365,12 @@ app.post(['/api/register', '/api/auth/register'], requireDB, async (req, res) =>
 });
 
 // Login User
-app.post(['/api/login', '/api/auth/login'], requireDB, async (req, res) => {
+app.post(['/api/login', '/api/auth/login'], authRateLimit, requireDB, async (req, res) => {
   try {
     const { email, username, password } = req.body;
     const identifier = (email || username || '').toLowerCase().trim();
     if (!identifier || !password) {
       return res.status(400).json({ error: 'Email/Username and password are required' });
-    }
-
-    if (isLocalFileDb()) {
-      const user = readLocalDb().users.find((candidate) =>
-        candidate.email === identifier || candidate.name === identifier
-      );
-      if (!user || !(await bcrypt.compare(password, user.password_hash))) {
-        return res.status(400).json({ error: 'Invalid email/username or password' });
-      }
-      const userObj = { id: String(user.id), email: user.email, name: user.name, username: user.name };
-      const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
-      return res.json({ success: true, message: 'Login successful!', token, user: userObj });
     }
 
     const user = await User.findOne({
@@ -445,10 +414,6 @@ app.get(['/api/me', '/api/auth/me'], requireDB, authenticateToken, async (req, r
       name: req.user.name,
       username: req.user.name || (req.user.email ? req.user.email.split('@')[0] : 'User')
     };
-
-    if (isLocalFileDb()) {
-      return res.json({ user: userObj, subscribed: false, subscription: null });
-    }
 
     let sub = null;
     if (mongoose.Types.ObjectId.isValid(userId)) {
@@ -557,7 +522,7 @@ app.get('/api/subscribers', requireDB, async (req, res) => {
 });
 
 // ─── Gemini AI Chat Route ─────────────────────────────────────────────────────
-app.post('/api/gemini/chat', async (req, res) => {
+app.post('/api/gemini/chat', aiRateLimit, async (req, res) => {
   if (!genAI) {
     return res.status(503).json({
       error: 'AI service is not configured. Please set GEMINI_API_KEY in Vercel environment variables.',
@@ -592,7 +557,7 @@ app.post('/api/gemini/chat', async (req, res) => {
 });
 
 // ─── Learning / RAG Ask Route ─────────────────────────────────────────────────
-app.post('/api/learning/ask', async (req, res) => {
+app.post('/api/learning/ask', aiRateLimit, async (req, res) => {
   if (!genAI) {
     return res.status(503).json({
       error: 'AI service is not configured. Please set GEMINI_API_KEY in Vercel environment variables.',

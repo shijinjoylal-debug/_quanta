@@ -4,80 +4,40 @@
         "api/index.js": {
             "maxDuration": 30,
             "memory": 1024
-        },
-        "server.js": {
-            "maxDuration": 30,
-            "memory": 1024
         }
     },
     "rewrites": [
         {
-            "source": "/sw.js",
-            "destination": "/api"
-        },
-        {
-            "source": "/sw (1).js",
-            "destination": "/api"
-        },
-        {
-            "source": "/sw%20(1).js",
-            "destination": "/api"
-        },
-        {
-            "source": "/sw%20%281%29.js",
-            "destination": "/api"
-        },
-        {
-            "source": "/sw (2).js",
-            "destination": "/api"
-        },
-        {
-            "source": "/sw%20(2).js",
-            "destination": "/api"
-        },
-        {
-            "source": "/sw%20%282%29.js",
-            "destination": "/api"
-        },
-        {
-            "source": "/api/(.*)",
-            "destination": "/api"
-        },
-        {
-            "source": "/uploads/(.*)",
-            "destination": "/api"
-        },
-        {
             "source": "/subscription",
-            "destination": "/api"
+            "destination": "/pages/subscription.html"
         },
         {
             "source": "/subpage",
-            "destination": "/api"
+            "destination": "/pages/subpage.html"
         },
         {
             "source": "/about",
-            "destination": "/api"
+            "destination": "/about.html"
         },
         {
             "source": "/contact",
-            "destination": "/api"
+            "destination": "/contact.html"
         },
         {
             "source": "/blog",
-            "destination": "/api"
+            "destination": "/blog.html"
         },
         {
             "source": "/privacy",
-            "destination": "/api"
+            "destination": "/privacy.html"
         },
         {
             "source": "/terms",
-            "destination": "/api"
+            "destination": "/terms.html"
         },
         {
             "source": "/search",
-            "destination": "/api"
+            "destination": "/search.html"
         }
     ]
 }

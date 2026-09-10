@@ -1,13 +1,7 @@
 // EmerTezora Authentication & Subscription Manager
 (function () {
-  // Use the same config as the rest of the app (config.js must be loaded first)
-  // On Vercel: '' (relative), on local (different port): 'http://localhost:5000'
-  const API_BASE = (window.CONFIG && typeof window.CONFIG.API_BASE_URL === 'string')
-    ? window.CONFIG.API_BASE_URL
-    : ((window.location.origin.includes('5500') || window.location.protocol === 'file:')
-      ? 'http://localhost:5000'
-      : '');
-
+  // config.js must be loaded before auth.js.
+  const API_BASE = window.CONFIG.API_BASE_URL;
 
   window.EmerAuth = {
     API_BASE: API_BASE,
@@ -20,9 +14,6 @@
       } catch (e) {
         return null;
       }
-    },
-    isSubscribed: function () {
-      return localStorage.getItem('em_subscribed') === 'true';
     },
     logout: function () {
       localStorage.removeItem('em_token');
@@ -37,7 +28,6 @@
       const redirectIfNotSubscribed = options.redirect !== false;
 
       if (!token) {
-        localStorage.setItem('em_subscribed', 'false');
         if (redirectIfNotSubscribed) {
           this.showAccessDeniedModal();
         }
@@ -52,7 +42,6 @@
         });
 
         if (!res.ok) {
-          localStorage.setItem('em_subscribed', 'false');
           if (redirectIfNotSubscribed) {
             this.showAccessDeniedModal();
           }
@@ -66,11 +55,9 @@
         }
 
         if (data.subscribed) {
-          localStorage.setItem('em_subscribed', 'true');
           this.updateUI(data.user, true);
           return true;
         } else {
-          localStorage.setItem('em_subscribed', 'false');
           if (redirectIfNotSubscribed) {
             this.showAccessDeniedModal(data.user);
           }
@@ -78,12 +65,6 @@
         }
       } catch (err) {
         console.warn('Auth check connection error:', err);
-        // Fallback: check cached status if server is unreachable
-        if (this.isSubscribed()) {
-          const cachedUser = this.getUser();
-          this.updateUI(cachedUser, true);
-          return true;
-        }
         if (redirectIfNotSubscribed) {
           this.showAccessDeniedModal();
         }
@@ -166,8 +147,8 @@
           <h2 style="font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; color: #ffffff; margin-bottom: 12px;">
             Premium Subscription Required
           </h2>
-          <p style="color: #8b949e; font-size: 1rem; line-height: 1.6; margin-bottom: 28px;">
-            ${user ? `Hello <strong>${user.name || user.email}</strong>, this Premium Research Hub (subpage.html) is exclusively available to EmerTezora Premium members.` : 'Access to the Premium Research Hub (subpage.html) is reserved for EmerTezora active subscribers.'}
+          <p id="accessDeniedMessage" style="color: #8b949e; font-size: 1rem; line-height: 1.6; margin-bottom: 28px;">
+            ${user ? 'Hello, this Premium Research Hub (subpage.html) is exclusively available to EmerTezora Premium members.' : 'Access to the Premium Research Hub (subpage.html) is reserved for EmerTezora active subscribers.'}
           </p>
           <div style="display: flex; flex-direction: column; gap: 12px;">
             <a href="${subPath}" style="
@@ -205,6 +186,15 @@
           </div>
         </div>
       `;
+
+      if (user) {
+        const message = overlay.querySelector('#accessDeniedMessage');
+        const displayName = user.name || user.username || user.email || 'Member';
+        message.textContent = 'Hello ';
+        const nameElement = document.createElement('strong');
+        nameElement.textContent = displayName;
+        message.append(nameElement, ', this Premium Research Hub (subpage.html) is exclusively available to EmerTezora Premium members.');
+      }
 
       document.body.appendChild(overlay);
     }
