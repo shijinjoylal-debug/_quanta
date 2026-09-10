@@ -318,7 +318,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 // Register User
-app.post(['/api/register', '/api/auth/register'], authRateLimit, requireDB, async (req, res) => {
+app.post(['/api/register', '/api/auth/register', '/register', '/auth/register'], authRateLimit, requireDB, async (req, res) => {
   try {
     const { email, username, password, name } = req.body;
     const userEmail = (email || '').toLowerCase().trim();
@@ -365,7 +365,7 @@ app.post(['/api/register', '/api/auth/register'], authRateLimit, requireDB, asyn
 });
 
 // Login User
-app.post(['/api/login', '/api/auth/login'], authRateLimit, requireDB, async (req, res) => {
+app.post(['/api/login', '/api/auth/login', '/login', '/auth/login'], authRateLimit, requireDB, async (req, res) => {
   try {
     const { email, username, password } = req.body;
     const identifier = (email || username || '').toLowerCase().trim();

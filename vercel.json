@@ -8,6 +8,10 @@
     },
     "rewrites": [
         {
+            "source": "/api/:path*",
+            "destination": "/api/index.js"
+        },
+        {
             "source": "/subscription",
             "destination": "/pages/subscription.html"
         },
