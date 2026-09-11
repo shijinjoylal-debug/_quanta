@@ -33,6 +33,8 @@ if (GEMINI_API_KEY) {
 
 const allowedOrigins = new Set([
   process.env.FRONTEND_URL,
+  'https://emertezora.xyz',
+  'https://www.emertezora.xyz',
   'http://localhost:5050',
   'http://localhost:5501',
   'http://localhost:5502',
