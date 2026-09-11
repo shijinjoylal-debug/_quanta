@@ -619,7 +619,7 @@
         const res = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: isLogin ? undefined : email, username, password })
+          body: JSON.stringify(isLogin ? { username, password } : { email, username, password })
         });
         const data = await res.json();
 

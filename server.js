@@ -151,6 +151,7 @@ let Post = null;
 function initModels() {
   if (!mongoose || User) return;
   const userSchema = new mongoose.Schema({
+    username: { type: String, trim: true, lowercase: true, sparse: true, unique: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password_hash: { type: String, required: true },
     name: { type: String, required: true, trim: true },
@@ -324,8 +325,9 @@ app.post(['/api/register', '/api/auth/register', '/register', '/auth/register'],
   try {
     const { email, username, password, name } = req.body;
     const userEmail = (email || '').toLowerCase().trim();
-    if (!userEmail || !password) {
-      return res.status(400).json({ error: 'Email and password are required for registration' });
+    const userName = (username || '').trim().toLowerCase();
+    if (!userEmail || !userName || !password) {
+      return res.status(400).json({ error: 'Username, email, and password are required for registration' });
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
       return res.status(400).json({ error: 'Please enter a valid email address' });
@@ -336,20 +338,26 @@ app.post(['/api/register', '/api/auth/register', '/register', '/auth/register'],
       return res.status(409).json({ error: 'An account with this email already exists. Please log in.' });
     }
 
+    const existingUsername = await User.findOne({ username: userName });
+    if (existingUsername) {
+      return res.status(409).json({ error: 'That username is already taken. Please choose another.' });
+    }
+
     const passwordHash = await bcrypt.hash(password, 10);
-    const userName = (name || username || (userEmail.includes('@') ? userEmail.split('@')[0] : userEmail)).trim();
+    const displayName = (name || username).trim();
 
     const newUser = await User.create({
+      username: userName,
       email: userEmail,
       password_hash: passwordHash,
-      name: userName
+      name: displayName
     });
 
     const userObj = {
       id: newUser._id.toString(),
       email: newUser.email,
       name: newUser.name,
-      username: newUser.name
+      username: newUser.username
     };
     const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
     return res.json({ success: true, message: 'Registration successful!', token, user: userObj });
@@ -369,16 +377,18 @@ app.post(['/api/register', '/api/auth/register', '/register', '/auth/register'],
 // Login User
 app.post(['/api/login', '/api/auth/login', '/login', '/auth/login'], authRateLimit, requireDB, async (req, res) => {
   try {
-    const { email, username, password } = req.body;
-    const identifier = (email || username || '').toLowerCase().trim();
+    const { username, password } = req.body;
+    const identifier = (username || '').toLowerCase().trim();
     if (!identifier || !password) {
-      return res.status(400).json({ error: 'Email/Username and password are required' });
+      return res.status(400).json({ error: 'Username and password are required' });
     }
 
+    const escapedIdentifier = identifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const user = await User.findOne({
       $or: [
-        { email: identifier },
-        { name: identifier }
+        { username: identifier },
+        { name: identifier },
+        { name: { $regex: `^${escapedIdentifier}$`, $options: 'i' } }
       ]
     });
     if (!user) {
@@ -394,7 +404,7 @@ app.post(['/api/login', '/api/auth/login', '/login', '/auth/login'], authRateLim
       id: user._id.toString(),
       email: user.email,
       name: user.name,
-      username: user.name
+      username: user.username || user.name
     };
     const token = jwt.sign(userObj, JWT_SECRET, { expiresIn: '7d' });
     return res.json({ success: true, message: 'Login successful!', token, user: userObj });

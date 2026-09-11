@@ -754,8 +754,8 @@
       <!-- Login Form -->
       <form id="loginForm" onsubmit="handleLogin(event)">
         <div class="form-group">
-          <label for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" class="form-control" placeholder="quantum.physicist@emertezora.com"
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" class="form-control" placeholder="quantum_physicist"
             required>
         </div>
         <div class="form-group">
@@ -770,6 +770,10 @@
         <div class="form-group">
           <label for="signupName">Full Name</label>
           <input type="text" id="signupName" class="form-control" placeholder="Schrödinger" required>
+        </div>
+        <div class="form-group">
+          <label for="signupUsername">Username</label>
+          <input type="text" id="signupUsername" class="form-control" placeholder="quantum_physicist" required>
         </div>
         <div class="form-group">
           <label for="signupEmail">Email Address</label>
@@ -1003,7 +1007,7 @@
       e.preventDefault();
       if (authSubmitting) return;
       authSubmitting = true;
-      const email = document.getElementById('loginEmail').value;
+      const username = document.getElementById('loginUsername').value;
       const password = document.getElementById('loginPassword').value;
       const toast = document.getElementById('authToast');
       const submitBtn = e.target.querySelector('button[type="submit"]');
@@ -1017,7 +1021,7 @@
         const res = await fetch(`${API_BASE}/api/login`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, username: email, password })
+          body: JSON.stringify({ username, password })
         });
         const data = await res.json();
 
@@ -1058,6 +1062,7 @@
       if (authSubmitting) return;
       authSubmitting = true;
       const name = document.getElementById('signupName').value;
+      const username = document.getElementById('signupUsername').value;
       const email = document.getElementById('signupEmail').value;
       const password = document.getElementById('signupPassword').value;
       const toast = document.getElementById('authToast');
@@ -1072,7 +1077,7 @@
         const res = await fetch(`${API_BASE}/api/register`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, email, username: email, password })
+          body: JSON.stringify({ name, email, username, password })
         });
         const data = await res.json();
 
