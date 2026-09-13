@@ -24,6 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const homePath = useParentPath ? '../index.html' : 'index.html';
 
+    const communityPath = useParentPath
+        ? 'econnection.html'
+        : 'pages/econnection.html';
     const keyExpPath = useParentPath
         ? 'calc pnl.html'
         : 'pages/calc pnl.html';
@@ -62,6 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
         <nav id="navMenu">
             <ul>
                 <li><a href="${homePath}">Home</a></li>
+                <li><a href="${communityPath}">Community</a></li>
                 ${hubLink}
                 ${keyExpLink}
                

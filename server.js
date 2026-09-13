@@ -608,7 +608,14 @@ app.post('/api/learning/ask', aiRateLimit, async (req, res) => {
 app.get('/api/posts', requireDB, async (req, res) => {
   try {
     const posts = await Post.find({}).sort({ created_at: -1 }).lean();
-    res.json({ posts });
+    const normalized = posts.map(post => ({
+      ...post,
+      id: post._id?.toString?.() || post.id,
+      text: post.content ?? post.text ?? '',
+      createdAt: post.createdAt || post.created_at,
+      images: post.imageUrl ? [post.imageUrl] : (Array.isArray(post.images) ? post.images : [])
+    }));
+    res.json({ posts: normalized });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -616,15 +623,52 @@ app.get('/api/posts', requireDB, async (req, res) => {
 
 app.post('/api/posts', requireDB, authenticateToken, async (req, res) => {
   try {
-    const { content, imageUrl } = req.body;
+    const body = req.body || {};
+    const content = body.content ?? body.text ?? '';
+    const images = Array.isArray(body.images) ? body.images.filter(Boolean) : [];
+    const imageUrl = body.imageUrl || images[0] || null;
+
     const post = await Post.create({
       user_id: mongoose.Types.ObjectId.isValid(req.user.id) ? req.user.id : undefined,
-      user_name: req.user.name,
+      user_name: req.user.name || req.user.username || 'User',
       user_email: req.user.email,
-      content: content || '',
+      content: String(content || ''),
       imageUrl: imageUrl || null
     });
-    res.json({ success: true, post });
+
+    const plain = post.toObject();
+    const response = {
+      ...plain,
+      id: plain._id?.toString?.() || plain.id,
+      text: plain.content ?? plain.text ?? '',
+      createdAt: plain.createdAt || plain.created_at,
+      images: plain.imageUrl ? [plain.imageUrl] : []
+    };
+
+    res.json({ success: true, post: response });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.delete('/api/posts/:id', requireDB, authenticateToken, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found.' });
+    }
+
+    const userId = req.user?.id || req.user?._id;
+    const isOwner = userId && String(post.user_id) === String(userId);
+    const isAdmin = req.user?.email === 'admin@emertezora.com';
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ error: 'You can only delete your own posts.' });
+    }
+
+    await post.deleteOne();
+    res.json({ success: true, deleted: true });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

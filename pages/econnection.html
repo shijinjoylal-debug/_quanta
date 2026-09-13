@@ -291,6 +291,20 @@
     /* FRONTEND LOGIC */
     const API_POSTS = window.CONFIG.API_BASE_URL + "/api/posts";
 
+    function getAuthHeaders() {
+      const token = localStorage.getItem("em_token");
+      return token ? { Authorization: `Bearer ${token}` } : {};
+    }
+
+    async function fileToDataUrl(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error("Failed to read image file"));
+        reader.readAsDataURL(file);
+      });
+    }
+
     let selectedFiles = [];
 
     const imagesInput = document.getElementById("images");
@@ -349,17 +363,30 @@
       const text = document.getElementById("text").value.trim();
       if (!text) return alert("Write something!");
 
-      const fd = new FormData();
-      fd.append("text", text);
-
-      if (selectedFiles.length) {
-        selectedFiles.forEach(f => fd.append("images", f));
+      const token = localStorage.getItem("em_token");
+      if (!token) {
+        alert("Please login first");
+        window.location.href = "../index.html?login=true";
+        return;
       }
 
       try {
+        const imageData = selectedFiles.length
+          ? await Promise.all(selectedFiles.map(file => fileToDataUrl(file)))
+          : [];
+
         const res = await fetch(API_POSTS, {
           method: "POST",
-          body: fd,
+          headers: {
+            "Content-Type": "application/json",
+            ...getAuthHeaders()
+          },
+          body: JSON.stringify({
+            text,
+            content: text,
+            imageUrl: imageData[0] || null,
+            images: imageData
+          }),
           credentials: "include"
         });
 
@@ -369,27 +396,34 @@
           return;
         }
 
-        if (!res.ok) throw new Error("Failed to post");
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || "Failed to post");
+        }
 
         const data = await res.json();
-        showPost(data);
+        const post = data.post || data;
+        showPost(post);
 
         document.getElementById("postForm").reset();
         thumbs.innerHTML = "";
         selectedFiles = [];
-        // Clear file input value to allow selecting same file again
         imagesInput.value = "";
       } catch (err) {
         console.error(err);
-        alert("Error creating post");
+        alert(err.message || "Error creating post");
       }
     };
 
     /*** LOAD POSTS ***/
     async function loadPosts() {
       try {
-        const res = await fetch(API_POSTS, { credentials: "include" });
-        const all = await res.json();
+        const res = await fetch(API_POSTS, {
+          credentials: "include",
+          headers: getAuthHeaders()
+        });
+        const data = await res.json();
+        const all = Array.isArray(data.posts) ? data.posts : Array.isArray(data) ? data : [];
         // Since showPost uses prepend, we reverse the list (which is newest-to-oldest from backend)
         // or just iterate and append. Reversing and prepending is consistent.
         all.reverse().forEach(showPost);
@@ -403,11 +437,21 @@
       const div = document.createElement("div");
       div.className = "post";
 
+      const parsed = post || {};
+      const postId = parsed.id || parsed._id || parsed.Id;
+      const postText = parsed.text || parsed.content || "";
+      const postDate = parsed.createdAt || parsed.created_at || new Date().toISOString();
+      const images = Array.isArray(parsed.images)
+        ? parsed.images
+        : parsed.imageUrl ? [parsed.imageUrl] : [];
+
+      const dateString = isNaN(new Date(postDate).getTime()) ? "Just now" : new Date(postDate).toLocaleString();
+
       let imgs = "";
-      if (post.images?.length) {
+      if (images.length) {
         imgs = `
       <div class="post-images">
-        ${post.images
+        ${images
             .map(imagePath => {
               // Robust URL construction
               let src = imagePath.startsWith('http') ? imagePath : window.CONFIG.API_BASE_URL + (imagePath.startsWith('/') ? '' : '/') + imagePath;
@@ -421,12 +465,12 @@
       }
 
       div.innerHTML = `
-    <p>${post.text}</p>
+    <p>${postText}</p>
     ${imgs}
-    <time style="font-size:12px;opacity:0.6;">${new Date(post.createdAt).toLocaleString()}</time>
+    <time style="font-size:12px;opacity:0.6;">${dateString}</time>
     <br>
     <button class="secondary" style="margin-top:6px;color:#ff6b6b;border-color:#ff6b6b" 
-      onclick="deletePost('${post._id}', this)">Delete</button>
+      onclick="deletePost('${postId}', this)">Delete</button>
   `;
 
       document.getElementById("posts").prepend(div);
@@ -439,7 +483,8 @@
       try {
         const res = await fetch(`${API_POSTS}/${id}`, {
           method: "DELETE",
-          credentials: "include"
+          credentials: "include",
+          headers: getAuthHeaders()
         });
         if (res.status === 401) {
           alert("Session expired. Please login again.");
