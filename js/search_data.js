@@ -31,7 +31,7 @@ const searchData = [
     },
     {
         title: "Community",
-        url: "frontend/community.html",
+        url: "pages/econnection.html",
         description: "Community page for discussions and collaboration.",
         keywords: ["community", "discussion", "forum"]
     },

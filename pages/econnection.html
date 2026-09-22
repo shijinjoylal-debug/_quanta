@@ -296,15 +296,6 @@
       return token ? { Authorization: `Bearer ${token}` } : {};
     }
 
-    async function fileToDataUrl(file) {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = () => reject(new Error("Failed to read image file"));
-        reader.readAsDataURL(file);
-      });
-    }
-
     let selectedFiles = [];
 
     const imagesInput = document.getElementById("images");
@@ -371,22 +362,14 @@
       }
 
       try {
-        const imageData = selectedFiles.length
-          ? await Promise.all(selectedFiles.map(file => fileToDataUrl(file)))
-          : [];
+        const formData = new FormData();
+        formData.append("text", text);
+        selectedFiles.forEach(file => formData.append("images", file));
 
         const res = await fetch(API_POSTS, {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...getAuthHeaders()
-          },
-          body: JSON.stringify({
-            text,
-            content: text,
-            imageUrl: imageData[0] || null,
-            images: imageData
-          }),
+          headers: getAuthHeaders(),
+          body: formData,
           credentials: "include"
         });
 
@@ -453,10 +436,12 @@
       <div class="post-images">
         ${images
             .map(imagePath => {
-              // Robust URL construction
-              let src = imagePath.startsWith('http') ? imagePath : window.CONFIG.API_BASE_URL + (imagePath.startsWith('/') ? '' : '/') + imagePath;
-              // Remove potential double slashes (except after http:)
-              src = src.replace(/([^:]\/)\/+/g, "$1");
+              const isDataUrl = imagePath.startsWith('data:');
+              const isAbsoluteUrl = imagePath.startsWith('http');
+              let src = isDataUrl || isAbsoluteUrl
+                ? imagePath
+                : window.CONFIG.API_BASE_URL + (imagePath.startsWith('/') ? '' : '/') + imagePath;
+              if (!isDataUrl) src = src.replace(/([^:]\/)\/+/g, "$1");
               return `<img src="${src}" onclick="openLightbox(this.src)" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1594322436404-5a0526db4d13?q=80&w=200&auto=format&fit=crop';this.style.opacity='0.5';this.title='Image no longer available on server';">`;
             })
             .join("")}

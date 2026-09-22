@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:5000';
+const API_BASE = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:5050';
 const API_URL = `${API_BASE}/api/posts`;
 
 let selectedFiles = [];
@@ -97,8 +97,8 @@ document.getElementById("postForm").onsubmit = async (e) => {
 
         if (!res.ok) throw new Error("Failed to create post");
 
-        const newPost = await res.json();
-        addPostToFeed(newPost, true); // Prepend
+        const payload = await res.json();
+        addPostToFeed(payload.post || payload, true); // Prepend
         resetForm();
     } catch (err) {
         alert("Error posting: " + err.message);
@@ -140,7 +140,8 @@ async function loadPosts() {
     try {
         const res = await fetch(API_URL);
         if (!res.ok) throw new Error("Failed to fetch");
-        const posts = await res.json();
+        const payload = await res.json();
+        const posts = Array.isArray(payload) ? payload : (payload.posts || []);
         postsContainer.innerHTML = ""; // Clear loading state
         posts.forEach(p => addPostToFeed(p));
 

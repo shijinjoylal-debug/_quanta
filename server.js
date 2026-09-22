@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
+const multer = require('multer');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const Razorpay = require('razorpay');
@@ -42,7 +43,6 @@ const allowedOrigins = new Set([
   'http://127.0.0.1:5501',
   'http://127.0.0.1:5502'
 ].filter(Boolean).map((origin) => origin.replace(/\/$/, '')));
-
 app.use(cors({
   origin(origin, callback) {
     if (!origin || allowedOrigins.has(origin.replace(/\/$/, ''))) {
@@ -54,6 +54,14 @@ app.use(cors({
 }));
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true }));
+
+const uploadFiles = multer({
+  storage: multer.memoryStorage(),
+  limits: { files: 4, fileSize: 8 * 1024 * 1024 },
+  fileFilter: (req, file, callback) => {
+    callback(null, file.mimetype.startsWith('image/'));
+  }
+});
 
 // --- Service Worker Routes (must be before express.static to set proper headers) ---
 function serveServiceWorker(res, filename, fallbackZoneId) {
@@ -147,6 +155,7 @@ if (!cached) {
 let User = null;
 let Subscription = null;
 let Post = null;
+let Upload = null;
 
 function initModels() {
   if (!mongoose || User) return;
@@ -180,9 +189,20 @@ function initModels() {
     created_at: { type: Date, default: Date.now }
   }, { collection: 'posts' });
 
+  const uploadSchema = new mongoose.Schema({
+    post_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true, index: true },
+    user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+    filename: { type: String, required: true },
+    mimetype: { type: String, required: true },
+    size: { type: Number, required: true },
+    data: { type: Buffer, required: true },
+    created_at: { type: Date, default: Date.now }
+  }, { collection: 'uploads' });
+
   User = mongoose.models.User || mongoose.model('User', userSchema);
   Subscription = mongoose.models.Subscription || mongoose.model('Subscription', subscriptionSchema);
   Post = mongoose.models.Post || mongoose.model('Post', postSchema);
+  Upload = mongoose.models.Upload || mongoose.model('Upload', uploadSchema);
 }
 
 async function connectDB() {
@@ -605,23 +625,47 @@ app.post('/api/learning/ask', aiRateLimit, async (req, res) => {
 });
 
 // ─── Posts ───────────────────────────────────────────────────────────────────
+app.get('/api/uploads/:id', requireDB, async (req, res) => {
+  try {
+    const upload = await Upload.findById(req.params.id).select('mimetype data').lean();
+    if (!upload) return res.status(404).end();
+    res.type(upload.mimetype).send(upload.data);
+  } catch (err) {
+    res.status(404).end();
+  }
+});
+
 app.get('/api/posts', requireDB, async (req, res) => {
   try {
     const posts = await Post.find({}).sort({ created_at: -1 }).lean();
-    const normalized = posts.map(post => ({
-      ...post,
-      id: post._id?.toString?.() || post.id,
-      text: post.content ?? post.text ?? '',
-      createdAt: post.createdAt || post.created_at,
-      images: post.imageUrl ? [post.imageUrl] : (Array.isArray(post.images) ? post.images : [])
-    }));
-    res.json({ posts: normalized });
+    const postIds = posts.map(post => post._id);
+    const uploads = await Upload.find({ post_id: { $in: postIds } })
+      .select('_id post_id')
+      .sort({ created_at: 1 })
+      .lean();
+    const uploadsByPost = uploads.reduce((grouped, upload) => {
+      const postId = upload.post_id.toString();
+      (grouped[postId] ||= []).push(`/api/uploads/${upload._id}`);
+      return grouped;
+    }, {});
+    const normalized = posts.map(post => {
+      const postImages = uploadsByPost[post._id.toString()] || [];
+      return {
+        ...post,
+        id: post._id?.toString?.() || post.id,
+        text: post.content ?? post.text ?? '',
+        createdAt: post.createdAt || post.created_at,
+        imageUrl: postImages[0] || post.imageUrl || null,
+        images: postImages.length ? postImages : (post.imageUrl ? [post.imageUrl] : [])
+      };
+    });
+    res.json(normalized);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-app.post('/api/posts', requireDB, authenticateToken, async (req, res) => {
+app.post('/api/posts', requireDB, authenticateToken, uploadFiles.array('images', 4), async (req, res) => {
   try {
     const body = req.body || {};
     const content = body.content ?? body.text ?? '';
@@ -636,14 +680,32 @@ app.post('/api/posts', requireDB, authenticateToken, async (req, res) => {
       imageUrl: imageUrl || null
     });
 
+    if (req.files?.length) {
+      await Upload.insertMany(req.files.map(file => ({
+        post_id: post._id,
+        user_id: mongoose.Types.ObjectId.isValid(req.user.id) ? req.user.id : undefined,
+        filename: file.originalname,
+        mimetype: file.mimetype,
+        size: file.size,
+        data: file.buffer
+      })));
+    }
+
     const plain = post.toObject();
+    const savedUploads = await Upload.find({ post_id: post._id })
+      .select('_id')
+      .sort({ created_at: 1 })
+      .lean();
     const response = {
       ...plain,
       id: plain._id?.toString?.() || plain.id,
       text: plain.content ?? plain.text ?? '',
       createdAt: plain.createdAt || plain.created_at,
-      images: plain.imageUrl ? [plain.imageUrl] : []
+      images: savedUploads.length
+        ? savedUploads.map(upload => `/api/uploads/${upload._id}`)
+        : (plain.imageUrl ? [plain.imageUrl] : [])
     };
+    response.imageUrl = response.images[0] || null;
 
     res.json({ success: true, post: response });
   } catch (err) {
@@ -667,6 +729,7 @@ app.delete('/api/posts/:id', requireDB, authenticateToken, async (req, res) => {
       return res.status(403).json({ error: 'You can only delete your own posts.' });
     }
 
+    await Upload.deleteMany({ post_id: post._id });
     await post.deleteOne();
     res.json({ success: true, deleted: true });
   } catch (err) {

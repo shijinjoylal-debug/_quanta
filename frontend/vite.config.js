@@ -6,7 +6,6 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve(__dirname, 'index.html'),
-                community: resolve(__dirname, 'community.html'),
                 calculations: resolve(__dirname, 'calculations.html'),
                 formulas: resolve(__dirname, 'formulas.html'),
             },
