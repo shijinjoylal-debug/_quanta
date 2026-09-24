@@ -627,11 +627,22 @@ app.post('/api/learning/ask', aiRateLimit, async (req, res) => {
 // ─── Posts ───────────────────────────────────────────────────────────────────
 app.get('/api/uploads/:id', requireDB, async (req, res) => {
   try {
-    const upload = await Upload.findById(req.params.id).select('mimetype data').lean();
-    if (!upload) return res.status(404).end();
-    res.type(upload.mimetype).send(upload.data);
+    const upload = await Upload.findById(req.params.id)
+      .select('mimetype data');
+
+    if (!upload) {
+      return res.status(404).end();
+    }
+
+    res.set('Content-Type', upload.mimetype);
+    res.set('Content-Length', upload.data.length);
+
+    return res.send(upload.data);
   } catch (err) {
-    res.status(404).end();
+    console.error('Image retrieval error:', err);
+    return res.status(500).json({
+      error: 'Failed to retrieve image'
+    });
   }
 });
 
