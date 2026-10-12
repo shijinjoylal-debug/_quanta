@@ -36,6 +36,8 @@ const allowedOrigins = new Set([
   process.env.FRONTEND_URL,
   'https://emertezora.xyz',
   'https://www.emertezora.xyz',
+  'https://myquanta.online',
+  'https://www.myquanta.online',
   'http://localhost:5050',
   'http://localhost:5501',
   'http://localhost:5502',
